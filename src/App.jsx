@@ -9,11 +9,11 @@ import Quiz from "./components/Quiz.jsx";
 import Result from "./components/Result.jsx";
 import Final from "./components/Final.jsx";
 
-const PERSIST = ["screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override", "webhookSent"];
+const PERSIST = ["screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override", "webhookSent", "pid"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function initState() {
-  const st = { lang: detectLang(), screen: "intro", nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null, webhookSent: false };
+  const st = { lang: detectLang(), screen: "intro", nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null, webhookSent: false, pid: "" };
   try {
     const saved = JSON.parse(localStorage.getItem("hk_state") || "null");
     if (saved && typeof saved === "object") PERSIST.forEach((k) => { if (k in saved) st[k] = saved[k]; });
@@ -116,7 +116,7 @@ export default function App() {
     patch({ lang: k });
   }
   const redo = () => go("kuis", { jawab: [], idx: 0, override: null, webhookSent: false });
-  const restart = () => go("intro", { nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null, webhookSent: false });
+  const restart = () => go("intro", { nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null, webhookSent: false, pid: "" });
 
   // pintasan keyboard A-E / 1-5 di layar kuis
   useEffect(() => {

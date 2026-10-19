@@ -7,4 +7,10 @@ npm install
 npm run dev
 ```
 
-Webhook: salin `.env.example` ke `.env`, isi `VITE_WEBHOOK_URL`. Data peserta (JSON, `Content-Type: text/plain` agar lolos CORS) dikirim satu kali saat peserta sampai layar terakhir.
+## Simpan data ke Google Sheets
+
+1. Buat Google Sheet → Extensions → Apps Script → tempel isi `apps-script/Code.gs`.
+2. Jalankan fungsi `setup` sekali, lalu Deploy → New deployment → Web app (Execute as: Me, Who has access: Anyone).
+3. Salin URL `/exec` ke `.env`: salin `.env.example`, isi `VITE_GAS_URL`.
+
+Data peserta (JSON flat, `Content-Type: text/plain` agar lolos CORS) dikirim satu kali saat peserta sampai layar terakhir. Kirim ulang (misal setelah menjawab ulang kuis) meng-update baris yang sama. Skor dan jalur dihitung ulang di server.

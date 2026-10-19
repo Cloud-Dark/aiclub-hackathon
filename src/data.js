@@ -10,7 +10,8 @@ export const WEIGHTS = [
 ];
 export const LATAR = ["kerja-tech", "kerja-nontech", "mahasiswa", "freelance", "founder", "cari-kerja"];
 export const WA_GROUP_URL = "https://chat.whatsapp.com/GNcd3TL3bZ71LoxlL8RzH9";
-export const WEBHOOK_URL = import.meta.env.VITE_WEBHOOK_URL || "";
+export const GAS_URL = import.meta.env.VITE_GAS_URL || "";
+export const GAS_TOKEN = import.meta.env.VITE_GAS_TOKEN || "";
 
 export const SCREENS = ["intro", "identitas", "kuis", "hasil", "final"];
 export const STEP_OF = { intro: -1, identitas: 0, kuis: 1, hasil: 2, final: 3 };

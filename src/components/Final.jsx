@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Head } from "./Common.jsx";
 import { WA_GROUP_URL } from "../data.js";
 import { urutSkor, aktif } from "../lib/scoring.js";
-import { buildPayload, sendWebhook } from "../lib/webhook.js";
+import { buildPayload, sendToGas } from "../lib/gas.js";
 
 export function shareText(st, t, get, role) {
   const u = urutSkor(st.jawab);
@@ -29,12 +29,15 @@ export default function Final({ st, patch, t, get, role, onBack, onRestart }) {
   const shareUrl = "https://wa.me/?text=" + encodeURIComponent(text);
   const sentRef = useRef(false);
 
-  // kirim ke webhook sekali per sesi lengkap, setelah peserta tiba di langkah terakhir
+  // kirim ke Google Apps Script sekali per sesi lengkap, setelah peserta tiba di langkah terakhir
   useEffect(() => {
     if (sentRef.current || st.webhookSent) return;
     sentRef.current = true;
     const payload = buildPayload(st);
-    sendWebhook(payload).then((ok) => { if (ok) patch({ webhookSent: true }); else sentRef.current = false; });
+    sendToGas(payload).then((res) => {
+      if (res && res.ok) patch({ webhookSent: true, pid: res.id });
+      else sentRef.current = false;
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
