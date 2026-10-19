@@ -22,8 +22,15 @@ export function quizDone(jawab) {
 }
 export const waValid = (v) => { const n = String(v).replace(/\D/g, "").length; return n >= 9 && n <= 15; };
 export const identDone = (st) => st.nama.trim().length > 0 && st.kota.trim().length > 0 && waValid(st.wa);
+// langkah besar: 0 daftar di portal kita, 1 daftar tim ke Tencent, 2 submit project
 export function reachable(st, step) {
   if (step <= 0) return true;
-  if (step === 1) return identDone(st);
-  return identDone(st) && quizDone(st.jawab);
+  return identDone(st) && quizDone(st.jawab) && !!st.joinedMain;
+}
+// sub-langkah di dalam langkah 0 (indikator kecil): kunci layar -> syarat
+export function subReachable(st, key) {
+  if (key === "identitas") return true;
+  if (key === "kuis") return identDone(st);
+  if (key === "hasil" || key === "grup") return identDone(st) && quizDone(st.jawab);
+  return identDone(st) && quizDone(st.jawab) && !!st.joinedMain;
 }

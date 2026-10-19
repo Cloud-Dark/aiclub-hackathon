@@ -57,7 +57,7 @@ export function Stepper({ st, get, gotoStep }) {
 
 export function BottomNav({ st, t, get, gotoStep }) {
   const cur = STEP_OF[st.screen];
-  const ic = [ICONS.user, ICONS.quiz, ICONS.path, ICONS.team];
+  const ic = [ICONS.user, ICONS.team, ICONS.path];
   return (
     <nav className="bnav" aria-label="steps">
       <button type="button" className={cur === -1 ? "cur" : ""} aria-current={cur === -1 ? "page" : undefined} onClick={() => gotoStep(-1)}>

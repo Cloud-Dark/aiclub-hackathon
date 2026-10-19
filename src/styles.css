@@ -67,7 +67,7 @@ button{cursor:pointer;background:none;border:0;padding:0}
 
 /* mobile bottom nav */
 .bnav{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(8,12,24,.97);border-top:2px solid var(--line);
-  display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .bnav button{height:var(--navh);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:var(--faint);position:relative}
 .bnav button svg{width:20px;height:20px}
 .bnav button span{font-family:var(--pixel);font-size:7px;letter-spacing:.02em}
@@ -320,3 +320,13 @@ html[lang=zh] .facts dt{font-size:11px}
 .cbtn-row .cbtn{flex:1 1 130px;margin-top:0;display:flex;align-items:center;justify-content:center}
 .cbtn[aria-disabled=true]{opacity:.7}
 .cbtn{line-height:1.5}
+.substeps{margin-bottom:6px}
+.substeps li{padding-top:8px}
+.sub-btn{display:flex;align-items:center;gap:8px;color:inherit;min-width:0;text-align:left;padding:0}
+.sub-btn:hover .l{text-decoration:underline;text-underline-offset:3px}
+.substeps .l{font-size:7px}
+.check{display:flex;align-items:flex-start;gap:12px;font-family:var(--mono);font-size:21px;color:var(--ink);line-height:1.3;cursor:pointer}
+.check input{appearance:none;-webkit-appearance:none;flex:none;width:26px;height:26px;margin:0;border:2px solid var(--line);background:var(--bg);display:grid;place-items:center;cursor:pointer}
+.check input:checked{background:var(--yellow);border-color:var(--yellow)}
+.check input:checked::after{content:"";width:10px;height:10px;background:var(--on)}
+.check input:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}

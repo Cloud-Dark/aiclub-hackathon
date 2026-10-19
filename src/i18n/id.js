@@ -13,19 +13,15 @@ export default {
   "steps": [
     {
       "label": "DAFTAR",
-      "ket": "nama & kota"
+      "ket": "data, kuis & tim"
     },
     {
-      "label": "SKENARIO",
-      "ket": "{n} pertanyaan"
+      "label": "TENCENT",
+      "ket": "daftar tim"
     },
     {
-      "label": "JALUR",
-      "ket": "peran terdeteksi"
-    },
-    {
-      "label": "TIM",
-      "ket": "grup & lamar"
+      "label": "SUBMIT",
+      "ket": "kirim project"
     }
   ],
   "combo": {
@@ -54,7 +50,7 @@ export default {
     "targetBody": "se-Indonesia · online, final onsite"
   },
   "identity": {
-    "step": "langkah 1 dari 4",
+    "step": "langkah 1 dari 3 · data diri",
     "title": "SIAPA KAMU",
     "name": "NAMA",
     "namePh": "nama panggilan juga boleh",
@@ -330,7 +326,8 @@ export default {
     "changeChoice": "GANTI PILIHAN",
     "memberTag": "ANGGOTA",
     "inviteTitle": "UNDANG BUILDER",
-    "inviteBody": "Builder yang cari tim. Undanganmu tampil di sini."
+    "inviteBody": "Builder yang cari tim. Undanganmu tampil di sini.",
+    "toTencent": "LANJUT KE LANGKAH 2"
   },
   "teams": [
     "Agent yang mencocokkan transaksi merchant tiap malam, tanpa orang.",
@@ -427,7 +424,12 @@ export default {
     "choose": "PILIH JALAN",
     "join": "LAMAR TIM",
     "create": "BUAT TIM",
-    "status": "STATUS"
+    "status": "STATUS",
+    "data": "DATA",
+    "quiz": "SKENARIO",
+    "track": "JALUR",
+    "team": "TIM",
+    "teamCreate": "BUAT TIM"
   },
   "choose": {
     "prompt": "pilih jalan",
@@ -485,5 +487,31 @@ export default {
     "back": "KEMBALI KE DAFTAR TIM",
     "otherTeam": "Kamu sedang melamar ke {team}. Tarik lamaran itu dulu kalau mau melamar ke tim ini.",
     "inTeam": "Kamu sudah tergabung di tim {team}. Keluar dulu kalau mau pindah."
+  },
+  "tencent": {
+    "prompt": "langkah 2 dari 3",
+    "title": "DAFTARKAN TIM KE TENCENT",
+    "body": "Setelah daftar di portal kita, tim juga harus terdaftar di portal Tencent. Biasanya owner tim yang mendaftarkan.",
+    "teamTitle": "STATUS TIMMU",
+    "teamOwner": "Kamu owner tim {team}. Daftarkan timmu sekarang.",
+    "teamMember": "Kamu anggota tim {team}. Pastikan owner timmu sudah mendaftarkan tim ke Tencent.",
+    "teamPending": "Lamaranmu ke {team} masih menunggu persetujuan owner.",
+    "teamNone": "Kamu belum punya tim. Kembali ke langkah 1 untuk melamar atau membuat tim.",
+    "toTeam": "KEMBALI KE LANGKAH 1",
+    "cta": "KLIK DISINI UNTUK DAFTAR TIM KE TENCENT",
+    "opened": "Portal Tencent sudah dibuka",
+    "hint": "Link terbuka di tab baru. Selesai mendaftar, kembali ke sini.",
+    "next": "LANJUT KE SUBMIT PROJECT",
+    "later": "Langkah 3 dikerjakan nanti, setelah project selesai dibuat."
+  },
+  "submit": {
+    "prompt": "langkah 3 dari 3",
+    "title": "SUBMIT PROJECT KE TENCENT",
+    "body": "Langkah terakhir. Kerjakan ini setelah project selesai dibuat, bukan sebelumnya.",
+    "ready": "Project saya sudah selesai dan siap dikirim",
+    "readyHint": "Centang dulu supaya tombol submit terbuka.",
+    "cta": "KLIK DISINI UNTUK SUBMIT PROJECT KE TENCENT",
+    "sent": "Portal submit sudah dibuka. Semoga sukses di Demo Day!",
+    "restart": "Mulai dari awal"
   }
 };

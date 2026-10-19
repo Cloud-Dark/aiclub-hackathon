@@ -38,8 +38,12 @@ export const BUILDER = [
 // pelamar contoh yang masuk ke tim buatan peserta (index ke BUILDER)
 export const SEED_APPLICANTS = [0, 4];
 
-export const SCREENS = ["intro", "login", "identitas", "kuis", "hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor"];
-export const STEP_OF = { intro: -1, login: -1, identitas: 0, kuis: 1, hasil: 2, grup: 3, pilih: 3, pasar: 3, tim: 3, buat: 3, dasbor: 3 };
+export const SCREENS = ["intro", "login", "identitas", "kuis", "hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"];
+export const STEP_OF = { intro: -1, login: -1, identitas: 0, kuis: 0, hasil: 0, grup: 0, pilih: 0, pasar: 0, tim: 0, buat: 0, dasbor: 0, tencent: 1, submit: 2 };
+
+// portal Tencent (lewat link aiclub.id)
+export const TENCENT_REGISTER_URL = "https://aiclub.id/l/O3Sa9yF";
+export const TENCENT_SUBMIT_URL = "https://aiclub.id/l/9k54mLk";
 
 export const ICONS = {
   home: "M4 1h2v1h1v1h1v1h1v1H8v4H6V7H4v2H2V5H1V4h1V3h1V2h1z",

@@ -111,12 +111,9 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
         </div>
       </div>
       <Actions onBack={onBack} t={t} extra={<button type="button" className="link" onClick={actions.restart}>{t("dash.restart")}</button>}>
-        {st.myTeam
-          ? <button type="button" className="btn primary" onClick={actions.toChoosePage}>{t("dash.changeChoice")}</button>
-          : <>
-              <button type="button" className="btn primary" onClick={actions.toMarketBack}>{t("dash.toMarket")}</button>
-              <button type="button" className="btn ghost" onClick={actions.toChoosePage}>{t("dash.changeChoice")}</button>
-            </>}
+        <button type="button" className="btn gold" onClick={actions.toTencent}>{t("dash.toTencent")} <span aria-hidden="true">&rsaquo;</span></button>
+        {!st.myTeam && <button type="button" className="btn ghost" onClick={actions.toMarketBack}>{t("dash.toMarket")}</button>}
+        <button type="button" className="btn ghost" onClick={actions.toChoosePage}>{t("dash.changeChoice")}</button>
       </Actions>
     </section>
   );

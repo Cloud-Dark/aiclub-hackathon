@@ -13,19 +13,15 @@ export default {
   "steps": [
     {
       "label": "SIGN UP",
-      "ket": "name & city"
+      "ket": "details, quiz & team"
     },
     {
-      "label": "SCENARIOS",
-      "ket": "{n} questions"
+      "label": "TENCENT",
+      "ket": "register team"
     },
     {
-      "label": "TRACK",
-      "ket": "role detected"
-    },
-    {
-      "label": "TEAM",
-      "ket": "group & apply"
+      "label": "SUBMIT",
+      "ket": "send project"
     }
   ],
   "combo": {
@@ -54,7 +50,7 @@ export default {
     "targetBody": "all of Indonesia · online, final onsite"
   },
   "identity": {
-    "step": "step 1 of 4",
+    "step": "step 1 of 3 · your details",
     "title": "WHO ARE YOU",
     "name": "NAME",
     "namePh": "nickname works too",
@@ -330,7 +326,8 @@ export default {
     "changeChoice": "CHANGE MY CHOICE",
     "memberTag": "MEMBER",
     "inviteTitle": "INVITE BUILDERS",
-    "inviteBody": "Builders looking for a team. Your invites show up here."
+    "inviteBody": "Builders looking for a team. Your invites show up here.",
+    "toTencent": "ON TO STEP 2"
   },
   "teams": [
     "An agent that matches merchant transactions every night, no humans needed.",
@@ -427,7 +424,12 @@ export default {
     "choose": "CHOOSE",
     "join": "APPLY",
     "create": "CREATE TEAM",
-    "status": "STATUS"
+    "status": "STATUS",
+    "data": "DETAILS",
+    "quiz": "SCENARIOS",
+    "track": "TRACK",
+    "team": "TEAM",
+    "teamCreate": "CREATE TEAM"
   },
   "choose": {
     "prompt": "choose your path",
@@ -485,5 +487,31 @@ export default {
     "back": "BACK TO TEAM LIST",
     "otherTeam": "You're applying to {team}. Withdraw that application first to apply to this team.",
     "inTeam": "You're already in team {team}. Leave first if you want to switch."
+  },
+  "tencent": {
+    "prompt": "step 2 of 3",
+    "title": "REGISTER YOUR TEAM WITH TENCENT",
+    "body": "After signing up on our portal, your team must also be registered on the Tencent portal. Usually the team owner does it.",
+    "teamTitle": "YOUR TEAM STATUS",
+    "teamOwner": "You own team {team}. Register your team now.",
+    "teamMember": "You're in team {team}. Make sure your team owner has registered the team with Tencent.",
+    "teamPending": "Your application to {team} is still waiting for the owner's approval.",
+    "teamNone": "You don't have a team yet. Go back to step 1 to apply to one or create your own.",
+    "toTeam": "BACK TO STEP 1",
+    "cta": "CLICK HERE TO REGISTER YOUR TEAM WITH TENCENT",
+    "opened": "Tencent portal opened",
+    "hint": "The link opens in a new tab. When you're done, come back here.",
+    "next": "ON TO SUBMIT PROJECT",
+    "later": "Step 3 comes later, once your project is built."
+  },
+  "submit": {
+    "prompt": "step 3 of 3",
+    "title": "SUBMIT YOUR PROJECT TO TENCENT",
+    "body": "The last step. Do this once your project is finished, not before.",
+    "ready": "My project is finished and ready to send",
+    "readyHint": "Tick this first to unlock the submit button.",
+    "cta": "CLICK HERE TO SUBMIT YOUR PROJECT TO TENCENT",
+    "sent": "Submission portal opened. Good luck at Demo Day!",
+    "restart": "Start over"
   }
 };

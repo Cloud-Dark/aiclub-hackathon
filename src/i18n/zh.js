@@ -13,19 +13,15 @@ export default {
   "steps": [
     {
       "label": "报名",
-      "ket": "姓名和城市"
+      "ket": "资料、测验和组队"
     },
     {
-      "label": "情景题",
-      "ket": "{n} 道题"
+      "label": "腾讯",
+      "ket": "登记队伍"
     },
     {
-      "label": "赛道",
-      "ket": "角色识别"
-    },
-    {
-      "label": "组队",
-      "ket": "进群并申请"
+      "label": "提交",
+      "ket": "提交项目"
     }
   ],
   "combo": {
@@ -54,7 +50,7 @@ export default {
     "targetBody": "全印尼 · 线上进行，决赛线下"
   },
   "identity": {
-    "step": "第 1 步，共 4 步",
+    "step": "第 1 步，共 3 步 · 你的资料",
     "title": "你是谁",
     "name": "姓名",
     "namePh": "昵称也可以",
@@ -330,7 +326,8 @@ export default {
     "changeChoice": "更改选择",
     "memberTag": "成员",
     "inviteTitle": "邀请 BUILDER",
-    "inviteBody": "正在找队伍的 builder。你发出的邀请会显示在这里。"
+    "inviteBody": "正在找队伍的 builder。你发出的邀请会显示在这里。",
+    "toTencent": "继续第 2 步"
   },
   "teams": [
     "每晚自动匹配商户交易的 agent，无需人工。",
@@ -427,7 +424,12 @@ export default {
     "choose": "选择",
     "join": "申请队伍",
     "create": "创建队伍",
-    "status": "状态"
+    "status": "状态",
+    "data": "资料",
+    "quiz": "情景题",
+    "track": "赛道",
+    "team": "组队",
+    "teamCreate": "创建队伍"
   },
   "choose": {
     "prompt": "选择你的路径",
@@ -485,5 +487,31 @@ export default {
     "back": "返回队伍列表",
     "otherTeam": "你正在申请 {team}。想申请这支队伍，请先撤回该申请。",
     "inTeam": "你已加入队伍 {team}。想换队请先退出。"
+  },
+  "tencent": {
+    "prompt": "第 2 步，共 3 步",
+    "title": "在腾讯登记你的队伍",
+    "body": "在我们的平台报名后，队伍还需要在腾讯的平台登记。通常由队长负责登记。",
+    "teamTitle": "你的队伍状态",
+    "teamOwner": "你是队伍 {team} 的队长。现在就去登记吧。",
+    "teamMember": "你在队伍 {team} 中。请确认队长已在腾讯登记队伍。",
+    "teamPending": "你对 {team} 的申请仍在等待队长通过。",
+    "teamNone": "你还没有队伍。回到第 1 步，申请队伍或创建自己的队伍。",
+    "toTeam": "返回第 1 步",
+    "cta": "点击这里在腾讯登记队伍",
+    "opened": "已打开腾讯平台",
+    "hint": "链接会在新标签页打开。完成后回到这里。",
+    "next": "继续：提交项目",
+    "later": "第 3 步等项目做完以后再进行。"
+  },
+  "submit": {
+    "prompt": "第 3 步，共 3 步",
+    "title": "向腾讯提交项目",
+    "body": "最后一步。请在项目完成之后再做，不要提前。",
+    "ready": "我的项目已完成，可以提交",
+    "readyHint": "先勾选，提交按钮才会开放。",
+    "cta": "点击这里向腾讯提交项目",
+    "sent": "已打开提交平台。Demo Day 加油！",
+    "restart": "从头开始"
   }
 };

@@ -14,18 +14,20 @@ import Create from "./components/Create.jsx";
 import TeamDetail from "./components/TeamDetail.jsx";
 import Market from "./components/Market.jsx";
 import Dash from "./components/Dash.jsx";
+import Tencent from "./components/Tencent.jsx";
+import Submit from "./components/Submit.jsx";
 import { SubSteps } from "./components/Widgets.jsx";
 import { activeApp, canCreate } from "./lib/rules.js";
 import { TIM } from "./data.js";
 
 const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override",
-  "clickedMain", "joinedMain", "mode", "viewTeam", "tab", "apps", "undang", "myTeam", "applicants", "log"];
+  "clickedMain", "joinedMain", "mode", "viewTeam", "tencentClicked", "projectReady", "submitClicked", "tab", "apps", "undang", "myTeam", "applicants", "log"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const fresh = () => ({
   user: null,
   nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null,
-  clickedMain: false, joinedMain: false, mode: null, viewTeam: null, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: []
+  clickedMain: false, joinedMain: false, mode: null, viewTeam: null, tencentClicked: false, projectReady: false, submitClicked: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: []
 });
 
 function initState() {
@@ -37,8 +39,8 @@ function initState() {
   if (!SCREENS.includes(st.screen)) st.screen = "intro";
   if (st.screen !== "intro" && !st.user) st.screen = "intro";
   else if (!["intro", "login", "identitas"].includes(st.screen) && !identDone(st)) st.screen = "identitas";
-  if (["hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
-  if (["pilih", "pasar", "tim", "buat", "dasbor"].includes(st.screen) && !st.joinedMain) st.screen = "grup";
+  if (["hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
+  if (["pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"].includes(st.screen) && !st.joinedMain) st.screen = "grup";
   if ((st.screen === "pasar" || st.screen === "buat" || st.screen === "tim") && st.myTeam) st.screen = "dasbor";
   if (st.screen === "tim" && !TIM.some((x) => x.nama === st.viewTeam)) st.screen = "pasar";
   if (st.screen === "buat" && !canCreate(st)) st.screen = "pilih";
@@ -116,6 +118,7 @@ export default function App() {
         break;
       case "hasil": go("grup"); break;
       case "pasar": go("dasbor"); break;
+      case "tencent": go("submit"); break;
     }
   }
   function back() {
@@ -130,20 +133,31 @@ export default function App() {
       case "tim": go("pasar"); break;
       case "buat": go("pilih"); break;
       case "dasbor": go(st.myTeam ? "pilih" : "pasar"); break;
+      case "tencent": go("dasbor"); break;
+      case "submit": go("tencent"); break;
     }
   }
+  const firstMissing = () => {
+    for (let k = 0; k < total(); k++) if (st.jawab[k] == null) return k;
+    return 0;
+  };
+  // klik indikator kecil di langkah 1
+  function goSub(key) {
+    if (key === "kuis") go("kuis", { idx: firstMissing() });
+    else go(key);
+  }
+  // klik langkah besar: 0 daftar di portal kita, 1 daftar tim ke Tencent, 2 submit project
   function gotoStep(i) {
     if (i === -1) { go("intro"); return; }
-    if (!reachable(st, i)) { toast(t("nav.locked")); return; }
-    if (i === 0) go("identitas");
-    else if (i === 1) {
-      let miss = -1;
-      for (let k = 0; k < total(); k++) if (st.jawab[k] == null) { miss = k; break; }
-      go("kuis", { idx: miss >= 0 ? miss : 0 });
+    if (!reachable(st, i)) { toast(t(i > 0 && identDone(st) && quizDone(st.jawab) ? "group.gate" : "nav.locked")); return; }
+    if (i === 0) {
+      if (STEP_OF[st.screen] === 0) return;
+      if (!identDone(st)) go("identitas");
+      else if (!quizDone(st.jawab)) go("kuis", { idx: firstMissing() });
+      else if (!st.joinedMain) go("grup");
+      else go(st.myTeam || st.apps.length ? "dasbor" : "pilih");
     }
-    else if (i === 2) go("hasil");
-    else if (["grup", "pilih", "pasar", "tim", "buat", "dasbor"].includes(st.screen)) return;
-    else go(!st.joinedMain ? "grup" : st.myTeam || st.apps.length ? "dasbor" : "pilih");
+    else go(i === 1 ? "tencent" : "submit");
   }
   function login(u) {
     setSt((s) => ({
@@ -170,6 +184,8 @@ export default function App() {
       go("pilih");
     },
     openDetail(team) { go("tim", { viewTeam: team }); },
+    toTencent() { go("tencent"); },
+    toTeamStep() { go(st.myTeam || st.apps.length ? "dasbor" : "pilih"); },
     toChoosePage() { go("pilih"); },
     toMarketBack() { go("pasar"); },
     goDash() { go("dasbor"); },
@@ -269,6 +285,8 @@ export default function App() {
     case "pilih": view = <Choose {...common} actions={actions} />; break;
     case "pasar": view = <Market {...common} actions={actions} />; break;
     case "tim": view = <TeamDetail {...common} actions={actions} />; break;
+    case "tencent": view = <Tencent {...common} actions={actions} />; break;
+    case "submit": view = <Submit {...common} actions={actions} />; break;
     case "buat": view = <Create {...common} actions={actions} />; break;
     default: view = <Dash {...common} actions={actions} />;
   }
@@ -278,7 +296,7 @@ export default function App() {
       <Header st={st} t={t} setLang={setLang} onLogout={logout} />
       <div className="wrap">
         <Stepper st={st} get={get} gotoStep={gotoStep} />
-        <SubSteps screen={st.screen} t={t} mode={st.mode} />
+        <SubSteps st={st} t={t} onGo={goSub} />
         <main id="app" aria-live="polite" data-step={STEP_OF[st.screen]}>{view}</main>
       </div>
       <BottomNav st={st} t={t} get={get} gotoStep={gotoStep} />
