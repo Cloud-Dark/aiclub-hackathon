@@ -19,7 +19,6 @@ export default function Intro({ t, onNext }) {
       </div>
       <div className="stack">
         <div className="card"><div className="kick c">{t("intro.whyTitle")}</div><div className="txt">{t("intro.whyBody")}</div></div>
-        <div className="card"><div className="kick">{t("intro.targetTitle")}</div><div className="big">120+</div><div className="txt" style={{ marginTop: -4 }}>{t("intro.targetBody")}</div></div>
       </div>
     </section>
   );

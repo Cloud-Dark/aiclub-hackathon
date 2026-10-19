@@ -6,7 +6,7 @@ export default {
     "title": "AI Agent 黑客松报名"
   },
   "top": {
-    "open": "10月15日开放报名",
+    "open": "10月15日–11月1日报名",
     "demo": "Demo Day 11月底 · Jakarta",
     "langLabel": "语言"
   },
@@ -40,14 +40,12 @@ export default {
     "prompt": "报名/ai-agent-hackathon",
     "title1": "AI AGENT",
     "title2": "黑客松",
-    "sub": "Tencent Cloud Indonesia · 6 周",
+    "sub": "Tencent Cloud Indonesia · 11月1日截止报名",
     "body": "先个人报名，不用带队。回答 6 道情景题，系统会把你放到最适合的赛道——可能是 CEO，可能是 AI 工程师，也可能是最懂问题的那个人。然后进入组队市场：招人，或被招。",
     "cta": "开始报名",
     "ctaHint": "免费 · 4 分钟 · 不用是高手",
     "whyTitle": "为什么要做测验",
-    "whyBody": "人常常看错自己的定位。自称 CEO 的其实是工程师。说自己只是来凑热闹的，反而是唯一真懂问题的人。",
-    "targetTitle": "参赛对象",
-    "targetBody": "全印尼 · 线上进行，决赛线下"
+    "whyBody": "人常常看错自己的定位。自称 CEO 的其实是工程师。说自己只是来凑热闹的，反而是唯一真懂问题的人。"
   },
   "identity": {
     "step": "第 1 步，共 3 步 · 你的资料",
@@ -108,7 +106,7 @@ export default {
     "CEO": {
       "ringkas": "CEO / 创意发起人",
       "nama": "CEO / 创意发起人",
-      "desc": "你靠方向和人推动事情。你的任务是挑一个值得投入六周的问题，然后吸引相信它的人。"
+      "desc": "你靠方向和人推动事情。你的任务是挑一个值得做到 Demo Day 的问题，然后吸引相信它的人。"
     },
     "CTO": {
       "ringkas": "CTO / 工程师",
@@ -211,7 +209,7 @@ export default {
     }
   ],
   "market": {
-    "prompt": "组队市场 · 9 天后关闭",
+    "prompt": "组队市场 · 11月1日关闭",
     "titleTwoWay": "双向：申请或被邀请",
     "titleDraft": "队伍招人，你来申请",
     "asRole": "你的身份是",
@@ -354,7 +352,7 @@ export default {
     {
       "minggu": "第 2-3 周",
       "judul": "组队市场和挑战简报",
-      "ket": "互相申请和邀请。Tencent 公布挑战题目。报名截止。"
+      "ket": "互相申请和邀请。Tencent 公布挑战题目。11月1日报名截止。"
     },
     {
       "minggu": "第 3-4 周",

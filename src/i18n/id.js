@@ -6,7 +6,7 @@ export default {
     "title": "Pendaftaran AI Agent Hackathon"
   },
   "top": {
-    "open": "pendaftaran buka 15 Okt",
+    "open": "pendaftaran 15 Okt – 1 Nov",
     "demo": "demo day akhir Nov · Jakarta",
     "langLabel": "Bahasa"
   },
@@ -40,14 +40,12 @@ export default {
     "prompt": "daftar/ai-agent-hackathon",
     "title1": "AI AGENT",
     "title2": "HACKATHON",
-    "sub": "Tencent Cloud Indonesia · 6 minggu",
+    "sub": "Tencent Cloud Indonesia · pendaftaran sampai 1 Nov",
     "body": "Daftar sendiri dulu, bukan bawa tim. Jawab 6 skenario, sistem menaruh kamu di jalur yang paling cocok — mungkin CEO, mungkin AI engineer, mungkin orang yang paling paham masalahnya. Setelah itu kamu masuk pasar tim: rekrut, atau direkrut.",
     "cta": "MULAI PENDAFTARAN",
     "ctaHint": "gratis · 4 menit · nggak perlu jago dulu",
     "whyTitle": "KENAPA PAKAI KUIS",
-    "whyBody": "Orang sering salah menebak posisinya sendiri. Yang ngaku CEO ternyata engineer. Yang ngaku cuma ikut-ikutan ternyata satu-satunya yang paham masalahnya.",
-    "targetTitle": "TARGET PESERTA",
-    "targetBody": "se-Indonesia · online, final onsite"
+    "whyBody": "Orang sering salah menebak posisinya sendiri. Yang ngaku CEO ternyata engineer. Yang ngaku cuma ikut-ikutan ternyata satu-satunya yang paham masalahnya."
   },
   "identity": {
     "step": "langkah 1 dari 3 · data diri",
@@ -108,7 +106,7 @@ export default {
     "CEO": {
       "ringkas": "CEO / PEMILIK IDE",
       "nama": "CEO / Pemilik ide",
-      "desc": "Kamu bergerak dari arah dan orang. Tugasmu memilih masalah yang layak enam minggu, lalu menarik orang yang percaya."
+      "desc": "Kamu bergerak dari arah dan orang. Tugasmu memilih masalah yang layak dikerjakan sampai demo day, lalu menarik orang yang percaya."
     },
     "CTO": {
       "ringkas": "CTO / ENGINEER",
@@ -211,7 +209,7 @@ export default {
     }
   ],
   "market": {
-    "prompt": "pasar tim · tutup 9 hari lagi",
+    "prompt": "pasar tim · tutup 1 Nov",
     "titleTwoWay": "DUA ARAH: LAMAR ATAU DIUNDANG",
     "titleDraft": "TIM MEREKRUT, KAMU MELAMAR",
     "asRole": "kamu masuk sebagai",
@@ -354,7 +352,7 @@ export default {
     {
       "minggu": "MINGGU 2-3",
       "judul": "Pasar tim & briefing tantangan",
-      "ket": "Saling lamar dan undang. Tencent membuka challenge statement. Pendaftaran tutup."
+      "ket": "Saling lamar dan undang. Tencent membuka challenge statement. Pendaftaran tutup 1 Nov."
     },
     {
       "minggu": "MINGGU 3-4",

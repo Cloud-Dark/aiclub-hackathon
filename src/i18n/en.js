@@ -6,7 +6,7 @@ export default {
     "title": "AI Agent Hackathon Registration"
   },
   "top": {
-    "open": "registration opens Oct 15",
+    "open": "registration Oct 15 – Nov 1",
     "demo": "demo day late Nov · Jakarta",
     "langLabel": "Language"
   },
@@ -40,14 +40,12 @@ export default {
     "prompt": "register/ai-agent-hackathon",
     "title1": "AI AGENT",
     "title2": "HACKATHON",
-    "sub": "Tencent Cloud Indonesia · 6 weeks",
+    "sub": "Tencent Cloud Indonesia · registration closes Nov 1",
     "body": "Sign up solo first, no team needed. Answer 6 scenarios and we'll drop you on the track that fits best — maybe CEO, maybe AI engineer, maybe the one who gets the problem best. Then you hit the team market: recruit, or get recruited.",
     "cta": "START SIGNING UP",
     "ctaHint": "free · 4 minutes · no pro skills needed",
     "whyTitle": "WHY A QUIZ",
-    "whyBody": "People often misjudge their own role. The self-proclaimed CEO turns out to be an engineer. The one who's \"just tagging along\" is the only one who gets the problem.",
-    "targetTitle": "WHO CAN JOIN",
-    "targetBody": "all of Indonesia · online, final onsite"
+    "whyBody": "People often misjudge their own role. The self-proclaimed CEO turns out to be an engineer. The one who's \"just tagging along\" is the only one who gets the problem."
   },
   "identity": {
     "step": "step 1 of 3 · your details",
@@ -108,7 +106,7 @@ export default {
     "CEO": {
       "ringkas": "CEO / IDEA OWNER",
       "nama": "CEO / Idea owner",
-      "desc": "You move from direction and people. Your job: pick a problem worth six weeks, then pull in people who believe."
+      "desc": "You move from direction and people. Your job: pick a problem worth working on until demo day, then pull in people who believe."
     },
     "CTO": {
       "ringkas": "CTO / ENGINEER",
@@ -211,7 +209,7 @@ export default {
     }
   ],
   "market": {
-    "prompt": "team market · closes in 9 days",
+    "prompt": "team market · closes Nov 1",
     "titleTwoWay": "TWO-WAY: APPLY OR GET INVITED",
     "titleDraft": "TEAMS RECRUIT, YOU APPLY",
     "asRole": "you're joining as",
@@ -354,7 +352,7 @@ export default {
     {
       "minggu": "WEEKS 2-3",
       "judul": "Team market & challenge briefing",
-      "ket": "Apply and invite each other. Tencent drops the challenge statement. Registration closes."
+      "ket": "Apply and invite each other. Tencent drops the challenge statement. Registration closes Nov 1."
     },
     {
       "minggu": "WEEKS 3-4",
