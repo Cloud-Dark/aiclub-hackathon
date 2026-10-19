@@ -24,8 +24,8 @@ export default {
       "ket": "角色识别"
     },
     {
-      "label": "WHATSAPP",
-      "ket": "加入群组"
+      "label": "组队",
+      "ket": "进群并申请"
     }
   ],
   "combo": {
@@ -102,7 +102,7 @@ export default {
     "openInvited": "被其他队伍直接邀请",
     "openTraining": "WorkBuddy 和 CodeBuddy 培训，第 3-4 周",
     "redo": "重新作答",
-    "toFinal": "最后 2 步"
+    "toGroup": "加入 WHATSAPP 群"
   },
   "roles": {
     "CEO": {
@@ -210,20 +210,168 @@ export default {
       ]
     }
   ],
-  "final": {
-    "prompt": "最后 2 步",
-    "title": "最后 2 步",
-    "s1": "第 1 步",
-    "s1t": "加入 WhatsApp 群",
-    "s1b": "参赛者信息、简报和组队都在这个群里进行。",
+  "market": {
+    "prompt": "组队市场 · 9 天后关闭",
+    "titleTwoWay": "双向：申请或被邀请",
+    "titleDraft": "队伍招人，你来申请",
+    "asRole": "你的身份是",
+    "tabTeams": "需要你的队伍",
+    "tabBuilders": "找队伍的 builder",
+    "members": "{n} 名成员",
+    "ceo": "CEO {name}",
+    "slots": "招募中的位置",
+    "stMatch": "匹配你的赛道",
+    "stOpen": "开放",
+    "stSent": "申请已发送",
+    "apply": "申请这个位置",
+    "withdraw": "撤回申请",
+    "invite": "邀请加入我的队",
+    "invited": "邀请已发送",
+    "needCeo": "需要 CEO 赛道",
+    "summary": "{a} 个申请 · {b} 个邀请",
+    "toStatus": "查看我的状态",
+    "stApproved": "已通过",
+    "stRejected": "已拒绝",
+    "yourTeam": "你的队伍",
+    "youOwner": "你是队长",
+    "openGroup": "打开队伍群",
+    "rejectedBtn": "申请被拒绝",
+    "groupSoon": "群链接稍后提供",
+    "hint": "一次申请对应一个队伍群。可以申请多支队伍，由队长通过或拒绝。"
+  },
+  "dash": {
+    "greeting": "{name}，你还没有队伍",
+    "guest": "参赛者",
+    "actsTitle": "申请和邀请",
+    "empty": "还没有。回到组队市场，至少申请两支队伍——队伍满员比你想的快。",
+    "appliedKet": "你的申请 · 等待 CEO 回复",
+    "appliedSt": "等待中",
+    "invitedKet": "你发出的邀请 · 尚未回复",
+    "invitedSt": "已发送",
+    "roadTitle": "通往 Demo Day 之路",
+    "formed": "已组成队伍",
+    "formedBody": "来自 120+ 报名者 · 目标 30 支队伍",
+    "yourRole": "你的赛道",
+    "challengeTitle": "来自 TENCENT 的挑战",
+    "challengeBody": "第 2 周随简报一起公布。在那之前，先把队伍组好。",
+    "toMarket": "返回组队市场",
+    "restart": "从头开始",
+    "approvedKet": "队长已通过 · 去加入队伍群",
+    "rejectedKet": "队长已拒绝 · 试试其他队伍",
+    "stApproved": "已通过",
+    "stRejected": "已拒绝",
+    "joinTeam": "加入队伍群",
+    "noLink": "队长还没添加群链接",
+    "demoNote": "演示模式 · 队长的决定在此设备上模拟",
+    "simApprove": "通过",
+    "simReject": "拒绝",
+    "mainTitle": "黑客松主群",
+    "mainJoined": "已加入",
+    "mainOpen": "打开群",
+    "logTitle": "你的动态",
+    "logEmpty": "暂无动态。",
+    "log": {
+      "joinMain": "加入了黑客松主群",
+      "apply": "申请了 {team}",
+      "withdraw": "撤回了对 {team} 的申请",
+      "approved": "{team} 通过了你的申请",
+      "rejected": "{team} 拒绝了你的申请",
+      "invite": "邀请 {who} 加入你的队伍",
+      "uninvite": "取消了对 {who} 的邀请",
+      "openTeam": "创建了队伍 {team}",
+      "approveWho": "通过了 {who} 加入你的队伍",
+      "rejectWho": "拒绝了 {who}"
+    },
+    "myTeam": {
+      "title": "我的队伍",
+      "createTitle": "创建自己的队伍",
+      "createBody": "你将成为队长：创建队伍的 WhatsApp 群，然后通过或拒绝申请人。",
+      "name": "队伍名称",
+      "namePh": "例如 LAPOR WARGA",
+      "desc": "简介",
+      "descPh": "一句话：这个 agent 解决什么问题",
+      "slots": "招募中的位置",
+      "wa": "队伍 WHATSAPP 群链接",
+      "waPh": "https://chat.whatsapp.com/...",
+      "waHint": "在 WhatsApp 创建群，复制邀请链接粘贴到这里。你通过的申请人会看到这个链接。",
+      "createBtn": "创建队伍",
+      "save": "保存链接",
+      "saved": "群链接已保存",
+      "errName": "请先填写队伍名称",
+      "errSlot": "至少选择一个位置",
+      "errWa": "链接必须以 https://chat.whatsapp.com/ 开头",
+      "inbox": "收到的申请",
+      "noApplicants": "还没有申请人。",
+      "approve": "通过",
+      "reject": "拒绝",
+      "pending": "等待中",
+      "approved": "已通过",
+      "rejected": "已拒绝",
+      "openGroup": "打开队伍群",
+      "noLink": "还没有群链接 · 请在上面添加"
+    }
+  },
+  "teams": [
+    "每晚自动匹配商户交易的 agent，无需人工。",
+    "社区小店助手 agent：收款、记库存，一个聊天全搞定。",
+    "能解释理由的小额贷款风险评估工具。",
+    "从旧文档中回答运营团队问题的内部 agent。",
+    "为小城市公共服务排队重新排期的 agent。",
+    "阅读供应商合同并标出风险条款的 agent。"
+  ],
+  "builders": [
+    "用工具调用做过两个 agent。还没在团队里干过。",
+    "4 年产品设计经验。想找一支真想让原型被用起来的队伍。",
+    "7 年支付运营经验。知道流程哪里漏。",
+    "零售数据分析师。能证明 agent 到底省没省时间。",
+    "后端，能自己部署。需要懂真实问题的人。",
+    "从零做起 8 千人的社区。想找产品已经能用的队伍。"
+  ],
+  "schedule": [
+    {
+      "minggu": "第 1 周 · 10月15日",
+      "judul": "开放报名",
+      "ket": "个人报名，回答情景题，获得赛道。"
+    },
+    {
+      "minggu": "第 2-3 周",
+      "judul": "组队市场和挑战简报",
+      "ket": "互相申请和邀请。Tencent 公布挑战题目。报名截止。"
+    },
+    {
+      "minggu": "第 3-4 周",
+      "judul": "线上培训",
+      "ket": "WorkBuddy、CodeBuddy、Token Hub。导师在线答疑。"
+    },
+    {
+      "minggu": "第 4-5 周",
+      "judul": "提交和评审",
+      "ket": "提交原型。全部评审，八队晋级。"
+    },
+    {
+      "minggu": "第 6 周 · 11月底",
+      "judul": "Demo Day，Jakarta",
+      "ket": "前 8 名线下展示。决出第 1、2、3 名。"
+    }
+  ],
+  "group": {
+    "prompt": "必做步骤 · 主群",
+    "title": "请先加入主群",
+    "required": "必须",
+    "s1": "第 1 步 · 必须",
+    "s1t": "加入黑客松 WhatsApp 群",
+    "s1b": "所有官方信息、简报和公告都在主群里。加入主群后才能申请队伍。",
     "joinCta": "点击这里加入 WHATSAPP",
     "s2": "第 2 步",
-    "s2t": "把你的信息分享到群里",
-    "s2b": "你的资料会自动整理成一条消息，直接发到群里，让大家认识你。",
+    "s2t": "在群里自我介绍",
+    "s2b": "你的资料会自动整理成一条消息，发到群里，让其他参赛者和队长认识你。",
     "shareCta": "点击这里把你的信息发送到 WHATSAPP",
     "previewTitle": "消息预览",
-    "done": "完成。群里见！",
-    "restart": "从头开始",
+    "confirm": "我已加入",
+    "confirmHint": "请先点击上面的加入按钮，才能继续。",
+    "joined": "已加入主群",
+    "next": "进入组队市场",
+    "gate": "请先加入主群再进入组队市场",
     "msg": {
       "head": "大家好，我是 AI Agent 黑客松的参赛者",
       "name": "姓名",

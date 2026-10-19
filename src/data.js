@@ -1,4 +1,5 @@
-export const CONFIG = { modeDraft: false, quizLen: 6 };
+// demoOwner: tampilkan tombol simulasi keputusan owner (sampai ada backend sungguhan)
+export const CONFIG = { modeDraft: false, quizLen: 6, demoOwner: true };
 export const URUT = ["CEO", "CTO", "AI", "PM", "DSG", "GRW", "DOM", "DAT"];
 export const WEIGHTS = [
   [{ DOM: 3, PM: 1 }, { PM: 3, AI: 1 }, { CTO: 3, AI: 1 }, { CEO: 3 }, { DAT: 3 }],
@@ -10,11 +11,27 @@ export const WEIGHTS = [
 ];
 export const LATAR = ["kerja-tech", "kerja-nontech", "mahasiswa", "freelance", "founder", "cari-kerja"];
 export const WA_GROUP_URL = "https://chat.whatsapp.com/GNcd3TL3bZ71LoxlL8RzH9";
-export const GAS_URL = import.meta.env.VITE_GAS_URL || "";
-export const GAS_TOKEN = import.meta.env.VITE_GAS_TOKEN || "";
 
-export const SCREENS = ["intro", "identitas", "kuis", "hasil", "final"];
-export const STEP_OF = { intro: -1, identitas: 0, kuis: 1, hasil: 2, final: 3 };
+export const WA_LINK_RE = /^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9_-]+/;
+
+export const TIM = [
+  { nama: "REKON", kota: "Jakarta", anggota: 3, ceo: "Raka", butuh: ["AI", "DAT"], wa: "" },
+  { nama: "WARUNG TAP", kota: "Bandung", anggota: 2, ceo: "Sari", butuh: ["CTO", "DSG"], wa: "" },
+  { nama: "SIAP RISIKO", kota: "Surabaya", anggota: 4, ceo: "Bintang", butuh: ["DOM", "PM"], wa: "" },
+  { nama: "TANYA OPS", kota: "Yogyakarta", anggota: 2, ceo: "Nadia", butuh: ["AI", "GRW"], wa: "" },
+  { nama: "ANTRE HABIS", kota: "Makassar", anggota: 3, ceo: "Fikri", butuh: ["DAT", "DSG"], wa: "" },
+  { nama: "BACA KONTRAK", kota: "Medan", anggota: 2, ceo: "Ayu", butuh: ["DOM", "CTO"], wa: "" }
+];
+export const BUILDER = [
+  { nama: "Dimas", kota: "Semarang", peran: "AI" }, { nama: "Lala", kota: "Denpasar", peran: "DSG" },
+  { nama: "Hendra", kota: "Palembang", peran: "DOM" }, { nama: "Vina", kota: "Balikpapan", peran: "DAT" },
+  { nama: "Arif", kota: "Pontianak", peran: "CTO" }, { nama: "Tari", kota: "Kupang", peran: "GRW" }
+];
+// pelamar contoh yang masuk ke tim buatan peserta (index ke BUILDER)
+export const SEED_APPLICANTS = [0, 4];
+
+export const SCREENS = ["intro", "identitas", "kuis", "hasil", "grup", "pasar", "dasbor"];
+export const STEP_OF = { intro: -1, identitas: 0, kuis: 1, hasil: 2, grup: 3, pasar: 3, dasbor: 3 };
 
 export const ICONS = {
   home: "M4 1h2v1h1v1h1v1h1v1H8v4H6V7H4v2H2V5H1V4h1V3h1V2h1z",

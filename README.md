@@ -1,16 +1,21 @@
 # Pendaftaran AI Agent Hackathon
 
-React + Vite. Alur: Daftar → Skenario → Jalur → 2 langkah terakhir (gabung grup WhatsApp, share info ke grup).
+React + Vite.
 
 ```
 npm install
 npm run dev
 ```
 
-## Simpan data ke Google Sheets
+## Alur
 
-1. Buat Google Sheet → Extensions → Apps Script → tempel isi `apps-script/Code.gs`.
-2. Jalankan fungsi `setup` sekali, lalu Deploy → New deployment → Web app (Execute as: Me, Who has access: Anyone).
-3. Salin URL `/exec` ke `.env`: salin `.env.example`, isi `VITE_GAS_URL`.
+1. Daftar → Skenario → Jalur
+2. **Gabung grup WhatsApp utama (wajib)** — pasar tim baru terbuka setelah ini
+3. Pasar tim: lamar ke beberapa tim (satu lamaran = satu grup tim), atau undang builder
+4. Status: lamaran (menunggu / disetujui / ditolak), grup utama, tim saya, aktivitas, dan timeline sampai demo day
 
-Data peserta (JSON flat, `Content-Type: text/plain` agar lolos CORS) dikirim satu kali saat peserta sampai layar terakhir. Kirim ulang (misal setelah menjawab ulang kuis) meng-update baris yang sama. Skor dan jalur dihitung ulang di server.
+Owner tim membuka timnya sendiri di layar status, menempel link grup WhatsApp timnya, lalu menyetujui atau menolak pelamar. Pelamar yang disetujui melihat tombol gabung grup tim.
+
+## Mode demo
+
+Belum ada backend, semua data tersimpan di `localStorage` perangkat. Keputusan owner untuk tim contoh disimulasikan lewat tombol Setujui/Tolak di layar status (`CONFIG.demoOwner` di `src/data.js`; matikan saat backend sungguhan tersambung).

@@ -1,28 +1,39 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { makeT, detectLang } from "./i18n/index.js";
-import { SCREENS, STEP_OF } from "./data.js";
+import { SCREENS, STEP_OF, SEED_APPLICANTS, BUILDER } from "./data.js";
 import { total, quizDone, identDone, reachable } from "./lib/scoring.js";
 import { Header, Stepper, BottomNav } from "./components/Chrome.jsx";
 import Intro from "./components/Intro.jsx";
 import Identity from "./components/Identity.jsx";
 import Quiz from "./components/Quiz.jsx";
 import Result from "./components/Result.jsx";
-import Final from "./components/Final.jsx";
+import Group from "./components/Group.jsx";
+import Market from "./components/Market.jsx";
+import Dash from "./components/Dash.jsx";
 
-const PERSIST = ["screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override", "webhookSent", "pid"];
+const PERSIST = ["screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override",
+  "clickedMain", "joinedMain", "tab", "apps", "undang", "myTeam", "applicants", "log"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const fresh = () => ({
+  nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null,
+  clickedMain: false, joinedMain: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: []
+});
+
 function initState() {
-  const st = { lang: detectLang(), screen: "intro", nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null, webhookSent: false, pid: "" };
+  const st = { ...fresh(), lang: detectLang(), screen: "intro" };
   try {
     const saved = JSON.parse(localStorage.getItem("hk_state") || "null");
     if (saved && typeof saved === "object") PERSIST.forEach((k) => { if (k in saved) st[k] = saved[k]; });
   } catch (e) {}
   if (!SCREENS.includes(st.screen)) st.screen = "intro";
   if (st.screen !== "intro" && !identDone(st)) st.screen = "intro";
-  if ((st.screen === "hasil" || st.screen === "final") && !quizDone(st.jawab)) st.screen = "kuis";
+  if (["hasil", "grup", "pasar", "dasbor"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
+  if ((st.screen === "pasar" || st.screen === "dasbor") && !st.joinedMain) st.screen = "grup";
   return st;
 }
+
+const withLog = (s, k, x) => ({ log: [...s.log, { k, at: Date.now(), ...x }].slice(-60) });
 
 export default function App() {
   const [st, setSt] = useState(initState);
@@ -56,6 +67,7 @@ export default function App() {
     setSt((s) => ({ ...s, ...p }));
     if (clearErr) setErrors((e) => { if (!e[clearErr]) return e; const n = { ...e }; delete n[clearErr]; return n; });
   }, []);
+  const update = useCallback((fn) => setSt((s) => ({ ...s, ...fn(s) })), []);
 
   function toast(msg) {
     setToastMsg(msg);
@@ -88,7 +100,8 @@ export default function App() {
         if (st.idx + 1 >= total()) go("hasil");
         else { patch({ idx: st.idx + 1 }); window.scrollTo({ top: 0 }); }
         break;
-      case "hasil": go("final"); break;
+      case "hasil": go("grup"); break;
+      case "pasar": go("dasbor"); break;
     }
   }
   function back() {
@@ -96,7 +109,9 @@ export default function App() {
       case "identitas": go("intro"); break;
       case "kuis": if (st.idx > 0) patch({ idx: st.idx - 1 }); else go("identitas"); break;
       case "hasil": go("kuis", { idx: total() - 1 }); break;
-      case "final": go("hasil"); break;
+      case "grup": go("hasil"); break;
+      case "pasar": go("grup"); break;
+      case "dasbor": go("pasar"); break;
     }
   }
   function gotoStep(i) {
@@ -109,14 +124,59 @@ export default function App() {
       go("kuis", { idx: miss >= 0 ? miss : 0 });
     }
     else if (i === 2) go("hasil");
-    else go("final");
+    else go(st.joinedMain ? (st.screen === "dasbor" ? "dasbor" : "pasar") : "grup");
   }
   function setLang(k) {
     try { localStorage.setItem("hk_lang", k); } catch (e) {}
     patch({ lang: k });
   }
-  const redo = () => go("kuis", { jawab: [], idx: 0, override: null, webhookSent: false });
-  const restart = () => go("intro", { nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null, webhookSent: false, pid: "" });
+
+  const actions = {
+    confirmMain() {
+      if (!st.clickedMain) { toast(t("group.confirmHint")); return; }
+      setSt((s) => ({ ...s, joinedMain: true, ...withLog(s, "joinMain"), screen: "pasar" }));
+      window.scrollTo({ top: 0 });
+    },
+    toMarket() {
+      if (!st.joinedMain) { toast(t("group.gate")); return; }
+      go("pasar");
+    },
+    toMarketBack() { go("pasar"); },
+    toggleApply(team) {
+      update((s) => {
+        const ex = s.apps.find((x) => x.team === team);
+        if (ex) return ex.status === "pending" ? { apps: s.apps.filter((x) => x.team !== team), ...withLog(s, "withdraw", { team }) } : {};
+        return { apps: [...s.apps, { team, status: "pending", at: Date.now() }], ...withLog(s, "apply", { team }) };
+      });
+    },
+    // simulasi keputusan owner tim (mode demo, sampai ada backend)
+    decideApp(team, status) {
+      update((s) => ({ apps: s.apps.map((x) => (x.team === team ? { ...x, status } : x)), ...withLog(s, status, { team }) }));
+    },
+    openTeamGroup(tm) {
+      if (tm.wa) window.open(tm.wa, "_blank", "noopener,noreferrer");
+      else toast(t("market.groupSoon"));
+    },
+    toggleInvite(who, ok) {
+      if (!ok) { toast(t("market.needCeo")); return; }
+      update((s) => {
+        const has = s.undang.includes(who);
+        return { undang: has ? s.undang.filter((x) => x !== who) : [...s.undang, who], ...withLog(s, has ? "uninvite" : "invite", { who }) };
+      });
+    },
+    openTeam(team) {
+      update((s) => ({ myTeam: team, applicants: SEED_APPLICANTS.map((b) => ({ b, status: "pending" })), ...withLog(s, "openTeam", { team: team.nama }) }));
+    },
+    saveTeamLink(wa) { update((s) => ({ myTeam: { ...s.myTeam, wa } })); },
+    decideApplicant(i, status) {
+      update((s) => ({
+        applicants: s.applicants.map((x, j) => (j === i ? { ...x, status } : x)),
+        ...withLog(s, status === "approved" ? "approveWho" : "rejectWho", { who: BUILDER[s.applicants[i].b].nama })
+      }));
+    },
+    restart() { go("intro", fresh()); }
+  };
+  const redo = () => go("kuis", { jawab: [], idx: 0, override: null });
 
   // pintasan keyboard A-E / 1-5 di layar kuis
   useEffect(() => {
@@ -140,7 +200,9 @@ export default function App() {
     case "identitas": view = <Identity {...common} errors={errors} />; break;
     case "kuis": view = <Quiz key={st.idx} {...common} />; break;
     case "hasil": view = <Result {...common} onRedo={redo} />; break;
-    default: view = <Final {...common} onRestart={restart} />;
+    case "grup": view = <Group {...common} actions={actions} />; break;
+    case "pasar": view = <Market {...common} actions={actions} />; break;
+    default: view = <Dash {...common} actions={actions} />;
   }
 
   return (

@@ -263,3 +263,14 @@ a.btn{text-decoration:none}
 .preview{margin:0;background:var(--bg);border:2px dashed var(--line);padding:12px 14px;font-family:var(--mono);font-size:19px;line-height:1.3;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
 html[lang=zh] .preview{font-size:15px}
 [tabindex="-1"]:focus{outline:none}
+
+/* team market + dashboard additions */
+.okline{font-family:var(--mono);font-size:19px;color:var(--cyan)}
+.it-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.row-btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row-btns .cbtn{margin-top:0;padding:10px 12px;min-height:40px}
+a.cbtn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.cbtn[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+.tag.pick{background:none;cursor:pointer}
+.tag.pick.on{background:var(--cyan);color:var(--on);border-color:var(--cyan)}
+.btn[aria-disabled=true]{cursor:not-allowed}

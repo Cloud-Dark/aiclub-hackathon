@@ -24,8 +24,8 @@ export default {
       "ket": "role detected"
     },
     {
-      "label": "WHATSAPP",
-      "ket": "join the group"
+      "label": "TEAM",
+      "ket": "group & apply"
     }
   ],
   "combo": {
@@ -102,7 +102,7 @@ export default {
     "openInvited": "Get invited directly by other teams",
     "openTraining": "WorkBuddy & CodeBuddy training, weeks 3-4",
     "redo": "Retake",
-    "toFinal": "LAST 2 STEPS"
+    "toGroup": "JOIN WHATSAPP GROUP"
   },
   "roles": {
     "CEO": {
@@ -210,20 +210,168 @@ export default {
       ]
     }
   ],
-  "final": {
-    "prompt": "last 2 steps",
-    "title": "LAST 2 STEPS",
-    "s1": "STEP 1",
-    "s1t": "Join the WhatsApp group",
-    "s1b": "Participant info, briefings and team forming all happen in this group.",
+  "market": {
+    "prompt": "team market · closes in 9 days",
+    "titleTwoWay": "TWO-WAY: APPLY OR GET INVITED",
+    "titleDraft": "TEAMS RECRUIT, YOU APPLY",
+    "asRole": "you're joining as",
+    "tabTeams": "TEAMS THAT NEED YOU",
+    "tabBuilders": "BUILDERS SEEKING TEAMS",
+    "members": "{n} members",
+    "ceo": "CEO {name}",
+    "slots": "OPEN SLOTS",
+    "stMatch": "MATCHES YOUR TRACK",
+    "stOpen": "OPEN",
+    "stSent": "APPLICATION SENT",
+    "apply": "APPLY FOR THIS SLOT",
+    "withdraw": "WITHDRAW",
+    "invite": "INVITE TO MY TEAM",
+    "invited": "INVITE SENT",
+    "needCeo": "CEO TRACK ONLY",
+    "summary": "{a} applications · {b} invites",
+    "toStatus": "SEE MY STATUS",
+    "stApproved": "APPROVED",
+    "stRejected": "REJECTED",
+    "yourTeam": "YOUR TEAM",
+    "youOwner": "YOU'RE THE OWNER",
+    "openGroup": "OPEN TEAM GROUP",
+    "rejectedBtn": "APPLICATION REJECTED",
+    "groupSoon": "GROUP LINK COMING",
+    "hint": "One application = one team group. You can apply to several teams; the owner approves or rejects."
+  },
+  "dash": {
+    "greeting": "{name}, NO TEAM YET",
+    "guest": "PARTICIPANT",
+    "actsTitle": "APPLICATIONS & INVITES",
+    "empty": "Nothing yet. Head back to the team market and apply to at least two teams — teams fill up faster than you think.",
+    "appliedKet": "your application · waiting on CEO",
+    "appliedSt": "PENDING",
+    "invitedKet": "your invite · no reply yet",
+    "invitedSt": "SENT",
+    "roadTitle": "ROAD TO DEMO DAY",
+    "formed": "TEAMS FORMED",
+    "formedBody": "from 120+ sign-ups · goal: 30 teams",
+    "yourRole": "YOUR TRACK",
+    "challengeTitle": "CHALLENGE FROM TENCENT",
+    "challengeBody": "Drops in week 2, along with the briefing. Until then, build your team.",
+    "toMarket": "BACK TO TEAM MARKET",
+    "restart": "Start over",
+    "approvedKet": "approved by owner · time to join the team group",
+    "rejectedKet": "rejected by owner · try another team",
+    "stApproved": "APPROVED",
+    "stRejected": "REJECTED",
+    "joinTeam": "JOIN TEAM GROUP",
+    "noLink": "owner hasn't added a group link yet",
+    "demoNote": "DEMO MODE · owner decisions are simulated on this device",
+    "simApprove": "APPROVE",
+    "simReject": "REJECT",
+    "mainTitle": "MAIN HACKATHON GROUP",
+    "mainJoined": "joined",
+    "mainOpen": "OPEN GROUP",
+    "logTitle": "YOUR ACTIVITY",
+    "logEmpty": "No activity yet.",
+    "log": {
+      "joinMain": "Joined the main hackathon group",
+      "apply": "Applied to {team}",
+      "withdraw": "Withdrew application from {team}",
+      "approved": "{team} approved your application",
+      "rejected": "{team} rejected your application",
+      "invite": "Invited {who} to your team",
+      "uninvite": "Cancelled invite to {who}",
+      "openTeam": "Opened team {team}",
+      "approveWho": "Approved {who} into your team",
+      "rejectWho": "Rejected {who}"
+    },
+    "myTeam": {
+      "title": "MY TEAM",
+      "createTitle": "START YOUR OWN TEAM",
+      "createBody": "You become the owner: create the team's WhatsApp group, then approve or reject applicants.",
+      "name": "TEAM NAME",
+      "namePh": "e.g. LAPOR WARGA",
+      "desc": "DESCRIPTION",
+      "descPh": "one sentence: what this agent solves",
+      "slots": "OPEN SLOTS",
+      "wa": "TEAM WHATSAPP GROUP LINK",
+      "waPh": "https://chat.whatsapp.com/...",
+      "waHint": "Create a group in WhatsApp, copy the invite link and paste it here. Applicants you approve will see this link.",
+      "createBtn": "OPEN TEAM",
+      "save": "SAVE LINK",
+      "saved": "Group link saved",
+      "errName": "Enter a team name first",
+      "errSlot": "Pick at least one slot",
+      "errWa": "Link must start with https://chat.whatsapp.com/",
+      "inbox": "INCOMING APPLICANTS",
+      "noApplicants": "No applicants yet.",
+      "approve": "APPROVE",
+      "reject": "REJECT",
+      "pending": "PENDING",
+      "approved": "APPROVED",
+      "rejected": "REJECTED",
+      "openGroup": "OPEN TEAM GROUP",
+      "noLink": "No group link yet · add it above"
+    }
+  },
+  "teams": [
+    "An agent that matches merchant transactions every night, no humans needed.",
+    "A sidekick agent for small neighborhood shops: take payments, track stock, all from one chat.",
+    "A micro-loan risk scorer that can explain its reasoning.",
+    "An internal agent that answers ops team questions from old docs.",
+    "An agent that reschedules public service queues in small towns.",
+    "An agent that reads vendor contracts and flags risky clauses."
+  ],
+  "builders": [
+    "Built two agents with tool-calling. Never worked on a team.",
+    "4 years in product design. Looking for a team that wants its prototype actually used.",
+    "7 years in payment ops. Knows where the process leaks.",
+    "Retail data analyst. Can prove whether the agent saves time or not.",
+    "Backend, deploys my own stuff. Need someone who knows the real problem.",
+    "Grew a community of 8K people from zero. Looking for a team with a product ready to use."
+  ],
+  "schedule": [
+    {
+      "minggu": "WEEK 1 · OCT 15",
+      "judul": "Registration opens",
+      "ket": "Sign up solo, answer scenarios, get your track."
+    },
+    {
+      "minggu": "WEEKS 2-3",
+      "judul": "Team market & challenge briefing",
+      "ket": "Apply and invite each other. Tencent drops the challenge statement. Registration closes."
+    },
+    {
+      "minggu": "WEEKS 3-4",
+      "judul": "Online training",
+      "ket": "WorkBuddy, CodeBuddy, Token Hub. Mentors on hand."
+    },
+    {
+      "minggu": "WEEKS 4-5",
+      "judul": "Submission & judging",
+      "ket": "Submit your prototype. All get judged, eight advance."
+    },
+    {
+      "minggu": "WEEK 6 · LATE NOV",
+      "judul": "Demo Day, Jakarta",
+      "ket": "Top 8 present onsite. 1st, 2nd, 3rd place."
+    }
+  ],
+  "group": {
+    "prompt": "required step · main group",
+    "title": "JOIN THE MAIN GROUP FIRST",
+    "required": "REQUIRED",
+    "s1": "STEP 1 · REQUIRED",
+    "s1t": "Join the Hackathon WhatsApp group",
+    "s1b": "All official info, briefings and announcements live in the main group. You must join before you can apply to a team.",
     "joinCta": "CLICK HERE TO JOIN WHATSAPP",
     "s2": "STEP 2",
-    "s2t": "Share your info in the group",
-    "s2b": "Your details are put together as a message. Just send it in the group so others know who you are.",
+    "s2t": "Introduce yourself in the group",
+    "s2b": "Your details are put together as a message. Just send it in the group so other participants and team owners know who you are.",
     "shareCta": "CLICK HERE TO SEND YOUR INFO TO WHATSAPP",
     "previewTitle": "MESSAGE PREVIEW",
-    "done": "All done. See you in the group!",
-    "restart": "Start over",
+    "confirm": "I'VE JOINED",
+    "confirmHint": "Click the join button above first, then you can continue.",
+    "joined": "Joined the main group",
+    "next": "ENTER TEAM MARKET",
+    "gate": "Join the main group before entering the team market",
     "msg": {
       "head": "Hi, I'm a participant of the AI Agent Hackathon",
       "name": "Name",

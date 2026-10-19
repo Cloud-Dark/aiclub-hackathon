@@ -60,7 +60,7 @@ export default function Result({ st, patch, t, role, onNext, onBack, onRedo }) {
         </div>
       </div>
       <Actions onBack={onBack} t={t} extra={<button type="button" className="link" onClick={onRedo}>{t("result.redo")}</button>}>
-        <button type="button" className="btn gold" onClick={onNext}>{t("result.toFinal")} <span aria-hidden="true">&rsaquo;</span></button>
+        <button type="button" className="btn gold" onClick={onNext}>{t("result.toGroup")} <span aria-hidden="true">&rsaquo;</span></button>
       </Actions>
     </section>
   );
