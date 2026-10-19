@@ -232,7 +232,7 @@ export default {
     "invite": "邀请加入我的队",
     "invited": "邀请已发送",
     "needCeo": "需要 CEO 赛道",
-    "summary": "{a} 个申请 · {b} 个邀请",
+    "summary": "{a} 个有效申请",
     "toStatus": "查看我的状态",
     "stApproved": "已通过",
     "stRejected": "已拒绝",
@@ -241,13 +241,15 @@ export default {
     "openGroup": "打开队伍群",
     "rejectedBtn": "申请被拒绝",
     "groupSoon": "群链接稍后提供",
-    "hint": "一次申请对应一个队伍群。可以申请多支队伍，由队长通过或拒绝。"
+    "hint": "可以申请多支队伍，但最终只能加入一支。一旦某个申请通过，其余申请会自动取消。",
+    "lockedOwner": "你是队长。想申请其他队伍，请先关闭你的队伍。",
+    "lockedMember": "你已经加入一支队伍了。"
   },
   "dash": {
     "greeting": "{name}，你还没有队伍",
     "guest": "参赛者",
     "actsTitle": "申请和邀请",
-    "empty": "还没有。回到组队市场，至少申请两支队伍——队伍满员比你想的快。",
+    "empty": "还没有申请。回到组队市场，申请适合你的队伍。",
     "appliedKet": "你的申请 · 等待 CEO 回复",
     "appliedSt": "等待中",
     "invitedKet": "你发出的邀请 · 尚未回复",
@@ -284,7 +286,11 @@ export default {
       "uninvite": "取消了对 {who} 的邀请",
       "openTeam": "创建了队伍 {team}",
       "approveWho": "通过了 {who} 加入你的队伍",
-      "rejectWho": "拒绝了 {who}"
+      "rejectWho": "拒绝了 {who}",
+      "closeTeam": "关闭了队伍 {team}",
+      "leave": "退出了队伍 {team}",
+      "autoWithdraw": "对 {team} 的申请已自动取消",
+      "withdrawAll": "撤回了所有申请"
     },
     "myTeam": {
       "title": "我的队伍",
@@ -312,8 +318,15 @@ export default {
       "approved": "已通过",
       "rejected": "已拒绝",
       "openGroup": "打开队伍群",
-      "noLink": "还没有群链接 · 请在上面添加"
-    }
+      "noLink": "还没有群链接 · 请在上面添加",
+      "close": "关闭队伍",
+      "invite": "邀请",
+      "invited": "已发送"
+    },
+    "changeChoice": "更改选择",
+    "memberTag": "成员",
+    "inviteTitle": "邀请 BUILDER",
+    "inviteBody": "正在找队伍的 builder。你发出的邀请会显示在这里。"
   },
   "teams": [
     "每晚自动匹配商户交易的 agent，无需人工。",
@@ -374,7 +387,7 @@ export default {
     "confirm": "我已加入",
     "confirmHint": "请先点击上面的加入按钮，才能继续。",
     "joined": "已加入主群",
-    "next": "进入组队市场",
+    "next": "下一步：选择路径",
     "gate": "请先加入主群再进入组队市场",
     "msg": {
       "head": "大家好，我是 AI Agent 黑客松的参赛者",
@@ -404,5 +417,40 @@ export default {
     "errPass": "请先填写密码",
     "logout": "退出",
     "as": "当前账号"
+  },
+  "sub": {
+    "group": "主群",
+    "choose": "选择",
+    "join": "申请队伍",
+    "create": "创建队伍",
+    "status": "状态"
+  },
+  "choose": {
+    "prompt": "选择你的路径",
+    "title": "加入队伍还是创建队伍？",
+    "body": "二选一。一个人只能加入一支队伍，或创建一支队伍，不能同时做两件事。",
+    "joinTitle": "加入队伍",
+    "joinBody": "申请已有的队伍。队长通过后，你会进入该队的 WhatsApp 群。",
+    "joinCta": "找队伍",
+    "createTitle": "创建队伍",
+    "createBody": "你将成为队长：创建队伍的 WhatsApp 群、邀请 builder，并通过或拒绝申请人。",
+    "createCta": "创建我的队伍",
+    "now": "你当前的选择",
+    "continueJoin": "继续查看我的申请",
+    "continueCreate": "继续进入我的队伍",
+    "lockedOwner": "你目前是队伍 {team} 的队长。想加入其他队伍，请先关闭队伍。",
+    "lockedMember": "你已加入队伍 {team}。想自己创建队伍，请先退出。",
+    "lockedPending": "你还有 {n} 个等待中的申请。想创建队伍，请先撤回申请。",
+    "closeTeam": "关闭队伍",
+    "leaveTeam": "退出队伍",
+    "withdrawAll": "撤回所有申请",
+    "sure": "确定？再点一次"
+  },
+  "create": {
+    "prompt": "创建队伍",
+    "title": "创建队伍",
+    "s1": "1 · 你的队伍",
+    "s2": "2 · 你想找谁",
+    "s3": "3 · 队伍 WHATSAPP 群"
   }
 };

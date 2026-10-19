@@ -232,7 +232,7 @@ export default {
     "invite": "INVITE TO MY TEAM",
     "invited": "INVITE SENT",
     "needCeo": "CEO TRACK ONLY",
-    "summary": "{a} applications · {b} invites",
+    "summary": "{a} active applications",
     "toStatus": "SEE MY STATUS",
     "stApproved": "APPROVED",
     "stRejected": "REJECTED",
@@ -241,13 +241,15 @@ export default {
     "openGroup": "OPEN TEAM GROUP",
     "rejectedBtn": "APPLICATION REJECTED",
     "groupSoon": "GROUP LINK COMING",
-    "hint": "One application = one team group. You can apply to several teams; the owner approves or rejects."
+    "hint": "You can apply to several teams, but you can only end up in one. Once an application is approved, the others are cancelled automatically.",
+    "lockedOwner": "You own a team. Close it first to apply elsewhere.",
+    "lockedMember": "You're already in a team."
   },
   "dash": {
     "greeting": "{name}, NO TEAM YET",
     "guest": "PARTICIPANT",
     "actsTitle": "APPLICATIONS & INVITES",
-    "empty": "Nothing yet. Head back to the team market and apply to at least two teams — teams fill up faster than you think.",
+    "empty": "No applications yet. Head back to the team market and apply to a team that fits you.",
     "appliedKet": "your application · waiting on CEO",
     "appliedSt": "PENDING",
     "invitedKet": "your invite · no reply yet",
@@ -284,7 +286,11 @@ export default {
       "uninvite": "Cancelled invite to {who}",
       "openTeam": "Opened team {team}",
       "approveWho": "Approved {who} into your team",
-      "rejectWho": "Rejected {who}"
+      "rejectWho": "Rejected {who}",
+      "closeTeam": "Closed team {team}",
+      "leave": "Left team {team}",
+      "autoWithdraw": "Application to {team} cancelled automatically",
+      "withdrawAll": "Withdrew all applications"
     },
     "myTeam": {
       "title": "MY TEAM",
@@ -312,8 +318,15 @@ export default {
       "approved": "APPROVED",
       "rejected": "REJECTED",
       "openGroup": "OPEN TEAM GROUP",
-      "noLink": "No group link yet · add it above"
-    }
+      "noLink": "No group link yet · add it above",
+      "close": "CLOSE TEAM",
+      "invite": "INVITE",
+      "invited": "SENT"
+    },
+    "changeChoice": "CHANGE MY CHOICE",
+    "memberTag": "MEMBER",
+    "inviteTitle": "INVITE BUILDERS",
+    "inviteBody": "Builders looking for a team. Your invites show up here."
   },
   "teams": [
     "An agent that matches merchant transactions every night, no humans needed.",
@@ -374,7 +387,7 @@ export default {
     "confirm": "I'VE JOINED",
     "confirmHint": "Click the join button above first, then you can continue.",
     "joined": "Joined the main group",
-    "next": "ENTER TEAM MARKET",
+    "next": "NEXT: CHOOSE YOUR PATH",
     "gate": "Join the main group before entering the team market",
     "msg": {
       "head": "Hi, I'm a participant of the AI Agent Hackathon",
@@ -404,5 +417,40 @@ export default {
     "errPass": "Enter a password first",
     "logout": "SIGN OUT",
     "as": "Signed in as"
+  },
+  "sub": {
+    "group": "MAIN GROUP",
+    "choose": "CHOOSE",
+    "join": "APPLY",
+    "create": "CREATE TEAM",
+    "status": "STATUS"
+  },
+  "choose": {
+    "prompt": "choose your path",
+    "title": "JOIN A TEAM OR START ONE?",
+    "body": "Pick one. A person can belong to one team, or run one team. Not both at the same time.",
+    "joinTitle": "JOIN A TEAM",
+    "joinBody": "Apply to an existing team. The team owner approves you, then you enter that team's WhatsApp group.",
+    "joinCta": "FIND A TEAM",
+    "createTitle": "START A TEAM",
+    "createBody": "You become the owner: create the team's WhatsApp group, invite builders, then approve or reject applicants.",
+    "createCta": "START MY OWN TEAM",
+    "now": "YOUR CURRENT CHOICE",
+    "continueJoin": "CONTINUE TO MY APPLICATIONS",
+    "continueCreate": "CONTINUE TO MY TEAM",
+    "lockedOwner": "You're the owner of team {team}. Close the team first if you want to join another.",
+    "lockedMember": "You're already in team {team}. Leave first if you want to start your own.",
+    "lockedPending": "You still have {n} pending application(s). Withdraw them first if you want to start a team.",
+    "closeTeam": "CLOSE TEAM",
+    "leaveTeam": "LEAVE TEAM",
+    "withdrawAll": "WITHDRAW ALL APPLICATIONS",
+    "sure": "SURE? CLICK AGAIN"
+  },
+  "create": {
+    "prompt": "create team",
+    "title": "CREATE A TEAM",
+    "s1": "1 · YOUR TEAM",
+    "s2": "2 · WHO YOU'RE LOOKING FOR",
+    "s3": "3 · TEAM WHATSAPP GROUP"
   }
 };

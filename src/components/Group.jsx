@@ -61,7 +61,7 @@ export default function Group({ st, patch, t, get, role, actions, onBack }) {
         </div>
       </div>
       <Actions onBack={onBack} t={t}>
-        <button type="button" className="btn gold" aria-disabled={!st.joinedMain} onClick={actions.toMarket}>
+        <button type="button" className="btn gold" aria-disabled={!st.joinedMain} onClick={actions.toChoose}>
           {t("group.next")} <span aria-hidden="true">&rsaquo;</span>
         </button>
       </Actions>

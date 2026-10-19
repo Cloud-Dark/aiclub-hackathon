@@ -9,17 +9,21 @@ import Identity from "./components/Identity.jsx";
 import Quiz from "./components/Quiz.jsx";
 import Result from "./components/Result.jsx";
 import Group from "./components/Group.jsx";
+import Choose from "./components/Choose.jsx";
+import Create from "./components/Create.jsx";
 import Market from "./components/Market.jsx";
 import Dash from "./components/Dash.jsx";
+import { SubSteps } from "./components/Widgets.jsx";
+import { approvedApp, canCreate } from "./lib/rules.js";
 
 const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override",
-  "clickedMain", "joinedMain", "tab", "apps", "undang", "myTeam", "applicants", "log"];
+  "clickedMain", "joinedMain", "mode", "tab", "apps", "undang", "myTeam", "applicants", "log"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const fresh = () => ({
   user: null,
   nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null,
-  clickedMain: false, joinedMain: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: []
+  clickedMain: false, joinedMain: false, mode: null, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: []
 });
 
 function initState() {
@@ -31,8 +35,10 @@ function initState() {
   if (!SCREENS.includes(st.screen)) st.screen = "intro";
   if (st.screen !== "intro" && !st.user) st.screen = "intro";
   else if (!["intro", "login", "identitas"].includes(st.screen) && !identDone(st)) st.screen = "identitas";
-  if (["hasil", "grup", "pasar", "dasbor"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
-  if ((st.screen === "pasar" || st.screen === "dasbor") && !st.joinedMain) st.screen = "grup";
+  if (["hasil", "grup", "pilih", "pasar", "buat", "dasbor"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
+  if (["pilih", "pasar", "buat", "dasbor"].includes(st.screen) && !st.joinedMain) st.screen = "grup";
+  if ((st.screen === "pasar" || st.screen === "buat") && st.myTeam) st.screen = "dasbor";
+  if (st.screen === "buat" && !canCreate(st)) st.screen = "pilih";
   return st;
 }
 
@@ -116,8 +122,10 @@ export default function App() {
       case "kuis": if (st.idx > 0) patch({ idx: st.idx - 1 }); else go("identitas"); break;
       case "hasil": go("kuis", { idx: total() - 1 }); break;
       case "grup": go("hasil"); break;
-      case "pasar": go("grup"); break;
-      case "dasbor": go("pasar"); break;
+      case "pilih": go("grup"); break;
+      case "pasar": go("pilih"); break;
+      case "buat": go("pilih"); break;
+      case "dasbor": go(st.myTeam ? "pilih" : "pasar"); break;
     }
   }
   function gotoStep(i) {
@@ -130,7 +138,8 @@ export default function App() {
       go("kuis", { idx: miss >= 0 ? miss : 0 });
     }
     else if (i === 2) go("hasil");
-    else go(st.joinedMain ? (st.screen === "dasbor" ? "dasbor" : "pasar") : "grup");
+    else if (["grup", "pilih", "pasar", "buat", "dasbor"].includes(st.screen)) return;
+    else go(!st.joinedMain ? "grup" : st.myTeam || st.apps.length ? "dasbor" : "pilih");
   }
   function login(u) {
     setSt((s) => ({
@@ -149,38 +158,72 @@ export default function App() {
   const actions = {
     confirmMain() {
       if (!st.clickedMain) { toast(t("group.confirmHint")); return; }
-      setSt((s) => ({ ...s, joinedMain: true, ...withLog(s, "joinMain"), screen: "pasar" }));
+      setSt((s) => ({ ...s, joinedMain: true, ...withLog(s, "joinMain"), screen: "pilih" }));
       window.scrollTo({ top: 0 });
     },
-    toMarket() {
+    toChoose() {
       if (!st.joinedMain) { toast(t("group.gate")); return; }
-      go("pasar");
+      go("pilih");
     },
+    toChoosePage() { go("pilih"); },
     toMarketBack() { go("pasar"); },
+    goDash() { go("dasbor"); },
+    chooseJoin() { go("pasar", { mode: "join" }); },
+    chooseCreate() { go("buat", { mode: "create" }); },
     toggleApply(team) {
+      if (st.myTeam) { toast(t("market.lockedOwner")); return; }
+      if (approvedApp(st)) { toast(t("market.lockedMember")); return; }
       update((s) => {
         const ex = s.apps.find((x) => x.team === team);
         if (ex) return ex.status === "pending" ? { apps: s.apps.filter((x) => x.team !== team), ...withLog(s, "withdraw", { team }) } : {};
-        return { apps: [...s.apps, { team, status: "pending", at: Date.now() }], ...withLog(s, "apply", { team }) };
+        return { apps: [...s.apps, { team, status: "pending", at: Date.now() }], mode: "join", ...withLog(s, "apply", { team }) };
       });
     },
     // simulasi keputusan owner tim (mode demo, sampai ada backend)
     decideApp(team, status) {
-      update((s) => ({ apps: s.apps.map((x) => (x.team === team ? { ...x, status } : x)), ...withLog(s, status, { team }) }));
+      update((s) => {
+        let log = withLog(s, status, { team });
+        let apps = s.apps.map((x) => (x.team === team ? { ...x, status } : x));
+        if (status === "approved") {
+          // satu orang hanya bisa di satu tim: lamaran lain yang masih menunggu dibatalkan
+          const others = apps.filter((x) => x.team !== team && x.status === "pending");
+          apps = apps.filter((x) => x.team === team || x.status !== "pending");
+          let l = log.log;
+          others.forEach((o) => { l = [...l, { k: "autoWithdraw", at: Date.now(), team: o.team }]; });
+          log = { log: l.slice(-60) };
+        }
+        return { apps, ...log };
+      });
+    },
+    leaveTeam(team) {
+      update((s) => ({ apps: s.apps.filter((x) => x.team !== team), mode: null, ...withLog(s, "leave", { team }) }));
+      go("pilih");
+    },
+    withdrawAll() {
+      update((s) => ({ apps: s.apps.filter((x) => x.status !== "pending"), mode: null, ...withLog(s, "withdrawAll") }));
     },
     openTeamGroup(tm) {
       if (tm.wa) window.open(tm.wa, "_blank", "noopener,noreferrer");
       else toast(t("market.groupSoon"));
     },
-    toggleInvite(who, ok) {
-      if (!ok) { toast(t("market.needCeo")); return; }
+    toggleInvite(who) {
       update((s) => {
         const has = s.undang.includes(who);
         return { undang: has ? s.undang.filter((x) => x !== who) : [...s.undang, who], ...withLog(s, has ? "uninvite" : "invite", { who }) };
       });
     },
-    openTeam(team) {
-      update((s) => ({ myTeam: team, applicants: SEED_APPLICANTS.map((b) => ({ b, status: "pending" })), ...withLog(s, "openTeam", { team: team.nama }) }));
+    createTeam(team) {
+      if (!canCreate(st)) { toast(t("choose.lockedMember", { team: "" })); return; }
+      setSt((s) => ({
+        ...s, mode: "create", myTeam: team, undang: [],
+        applicants: SEED_APPLICANTS.map((b) => ({ b, status: "pending" })), ...withLog(s, "openTeam", { team: team.nama }), screen: "dasbor"
+      }));
+      window.scrollTo({ top: 0 });
+    },
+    closeTeam() {
+      const team = st.myTeam ? st.myTeam.nama : "";
+      update((s) => ({ myTeam: null, applicants: [], undang: [], mode: null, ...withLog(s, "closeTeam", { team }) }));
+      go("pilih");
     },
     saveTeamLink(wa) { update((s) => ({ myTeam: { ...s.myTeam, wa } })); },
     decideApplicant(i, status) {
@@ -217,7 +260,9 @@ export default function App() {
     case "kuis": view = <Quiz key={st.idx} {...common} />; break;
     case "hasil": view = <Result {...common} onRedo={redo} />; break;
     case "grup": view = <Group {...common} actions={actions} />; break;
+    case "pilih": view = <Choose {...common} actions={actions} />; break;
     case "pasar": view = <Market {...common} actions={actions} />; break;
+    case "buat": view = <Create {...common} actions={actions} />; break;
     default: view = <Dash {...common} actions={actions} />;
   }
 
@@ -226,6 +271,7 @@ export default function App() {
       <Header st={st} t={t} setLang={setLang} onLogout={logout} />
       <div className="wrap">
         <Stepper st={st} get={get} gotoStep={gotoStep} />
+        <SubSteps screen={st.screen} t={t} mode={st.mode} />
         <main id="app" aria-live="polite" data-step={STEP_OF[st.screen]}>{view}</main>
       </div>
       <BottomNav st={st} t={t} get={get} gotoStep={gotoStep} />

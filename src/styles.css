@@ -284,3 +284,20 @@ a.cbtn{text-decoration:none;display:inline-flex;align-items:center;justify-conte
 @media(min-width:640px){.user-chip b,.user-chip .as{display:inline}}
 .field>input[readonly]{color:var(--muted);border-style:dashed}
 .top.has-user .meta{display:none}
+
+/* sub-steps (wizard di langkah TIM) */
+.substeps{list-style:none;margin:16px 0 0;padding:0;display:flex;gap:6px}
+.substeps li{flex:1;display:flex;align-items:center;gap:8px;border-top:4px solid var(--line);padding-top:8px;min-width:0;color:var(--faint)}
+.substeps .n{font-family:var(--pixel);font-size:8px;flex:none;width:20px;height:20px;display:grid;place-items:center;border:2px solid var(--line)}
+.substeps .l{font-family:var(--pixel);font-size:7px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.substeps li.done{border-color:var(--cyan);color:var(--muted)} .substeps li.done .n{border-color:var(--cyan);color:var(--cyan)}
+.substeps li.cur{border-color:var(--yellow);color:var(--yellow)} .substeps li.cur .n{background:var(--yellow);color:var(--on);border-color:var(--yellow)}
+@media(max-width:560px){.substeps .l{display:none}.substeps li.cur .l{display:inline}}
+html[lang=zh] .substeps .l{font-size:11px}
+.choice{display:grid;gap:18px}
+@media(min-width:760px){.choice{grid-template-columns:1fr 1fr}}
+.choice .card{height:100%}
+.choice .lock{font-family:var(--mono);font-size:19px;color:var(--magenta);line-height:1.3}
+.choice .card.now{box-shadow:0 -4px 0 0 var(--yellow),0 4px 0 0 var(--yellow),-4px 0 0 0 var(--yellow),4px 0 0 0 var(--yellow)}
+.choice .btn,.choice .cbtn{margin-top:auto}
+.step-card{counter-increment:n}

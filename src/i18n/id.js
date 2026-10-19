@@ -232,7 +232,7 @@ export default {
     "invite": "UNDANG KE TIMKU",
     "invited": "UNDANGAN TERKIRIM",
     "needCeo": "PERLU JALUR CEO",
-    "summary": "{a} lamaran · {b} undangan",
+    "summary": "{a} lamaran aktif",
     "toStatus": "LIHAT STATUSKU",
     "stApproved": "DISETUJUI",
     "stRejected": "DITOLAK",
@@ -241,13 +241,15 @@ export default {
     "openGroup": "BUKA GRUP TIM",
     "rejectedBtn": "LAMARAN DITOLAK",
     "groupSoon": "LINK GRUP MENYUSUL",
-    "hint": "Satu lamaran = satu grup tim. Kamu boleh melamar ke beberapa tim; owner yang menyetujui atau menolak."
+    "hint": "Kamu boleh melamar ke beberapa tim, tapi hanya bisa masuk ke satu. Begitu satu lamaran disetujui, lamaran lain otomatis dibatalkan.",
+    "lockedOwner": "Kamu owner tim. Tutup tim dulu untuk melamar ke tim lain.",
+    "lockedMember": "Kamu sudah tergabung di satu tim."
   },
   "dash": {
     "greeting": "{name}, BELUM PUNYA TIM",
     "guest": "PESERTA",
     "actsTitle": "LAMARAN & UNDANGAN",
-    "empty": "Belum ada. Balik ke pasar tim, lamar minimal dua tim — tim yang penuh lebih cepat dari yang kamu kira.",
+    "empty": "Belum ada lamaran. Balik ke pasar tim dan lamar tim yang cocok denganmu.",
     "appliedKet": "lamaran kamu · menunggu CEO",
     "appliedSt": "MENUNGGU",
     "invitedKet": "undangan dari kamu · belum dibalas",
@@ -284,7 +286,11 @@ export default {
       "uninvite": "Membatalkan undangan ke {who}",
       "openTeam": "Membuka tim {team}",
       "approveWho": "Menyetujui {who} masuk timmu",
-      "rejectWho": "Menolak {who}"
+      "rejectWho": "Menolak {who}",
+      "closeTeam": "Menutup tim {team}",
+      "leave": "Keluar dari tim {team}",
+      "autoWithdraw": "Lamaran ke {team} dibatalkan otomatis",
+      "withdrawAll": "Menarik semua lamaran"
     },
     "myTeam": {
       "title": "TIM SAYA",
@@ -312,8 +318,15 @@ export default {
       "approved": "DISETUJUI",
       "rejected": "DITOLAK",
       "openGroup": "BUKA GRUP TIM",
-      "noLink": "Belum ada link grup · tambahkan di atas"
-    }
+      "noLink": "Belum ada link grup · tambahkan di atas",
+      "close": "TUTUP TIM",
+      "invite": "UNDANG",
+      "invited": "TERKIRIM"
+    },
+    "changeChoice": "GANTI PILIHAN",
+    "memberTag": "ANGGOTA",
+    "inviteTitle": "UNDANG BUILDER",
+    "inviteBody": "Builder yang cari tim. Undanganmu tampil di sini."
   },
   "teams": [
     "Agent yang mencocokkan transaksi merchant tiap malam, tanpa orang.",
@@ -374,7 +387,7 @@ export default {
     "confirm": "SAYA SUDAH GABUNG",
     "confirmHint": "Klik tombol gabung di atas dulu, baru bisa lanjut.",
     "joined": "Sudah gabung grup utama",
-    "next": "MASUK PASAR TIM",
+    "next": "LANJUT PILIH JALAN",
     "gate": "Gabung grup utama dulu sebelum masuk pasar tim",
     "msg": {
       "head": "Halo, saya peserta AI Agent Hackathon",
@@ -404,5 +417,40 @@ export default {
     "errPass": "Isi kata sandi dulu",
     "logout": "KELUAR",
     "as": "Masuk sebagai"
+  },
+  "sub": {
+    "group": "GRUP UTAMA",
+    "choose": "PILIH JALAN",
+    "join": "LAMAR TIM",
+    "create": "BUAT TIM",
+    "status": "STATUS"
+  },
+  "choose": {
+    "prompt": "pilih jalan",
+    "title": "GABUNG TIM ATAU BUAT TIM?",
+    "body": "Pilih salah satu. Satu orang hanya bisa tergabung di satu tim, atau membuka satu tim. Tidak bisa dua-duanya sekaligus.",
+    "joinTitle": "GABUNG TIM",
+    "joinBody": "Lamar ke tim yang sudah ada. Owner tim yang menyetujui, lalu kamu masuk ke grup WhatsApp tim itu.",
+    "joinCta": "CARI TIM",
+    "createTitle": "BUAT TIM",
+    "createBody": "Kamu jadi owner: buat grup WhatsApp tim, undang builder, lalu setujui atau tolak pelamar.",
+    "createCta": "BUAT TIM SENDIRI",
+    "now": "PILIHANMU SEKARANG",
+    "continueJoin": "LANJUT KE LAMARANKU",
+    "continueCreate": "LANJUT KE TIMKU",
+    "lockedOwner": "Kamu sedang jadi owner tim {team}. Tutup tim dulu kalau mau gabung ke tim lain.",
+    "lockedMember": "Kamu sudah tergabung di tim {team}. Keluar dulu kalau mau membuat tim sendiri.",
+    "lockedPending": "Kamu masih punya {n} lamaran yang menunggu. Tarik lamarannya dulu kalau mau membuat tim.",
+    "closeTeam": "TUTUP TIM",
+    "leaveTeam": "KELUAR DARI TIM",
+    "withdrawAll": "TARIK SEMUA LAMARAN",
+    "sure": "YAKIN? KLIK LAGI"
+  },
+  "create": {
+    "prompt": "buat tim",
+    "title": "BUAT TIM",
+    "s1": "1 · TIMMU",
+    "s2": "2 · SIAPA YANG KAMU CARI",
+    "s3": "3 · GRUP WHATSAPP TIM"
   }
 };

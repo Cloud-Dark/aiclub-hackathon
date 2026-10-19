@@ -9,9 +9,12 @@ Login dummy: pilih salah satu akun demo di halaman login (`rani@aiclub.id`, `bag
 1. Masuk dengan aiclub.id (dummy)
 2. Lengkapi data yang kurang (kota dan WhatsApp wajib)
 3. Skenario → Jalur
-4. **Gabung grup WhatsApp utama (wajib)** — pasar tim baru terbuka setelah ini
-5. Pasar tim: lamar ke beberapa tim (satu lamaran = satu grup tim), atau undang builder
-6. Status: lamaran (menunggu / disetujui / ditolak), grup utama, tim saya, aktivitas, timeline sampai demo day
+4. **Gabung grup WhatsApp utama (wajib)**
+5. **Pilih jalan: gabung tim atau buat tim.** Satu orang hanya bisa jadi anggota satu tim, atau owner satu tim, tidak keduanya.
+   - Gabung: lamar ke beberapa tim; begitu satu disetujui, lamaran lain otomatis batal.
+   - Buat: isi nama, slot yang dicari, dan link grup WhatsApp tim.
+   - Mau pindah pilihan: owner menutup tim dulu, anggota keluar dari tim dulu, atau tarik lamaran yang masih menunggu.
+6. Status: lamaran, tim saya (pelamar masuk, undang builder), aktivitas, timeline sampai demo day
 
 Owner tim membuka timnya di layar status, menempel link grup WhatsApp timnya, lalu menyetujui atau menolak pelamar.
 

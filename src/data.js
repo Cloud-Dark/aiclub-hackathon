@@ -37,8 +37,8 @@ export const BUILDER = [
 // pelamar contoh yang masuk ke tim buatan peserta (index ke BUILDER)
 export const SEED_APPLICANTS = [0, 4];
 
-export const SCREENS = ["intro", "login", "identitas", "kuis", "hasil", "grup", "pasar", "dasbor"];
-export const STEP_OF = { intro: -1, login: -1, identitas: 0, kuis: 1, hasil: 2, grup: 3, pasar: 3, dasbor: 3 };
+export const SCREENS = ["intro", "login", "identitas", "kuis", "hasil", "grup", "pilih", "pasar", "buat", "dasbor"];
+export const STEP_OF = { intro: -1, login: -1, identitas: 0, kuis: 1, hasil: 2, grup: 3, pilih: 3, pasar: 3, buat: 3, dasbor: 3 };
 
 export const ICONS = {
   home: "M4 1h2v1h1v1h1v1h1v1H8v4H6V7H4v2H2V5H1V4h1V3h1V2h1z",

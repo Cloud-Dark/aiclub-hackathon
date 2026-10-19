@@ -1,7 +1,8 @@
 import React from "react";
 import { Head, Actions } from "./Common.jsx";
 import MyTeam from "./MyTeam.jsx";
-import { TIM, BUILDER, CONFIG, WA_GROUP_URL } from "../data.js";
+import { ConfirmButton } from "./Widgets.jsx";
+import { TIM, CONFIG, WA_GROUP_URL } from "../data.js";
 import { aktif } from "../lib/scoring.js";
 import { fmtTime } from "../lib/time.js";
 
@@ -14,7 +15,7 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
   const stName = { pending: t("dash.appliedSt"), approved: t("dash.stApproved"), rejected: t("dash.stRejected") };
   const ket = { pending: t("dash.appliedKet"), approved: t("dash.approvedKet"), rejected: t("dash.rejectedKet") };
   const approvedN = st.apps.filter((x) => x.status === "approved").length;
-  const rows = st.apps.length + st.undang.length;
+  const rows = st.apps.length;
   const logs = st.log.slice().reverse();
 
   return (
@@ -31,7 +32,7 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
             </div>
           </div>
 
-          <div className="card">
+          {!st.myTeam && <div className="card">
             <div className="kick c">{t("dash.actsTitle")}</div>
             {rows ? (
               <div className="hist">
@@ -45,6 +46,7 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
                         {ap.status === "approved" && (team.wa
                           ? <a className="cbtn go" style={{ alignSelf: "flex-start", marginTop: 6 }} href={team.wa} target="_blank" rel="noopener noreferrer">{t("dash.joinTeam")}</a>
                           : <span className="note">{t("dash.noLink")}</span>)}
+                        {ap.status === "approved" && <div style={{ marginTop: 6 }}><ConfirmButton label={t("choose.leaveTeam")} sure={t("choose.sure")} onConfirm={() => actions.leaveTeam(ap.team)} /></div>}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
                         <span className="px" style={{ fontSize: 7, color: COLOR[ap.status] }}>{stName[ap.status]}</span>
@@ -58,21 +60,12 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
                     </div>
                   );
                 })}
-                {st.undang.map((n) => (
-                  <div key={n} className="it">
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                      <span className="px" style={{ fontSize: 9 }}>{n}</span>
-                      <span className="mono" style={{ fontSize: 18, color: "var(--dim)" }}>{t("dash.invitedKet")}</span>
-                    </div>
-                    <span className="px" style={{ fontSize: 7, color: "var(--cyan)" }}>{t("dash.invitedSt")}</span>
-                  </div>
-                ))}
               </div>
             ) : <div className="empty">{t("dash.empty")}</div>}
             {CONFIG.demoOwner && <div className="note">{t("dash.demoNote")}</div>}
-          </div>
+          </div>}
 
-          <MyTeam st={st} t={t} get={get} role={role} actions={actions} />
+          {st.myTeam && <MyTeam st={st} t={t} get={get} role={role} actions={actions} />}
 
           <div className="card">
             <div className="kick c">{t("dash.logTitle")}</div>
@@ -111,13 +104,18 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
           </div>
         </div>
         <div className="stack">
-          <div className="card y"><div className="kick">{t("dash.formed")}</div><div className="big" style={{ fontSize: 56 }}>{11 + st.undang.length + approvedN}</div><div className="txt" style={{ marginTop: -4 }}>{t("dash.formedBody")}</div></div>
+          <div className="card y"><div className="kick">{t("dash.formed")}</div><div className="big" style={{ fontSize: 56 }}>{11 + st.undang.length + approvedN + (st.myTeam ? 1 : 0)}</div><div className="txt" style={{ marginTop: -4 }}>{t("dash.formedBody")}</div></div>
           <div className="card"><div className="kick c">{t("dash.yourRole")}</div><div className="px" style={{ fontSize: 11, lineHeight: 1.6 }}>{role(a).ringkas}</div><div className="txt">{role(a).desc}</div></div>
           <div className="card"><div className="kick">{t("dash.challengeTitle")}</div><div className="txt">{t("dash.challengeBody")}</div></div>
         </div>
       </div>
       <Actions onBack={onBack} t={t} extra={<button type="button" className="link" onClick={actions.restart}>{t("dash.restart")}</button>}>
-        <button type="button" className="btn primary" onClick={actions.toMarketBack}>{t("dash.toMarket")}</button>
+        {st.myTeam
+          ? <button type="button" className="btn primary" onClick={actions.toChoosePage}>{t("dash.changeChoice")}</button>
+          : <>
+              <button type="button" className="btn primary" onClick={actions.toMarketBack}>{t("dash.toMarket")}</button>
+              <button type="button" className="btn ghost" onClick={actions.toChoosePage}>{t("dash.changeChoice")}</button>
+            </>}
       </Actions>
     </section>
   );
