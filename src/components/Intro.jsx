@@ -1,8 +1,10 @@
 import React from "react";
+import { Poster, Prize, Dates, Challenges } from "./EventInfo.jsx";
 
-export default function Intro({ t, onNext }) {
+export default function Intro({ t, get, onNext }) {
   return (
-    <section className="screen grid2">
+    <div className="screen">
+    <section className="grid2">
       <div className="stack" style={{ gap: 16 }}>
         <div className="prompt">&gt; {t("intro.prompt")}<span className="cursor" aria-hidden="true" /></div>
         <h1>{t("intro.title1")}<br />{t("intro.title2")}</h1>
@@ -18,8 +20,15 @@ export default function Intro({ t, onNext }) {
         </div>
       </div>
       <div className="stack">
+        <Poster t={t} />
         <div className="card"><div className="kick c">{t("intro.whyTitle")}</div><div className="txt">{t("intro.whyBody")}</div></div>
       </div>
     </section>
+    <div className="info-grid">
+      <Prize t={t} />
+      <Dates get={get} t={t} />
+    </div>
+    <div style={{ marginTop: 26 }}><Challenges get={get} t={t} /></div>
+    </div>
   );
 }

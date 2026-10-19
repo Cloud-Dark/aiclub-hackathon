@@ -98,7 +98,7 @@ export default {
     "openTeamLocked": "此模式下只有 CEO 赛道可以开队",
     "openApply": "申请加入需要 {role} 的队伍",
     "openInvited": "被其他队伍直接邀请",
-    "openTraining": "WorkBuddy 和 CodeBuddy 培训，第 3-4 周",
+    "openTraining": "用 WorkBuddy 构建，并从 3 个挑战中选 1 个",
     "redo": "重新作答",
     "toGroup": "加入 WHATSAPP 群"
   },
@@ -188,7 +188,7 @@ export default {
     },
     {
       "judul": "评委面前的五分钟",
-      "teks": "前 8 名在 Jakarta 线下展示。五分钟，外加问答。第一分钟由你掌控。",
+      "teks": "入围者在 Jakarta 线下展示。五分钟，外加问答。第一分钟由你掌控。",
       "opsi": [
         "问题是谁的，损失有多大，为什么是我们",
         "现场演示，一个完整流程，不用幻灯片",
@@ -345,29 +345,24 @@ export default {
   ],
   "schedule": [
     {
-      "minggu": "第 1 周 · 10月15日",
+      "minggu": "10月15日",
       "judul": "开放报名",
-      "ket": "个人报名，回答情景题，获得赛道。"
+      "ket": "在 aiclub.id 报名，加入 WhatsApp 群，然后选择一个挑战。"
     },
     {
-      "minggu": "第 2-3 周",
-      "judul": "组队市场和挑战简报",
-      "ket": "互相申请和邀请。Tencent 公布挑战题目。11月1日报名截止。"
+      "minggu": "11月1日 · 23:59 WIB",
+      "judul": "报名与作品提交截止",
+      "ket": "组队市场和报名关闭。提交你用 WorkBuddy 构建的 Agentic AI 作品。"
     },
     {
-      "minggu": "第 3-4 周",
-      "judul": "线上培训",
-      "ket": "WorkBuddy、CodeBuddy、Token Hub。导师在线答疑。"
+      "minggu": "11月14日",
+      "judul": "公布入围名单",
+      "ket": "公布入围者。"
     },
     {
-      "minggu": "第 4-5 周",
-      "judul": "提交和评审",
-      "ket": "提交原型。全部评审，八队晋级。"
-    },
-    {
-      "minggu": "第 6 周 · 11月底",
-      "judul": "Demo Day，Jakarta",
-      "ket": "前 8 名线下展示。决出第 1、2、3 名。"
+      "minggu": "11月27日 · 13:00–16:00 WIB",
+      "judul": "Demo Day 与颁奖，Jakarta",
+      "ket": "入围者现场展示，决出第 1、2、3 名。"
     }
   ],
   "group": {
@@ -511,5 +506,57 @@ export default {
     "cta": "点击这里向腾讯提交项目",
     "sent": "已打开提交平台。Demo Day 加油！",
     "restart": "从头开始"
+  },
+  "event": {
+    "title": "TENCENT CLOUD HACKATHON INDONESIA 2026",
+    "tagline": "用 WorkBuddy 构建真正能帮上工作的 AI agent，而不只是聊天。",
+    "collab": "Tencent Cloud 与 AICLUB.ID 联合举办 · 免费",
+    "prizeTitle": "奖金总额",
+    "prizeTotal": "USD 3,100",
+    "place": [
+      "第 1 名",
+      "第 2 名",
+      "第 3 名"
+    ],
+    "datesTitle": "重要日期",
+    "dates": [
+      {
+        "d": "10月15日",
+        "l": "开放报名"
+      },
+      {
+        "d": "11月1日",
+        "l": "报名与作品提交截止，23:59 WIB"
+      },
+      {
+        "d": "11月14日",
+        "l": "公布入围名单"
+      },
+      {
+        "d": "11月27日",
+        "l": "Demo Day 与颁奖 · Jakarta，13:00–16:00 WIB"
+      }
+    ],
+    "challengeTitle": "3 选 1 挑战",
+    "challenges": [
+      {
+        "name": "The Workplace Brain",
+        "tag": "LEARN ANYWHERE",
+        "desc": "帮助人们在工作中学习和查找知识的 agent。"
+      },
+      {
+        "name": "The Office Agent",
+        "tag": "AUTOMATE BETTER",
+        "desc": "自动化重复性办公工作的 agent。"
+      },
+      {
+        "name": "The Creator Agent",
+        "tag": "CREATE BOLDER",
+        "desc": "帮助创作者更大胆创作的 agent。"
+      }
+    ],
+    "partnersTitle": "支持方",
+    "posterAlt": "Tencent Cloud Hackathon Indonesia 2026 官方海报",
+    "venue": "Jakarta · 具体地点稍后公布"
   }
 };

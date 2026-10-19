@@ -17,6 +17,7 @@ import Dash from "./components/Dash.jsx";
 import Tencent from "./components/Tencent.jsx";
 import Submit from "./components/Submit.jsx";
 import { SubSteps } from "./components/Widgets.jsx";
+import { Footer } from "./components/Brand.jsx";
 import { activeApp, canCreate } from "./lib/rules.js";
 import { TIM } from "./data.js";
 
@@ -276,7 +277,7 @@ export default function App() {
   const common = { st, patch, t, get, role, onNext: next, onBack: back };
   let view;
   switch (st.screen) {
-    case "intro": view = <Intro t={t} onNext={next} />; break;
+    case "intro": view = <Intro t={t} get={get} onNext={next} />; break;
     case "login": view = <Login t={t} onBack={back} onLogin={login} />; break;
     case "identitas": view = <Identity {...common} errors={errors} />; break;
     case "kuis": view = <Quiz key={st.idx} {...common} />; break;
@@ -299,6 +300,7 @@ export default function App() {
         <SubSteps st={st} t={t} onGo={goSub} />
         <main id="app" aria-live="polite" data-step={STEP_OF[st.screen]}>{view}</main>
       </div>
+      <Footer t={t} />
       <BottomNav st={st} t={t} get={get} gotoStep={gotoStep} />
       <div className={"toast" + (toastMsg ? " on" : "")} role="status">{toastMsg}</div>
     </>

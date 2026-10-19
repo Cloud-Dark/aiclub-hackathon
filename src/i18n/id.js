@@ -98,7 +98,7 @@ export default {
     "openTeamLocked": "Hanya jalur CEO yang boleh membuka tim di mode ini",
     "openApply": "Melamar ke tim yang butuh {role}",
     "openInvited": "Diundang langsung oleh tim lain",
-    "openTraining": "Training WorkBuddy & CodeBuddy, minggu 3-4",
+    "openTraining": "Bangun agent dengan WorkBuddy, pilih 1 dari 3 tantangan",
     "redo": "Jawab ulang",
     "toGroup": "GABUNG GRUP WHATSAPP"
   },
@@ -188,7 +188,7 @@ export default {
     },
     {
       "judul": "LIMA MENIT DI DEPAN JURI",
-      "teks": "Top 8 tampil onsite di Jakarta. Lima menit, plus tanya jawab. Kamu pegang kendali menit pertama.",
+      "teks": "Finalis tampil onsite di Jakarta. Lima menit, plus tanya jawab. Kamu pegang kendali menit pertama.",
       "opsi": [
         "Masalahnya milik siapa, berapa besar ruginya, kenapa harus kami",
         "Live demo, satu alur penuh, tanpa slide",
@@ -345,29 +345,24 @@ export default {
   ],
   "schedule": [
     {
-      "minggu": "MINGGU 1 · 15 OKT",
-      "judul": "Pendaftaran buka",
-      "ket": "Daftar individu, jawab skenario, dapat jalur."
+      "minggu": "15 OKT",
+      "judul": "Pendaftaran dibuka",
+      "ket": "Daftar di aiclub.id, gabung grup WhatsApp, lalu pilih satu tantangan."
     },
     {
-      "minggu": "MINGGU 2-3",
-      "judul": "Pasar tim & briefing tantangan",
-      "ket": "Saling lamar dan undang. Tencent membuka challenge statement. Pendaftaran tutup 1 Nov."
+      "minggu": "1 NOV · 23.59 WIB",
+      "judul": "Batas pendaftaran & pengumpulan karya",
+      "ket": "Pasar tim dan pendaftaran tutup. Kumpulkan karya Agentic AI yang dibangun dengan WorkBuddy."
     },
     {
-      "minggu": "MINGGU 3-4",
-      "judul": "Training online",
-      "ket": "WorkBuddy, CodeBuddy, Token Hub. Mentor jaga sesi."
+      "minggu": "14 NOV",
+      "judul": "Pengumuman finalis",
+      "ket": "Finalis diumumkan."
     },
     {
-      "minggu": "MINGGU 4-5",
-      "judul": "Submission & penjurian",
-      "ket": "Kirim prototipe. Semua dinilai, delapan lolos."
-    },
-    {
-      "minggu": "MINGGU 6 · AKHIR NOV",
-      "judul": "Demo Day, Jakarta",
-      "ket": "Top 8 tampil onsite. Juara 1, 2, 3."
+      "minggu": "27 NOV · 13.00–16.00 WIB",
+      "judul": "Demo Day & Awarding, Jakarta",
+      "ket": "Finalis presentasi. Juara 1, 2, dan 3 diumumkan."
     }
   ],
   "group": {
@@ -511,5 +506,57 @@ export default {
     "cta": "KLIK DISINI UNTUK SUBMIT PROJECT KE TENCENT",
     "sent": "Portal submit sudah dibuka. Semoga sukses di Demo Day!",
     "restart": "Mulai dari awal"
+  },
+  "event": {
+    "title": "TENCENT CLOUD HACKATHON INDONESIA 2026",
+    "tagline": "Bangun AI agent yang beneran bantu kerja, bukan cuma bisa ngobrol, pakai WorkBuddy.",
+    "collab": "Kolaborasi Tencent Cloud & AICLUB.ID · gratis",
+    "prizeTitle": "TOTAL HADIAH",
+    "prizeTotal": "USD 3.100",
+    "place": [
+      "JUARA 1",
+      "JUARA 2",
+      "JUARA 3"
+    ],
+    "datesTitle": "TANGGAL PENTING",
+    "dates": [
+      {
+        "d": "15 OKT",
+        "l": "Pendaftaran dibuka"
+      },
+      {
+        "d": "1 NOV",
+        "l": "Batas pendaftaran & pengumpulan karya, 23.59 WIB"
+      },
+      {
+        "d": "14 NOV",
+        "l": "Pengumuman finalis"
+      },
+      {
+        "d": "27 NOV",
+        "l": "Demo Day & Awarding · Jakarta, 13.00–16.00 WIB"
+      }
+    ],
+    "challengeTitle": "PILIH 1 DARI 3 TANTANGAN",
+    "challenges": [
+      {
+        "name": "The Workplace Brain",
+        "tag": "LEARN ANYWHERE",
+        "desc": "Agent yang membantu orang belajar dan menemukan pengetahuan di tempat kerja."
+      },
+      {
+        "name": "The Office Agent",
+        "tag": "AUTOMATE BETTER",
+        "desc": "Agent yang mengotomasi pekerjaan kantor yang berulang."
+      },
+      {
+        "name": "The Creator Agent",
+        "tag": "CREATE BOLDER",
+        "desc": "Agent yang membantu kreator berkarya lebih berani."
+      }
+    ],
+    "partnersTitle": "DIDUKUNG OLEH",
+    "posterAlt": "Poster resmi Tencent Cloud Hackathon Indonesia 2026",
+    "venue": "Jakarta · lokasi detail menyusul"
   }
 };

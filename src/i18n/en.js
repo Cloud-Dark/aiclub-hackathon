@@ -98,7 +98,7 @@ export default {
     "openTeamLocked": "Only the CEO track can start a team in this mode",
     "openApply": "Apply to teams that need a {role}",
     "openInvited": "Get invited directly by other teams",
-    "openTraining": "WorkBuddy & CodeBuddy training, weeks 3-4",
+    "openTraining": "Build with WorkBuddy and pick 1 of 3 challenges",
     "redo": "Retake",
     "toGroup": "JOIN WHATSAPP GROUP"
   },
@@ -188,7 +188,7 @@ export default {
     },
     {
       "judul": "FIVE MINUTES WITH THE JUDGES",
-      "teks": "Top 8 present onsite in Jakarta. Five minutes, plus Q&A. You own the first minute.",
+      "teks": "Finalists present onsite in Jakarta. Five minutes, plus Q&A. You own the first minute.",
       "opsi": [
         "Whose problem it is, how much it costs, why us",
         "Live demo, one full flow, no slides",
@@ -345,29 +345,24 @@ export default {
   ],
   "schedule": [
     {
-      "minggu": "WEEK 1 · OCT 15",
+      "minggu": "OCT 15",
       "judul": "Registration opens",
-      "ket": "Sign up solo, answer scenarios, get your track."
+      "ket": "Sign up at aiclub.id, join the WhatsApp group, then pick one challenge."
     },
     {
-      "minggu": "WEEKS 2-3",
-      "judul": "Team market & challenge briefing",
-      "ket": "Apply and invite each other. Tencent drops the challenge statement. Registration closes Nov 1."
+      "minggu": "NOV 1 · 23:59 WIB",
+      "judul": "Registration & submission deadline",
+      "ket": "Team market and registration close. Submit the Agentic AI project you built with WorkBuddy."
     },
     {
-      "minggu": "WEEKS 3-4",
-      "judul": "Online training",
-      "ket": "WorkBuddy, CodeBuddy, Token Hub. Mentors on hand."
+      "minggu": "NOV 14",
+      "judul": "Finalists announced",
+      "ket": "Finalists are announced."
     },
     {
-      "minggu": "WEEKS 4-5",
-      "judul": "Submission & judging",
-      "ket": "Submit your prototype. All get judged, eight advance."
-    },
-    {
-      "minggu": "WEEK 6 · LATE NOV",
-      "judul": "Demo Day, Jakarta",
-      "ket": "Top 8 present onsite. 1st, 2nd, 3rd place."
+      "minggu": "NOV 27 · 13:00–16:00 WIB",
+      "judul": "Demo Day & Awarding, Jakarta",
+      "ket": "Finalists present. 1st, 2nd and 3rd place announced."
     }
   ],
   "group": {
@@ -511,5 +506,57 @@ export default {
     "cta": "CLICK HERE TO SUBMIT YOUR PROJECT TO TENCENT",
     "sent": "Submission portal opened. Good luck at Demo Day!",
     "restart": "Start over"
+  },
+  "event": {
+    "title": "TENCENT CLOUD HACKATHON INDONESIA 2026",
+    "tagline": "Build AI agents that actually help with work, not just chat, using WorkBuddy.",
+    "collab": "A Tencent Cloud & AICLUB.ID collaboration · free",
+    "prizeTitle": "TOTAL PRIZES",
+    "prizeTotal": "USD 3,100",
+    "place": [
+      "1ST PLACE",
+      "2ND PLACE",
+      "3RD PLACE"
+    ],
+    "datesTitle": "KEY DATES",
+    "dates": [
+      {
+        "d": "OCT 15",
+        "l": "Registration opens"
+      },
+      {
+        "d": "NOV 1",
+        "l": "Registration & submission deadline, 23:59 WIB"
+      },
+      {
+        "d": "NOV 14",
+        "l": "Finalists announced"
+      },
+      {
+        "d": "NOV 27",
+        "l": "Demo Day & Awarding · Jakarta, 13:00–16:00 WIB"
+      }
+    ],
+    "challengeTitle": "PICK 1 OF 3 CHALLENGES",
+    "challenges": [
+      {
+        "name": "The Workplace Brain",
+        "tag": "LEARN ANYWHERE",
+        "desc": "Agents that help people learn and find knowledge at work."
+      },
+      {
+        "name": "The Office Agent",
+        "tag": "AUTOMATE BETTER",
+        "desc": "Agents that automate repetitive office work."
+      },
+      {
+        "name": "The Creator Agent",
+        "tag": "CREATE BOLDER",
+        "desc": "Agents that help creators make bolder work."
+      }
+    ],
+    "partnersTitle": "SUPPORTED BY",
+    "posterAlt": "Official Tencent Cloud Hackathon Indonesia 2026 poster",
+    "venue": "Jakarta · venue details coming soon"
   }
 };

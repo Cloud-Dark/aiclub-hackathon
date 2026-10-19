@@ -330,3 +330,35 @@ html[lang=zh] .facts dt{font-size:11px}
 .check input:checked{background:var(--yellow);border-color:var(--yellow)}
 .check input:checked::after{content:"";width:10px;height:10px;background:var(--on)}
 .check input:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}
+
+/* branding: logo, mitra, poster, info event */
+.logo-icon{display:block;border-radius:8px;flex:none}
+.hdr-logos{display:none;align-items:center;gap:10px;white-space:nowrap}
+.hdr-logos img{display:block;width:auto}
+.hdr-logos .px{font-size:9px;color:var(--muted)}
+@media(min-width:640px){.hdr-logos{display:flex}}
+.pchips{display:flex;flex-wrap:wrap;gap:10px}
+.pchip{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;min-height:48px;background:var(--panel);border:2px solid var(--line);text-decoration:none;color:var(--ink);transition:transform .15s var(--ease),border-color .15s}
+.pchip:hover{border-color:var(--cyan);transform:translate(-2px,-2px)}
+.pchip img{display:block;height:28px;width:auto}
+.pchip.wm img{height:26px}
+.pchip .px{font-size:9px}
+.partners-strip{display:flex;flex-direction:column;gap:10px}
+.foot{margin-top:56px;border-top:2px solid var(--line);background:rgba(8,12,24,.6);padding:26px 0}
+.foot .wrap{display:flex;flex-direction:column;gap:20px}
+@media(min-width:900px){.foot .wrap{flex-direction:row;align-items:center;justify-content:space-between}}
+.foot-brand{display:flex;align-items:center;gap:12px}
+.foot-brand img{border-radius:8px}
+.poster{margin:0;border:2px solid var(--line);box-shadow:6px 6px 0 rgba(0,229,255,.18);background:var(--panel);line-height:0}
+.poster img{display:block;width:100%;height:auto}
+.info-grid{display:grid;gap:22px;margin-top:30px}
+@media(min-width:860px){.info-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:34px}}
+.prize .big{font-size:clamp(40px,10vw,56px)}
+.prize-rows{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.prize-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:2px dashed var(--line2);padding-top:8px}
+.prize-row .px{font-size:8px;color:var(--muted)}
+.prize-row .mono{font-size:22px;color:var(--ink)}
+html[lang=zh] .prize-row .px{font-size:12px}
+.cards.compact{grid-template-columns:1fr}
+.chal svg{flex:none}
+@media(max-width:767px){body{padding-bottom:calc(var(--navh) + env(safe-area-inset-bottom) + 24px)}}

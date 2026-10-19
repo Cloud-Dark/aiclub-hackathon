@@ -1,5 +1,6 @@
 import React from "react";
 import { I18N, LANGS } from "../i18n/index.js";
+import { asset } from "./Brand.jsx";
 import { ICONS, STEP_OF } from "../data.js";
 import { total, reachable } from "../lib/scoring.js";
 
@@ -11,14 +12,12 @@ export function Header({ st, t, setLang, onLogout }) {
       <header className={"top" + (st.user ? " has-user" : "")}>
         <div className="wrap">
           <div className="brand">
-            <svg width="22" height="22" viewBox="0 0 8 8" shapeRendering="crispEdges" aria-hidden="true">
-              <rect x="2" y="0" width="4" height="1" fill="#00E5FF" /><rect x="1" y="1" width="6" height="1" fill="#00E5FF" />
-              <rect x="0" y="2" width="3" height="2" fill="#00E5FF" /><rect x="5" y="2" width="3" height="2" fill="#00E5FF" />
-              <rect x="1" y="4" width="6" height="1" fill="#00E5FF" /><rect x="2" y="5" width="4" height="1" fill="#00E5FF" />
-              <rect x="3" y="6" width="2" height="2" fill="#00E5FF" /><rect x="3" y="2" width="2" height="2" fill="#FFE500" />
-            </svg>
+            <img className="logo-icon" src={asset("aiclub.png")} alt="AIClub.id" width="34" height="34" />
             <span className="px name">AICLUB<b>.ID</b></span>
-            <span className="px partners"><i>x</i>SUMOPOD<i>x</i>TENCENT CLOUD</span>
+            <span className="partners hdr-logos">
+              <i>x</i><img src={asset("sumopod.png")} alt="SumoPod" height="18" />
+              <i>x</i><img src={asset("tencent.png")} alt="" height="22" /><span className="px">TENCENT CLOUD</span>
+            </span>
           </div>
           <div className="meta"><span>{t("top.open")}</span><span style={{ color: "var(--line)" }}>|</span><span className="c">{t("top.demo")}</span></div>
           {st.user && (

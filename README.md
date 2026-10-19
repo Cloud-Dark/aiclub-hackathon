@@ -19,6 +19,12 @@ Login dummy: pilih salah satu akun demo di halaman login (`rani@aiclub.id`, `bag
 
 **3. Submit project ke Tencent** — https://aiclub.id/l/9k54mLk. Dikerjakan nanti setelah project selesai dibuat; tombol submit baru terbuka setelah peserta mencentang bahwa project sudah selesai.
 
+## Info event
+
+Data event (hadiah USD 3.100, 3 tantangan, tanggal penting, mitra) diambil dari halaman resmi
+https://aiclub.id/event/tencent-cloud-hackathon-2026. Teks ada di `src/i18n/*.js` (kunci `event`, `schedule`),
+logo dan poster di `public/brand/`.
+
 ## Masih dummy
 
 Belum ada backend. Login, daftar tim, pelamar, dan keputusan owner semuanya data dummy yang tersimpan di `localStorage` browser masing-masing.

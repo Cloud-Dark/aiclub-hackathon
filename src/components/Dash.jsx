@@ -2,6 +2,7 @@ import React from "react";
 import { Head, Actions } from "./Common.jsx";
 import MyTeam from "./MyTeam.jsx";
 import { ConfirmButton } from "./Widgets.jsx";
+import { Prize, Challenges } from "./EventInfo.jsx";
 import { TIM, CONFIG, WA_GROUP_URL } from "../data.js";
 import { aktif } from "../lib/scoring.js";
 import { fmtTime } from "../lib/time.js";
@@ -105,9 +106,9 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
           </div>
         </div>
         <div className="stack">
-          <div className="card y"><div className="kick">{t("dash.formed")}</div><div className="big" style={{ fontSize: 56 }}>{11 + st.undang.length + approvedN + (st.myTeam ? 1 : 0)}</div><div className="txt" style={{ marginTop: -4 }}>{t("dash.formedBody")}</div></div>
+          <Prize t={t} />
           <div className="card"><div className="kick c">{t("dash.yourRole")}</div><div className="px" style={{ fontSize: 11, lineHeight: 1.6 }}>{role(a).ringkas}</div><div className="txt">{role(a).desc}</div></div>
-          <div className="card"><div className="kick">{t("dash.challengeTitle")}</div><div className="txt">{t("dash.challengeBody")}</div></div>
+          <Challenges get={get} t={t} compact />
         </div>
       </div>
       <Actions onBack={onBack} t={t} extra={<button type="button" className="link" onClick={actions.restart}>{t("dash.restart")}</button>}>
