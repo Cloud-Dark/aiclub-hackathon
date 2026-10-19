@@ -262,3 +262,4 @@ a.btn{text-decoration:none}
 .cta-link{align-self:stretch}
 .preview{margin:0;background:var(--bg);border:2px dashed var(--line);padding:12px 14px;font-family:var(--mono);font-size:19px;line-height:1.3;color:var(--muted);white-space:pre-wrap;overflow-wrap:anywhere}
 html[lang=zh] .preview{font-size:15px}
+[tabindex="-1"]:focus{outline:none}

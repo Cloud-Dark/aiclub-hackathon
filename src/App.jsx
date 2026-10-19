@@ -45,7 +45,9 @@ export default function App() {
   }, [st.lang]);
 
   // fokus ke judul hanya saat pindah layar / pertanyaan, bukan setiap interaksi
+  const firstRender = useRef(true);
   useEffect(() => {
+    if (firstRender.current) { firstRender.current = false; return; }
     const h = document.querySelector("#app h1, #app h2");
     if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
   }, [st.screen, st.idx]);
