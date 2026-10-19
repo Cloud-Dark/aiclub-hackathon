@@ -274,3 +274,13 @@ a.cbtn{text-decoration:none;display:inline-flex;align-items:center;justify-conte
 .tag.pick{background:none;cursor:pointer}
 .tag.pick.on{background:var(--cyan);color:var(--on);border-color:var(--cyan)}
 .btn[aria-disabled=true]{cursor:not-allowed}
+.demo-acc{width:100%;background:none;color:inherit;cursor:pointer;transition:border-color .15s,transform .15s var(--ease)}
+.demo-acc:hover{border-color:var(--cyan);transform:translate(-2px,-2px)}
+.user-chip{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:18px;color:var(--muted);white-space:nowrap;min-width:0}
+.user-chip b{font-weight:400;color:var(--ink);overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.user-chip button{font-family:var(--pixel);font-size:7px;color:var(--dim);border:2px solid var(--line);padding:7px 8px}
+.user-chip button:hover{color:var(--ink);border-color:var(--cyan)}
+.user-chip b,.user-chip .as{display:none}
+@media(min-width:640px){.user-chip b,.user-chip .as{display:inline}}
+.field>input[readonly]{color:var(--muted);border-style:dashed}
+.top.has-user .meta{display:none}

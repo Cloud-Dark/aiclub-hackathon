@@ -76,10 +76,14 @@ export default {
     "errName": "Fill in your name first",
     "errEmail": "That email doesn't look right",
     "wa": "WHATSAPP",
-    "waPh": "optional, +62…",
+    "waPh": "+62 8xx xxxx xxxx",
     "linkedin": "LINKEDIN",
     "linkedinPh": "optional, profile link",
-    "optional": "optional"
+    "optional": "optional",
+    "fromAccount": "Linked to your aiclub.id account. Fill in what's missing; city and WhatsApp are required.",
+    "errCity": "Fill in your city first",
+    "errWa": "WhatsApp number doesn't look right (9-15 digits)",
+    "emailLocked": "from your aiclub.id account"
   },
   "quiz": {
     "progress": "scenario {a} of {b}",
@@ -383,5 +387,22 @@ export default {
       "role": "Track",
       "role2": "Second track"
     }
+  },
+  "login": {
+    "prompt": "login/aiclub.id",
+    "title": "SIGN IN WITH AICLUB.ID",
+    "body": "Use your AIClub.id community account so your data stays linked. After signing in, fill in whatever is missing, then the team market opens.",
+    "badge": "DUMMY · NOT CONNECTED TO THE REAL AICLUB.ID",
+    "email": "AICLUB.ID EMAIL",
+    "emailPh": "name@aiclub.id",
+    "pass": "PASSWORD",
+    "passPh": "anything, it's a dummy",
+    "submit": "SIGN IN",
+    "demoTitle": "OR USE A DEMO ACCOUNT",
+    "demoHint": "Each account has a different profile: some are missing city or WhatsApp.",
+    "errEmail": "That email doesn't look right",
+    "errPass": "Enter a password first",
+    "logout": "SIGN OUT",
+    "as": "Signed in as"
   }
 };

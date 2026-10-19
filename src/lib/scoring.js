@@ -20,7 +20,8 @@ export function quizDone(jawab) {
   for (let i = 0; i < total(); i++) if (jawab[i] == null) return false;
   return true;
 }
-export const identDone = (st) => st.nama.trim().length > 0;
+export const waValid = (v) => { const n = String(v).replace(/\D/g, "").length; return n >= 9 && n <= 15; };
+export const identDone = (st) => st.nama.trim().length > 0 && st.kota.trim().length > 0 && waValid(st.wa);
 export function reachable(st, step) {
   if (step <= 0) return true;
   if (step === 1) return identDone(st);

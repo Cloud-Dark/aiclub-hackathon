@@ -76,10 +76,14 @@ export default {
     "errName": "Isi nama dulu ya",
     "errEmail": "Format email belum benar",
     "wa": "WHATSAPP",
-    "waPh": "opsional, 08xxxxxxxxxx",
+    "waPh": "08xxxxxxxxxx",
     "linkedin": "LINKEDIN",
     "linkedinPh": "opsional, link profil",
-    "optional": "opsional"
+    "optional": "opsional",
+    "fromAccount": "Terhubung dengan akun aiclub.id. Lengkapi data yang masih kosong; kota dan WhatsApp wajib.",
+    "errCity": "Isi kota dulu ya",
+    "errWa": "Nomor WhatsApp belum benar (9-15 angka)",
+    "emailLocked": "dari akun aiclub.id"
   },
   "quiz": {
     "progress": "skenario {a} dari {b}",
@@ -383,5 +387,22 @@ export default {
       "role": "Jalur",
       "role2": "Jalur kedua"
     }
+  },
+  "login": {
+    "prompt": "masuk/aiclub.id",
+    "title": "MASUK DENGAN AICLUB.ID",
+    "body": "Pakai akun komunitas AIClub.id supaya datamu terhubung. Setelah masuk, lengkapi data yang masih kurang, baru pasar tim terbuka.",
+    "badge": "DUMMY · BELUM TERSAMBUNG KE AICLUB.ID SUNGGUHAN",
+    "email": "EMAIL AICLUB.ID",
+    "emailPh": "nama@aiclub.id",
+    "pass": "KATA SANDI",
+    "passPh": "bebas, ini dummy",
+    "submit": "MASUK",
+    "demoTitle": "ATAU PAKAI AKUN DEMO",
+    "demoHint": "Profil tiap akun berbeda: ada yang masih kosong kota atau WhatsApp-nya.",
+    "errEmail": "Format email belum benar",
+    "errPass": "Isi kata sandi dulu",
+    "logout": "KELUAR",
+    "as": "Masuk sebagai"
   }
 };

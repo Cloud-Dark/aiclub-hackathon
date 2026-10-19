@@ -76,10 +76,14 @@ export default {
     "errName": "请先填写姓名",
     "errEmail": "邮箱格式不正确",
     "wa": "WHATSAPP",
-    "waPh": "选填，+62…",
+    "waPh": "+62 8xx xxxx xxxx",
     "linkedin": "LINKEDIN",
     "linkedinPh": "选填，主页链接",
-    "optional": "选填"
+    "optional": "选填",
+    "fromAccount": "已关联你的 aiclub.id 账号。请补全缺少的资料；城市和 WhatsApp 为必填。",
+    "errCity": "请先填写城市",
+    "errWa": "WhatsApp 号码不正确（9-15 位数字）",
+    "emailLocked": "来自 aiclub.id 账号"
   },
   "quiz": {
     "progress": "情景 {a} / {b}",
@@ -383,5 +387,22 @@ export default {
       "role": "赛道",
       "role2": "次赛道"
     }
+  },
+  "login": {
+    "prompt": "登录/aiclub.id",
+    "title": "使用 AICLUB.ID 登录",
+    "body": "使用 AIClub.id 社区账号，让你的资料保持关联。登录后补全缺少的资料，组队市场才会开放。",
+    "badge": "演示 · 尚未连接真实 AICLUB.ID",
+    "email": "AICLUB.ID 邮箱",
+    "emailPh": "name@aiclub.id",
+    "pass": "密码",
+    "passPh": "随便填，这是演示",
+    "submit": "登录",
+    "demoTitle": "或使用演示账号",
+    "demoHint": "每个账号的资料不同：有的还缺城市或 WhatsApp。",
+    "errEmail": "邮箱格式不正确",
+    "errPass": "请先填写密码",
+    "logout": "退出",
+    "as": "当前账号"
   }
 };

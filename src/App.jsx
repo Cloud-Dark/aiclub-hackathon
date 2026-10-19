@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { makeT, detectLang } from "./i18n/index.js";
 import { SCREENS, STEP_OF, SEED_APPLICANTS, BUILDER } from "./data.js";
-import { total, quizDone, identDone, reachable } from "./lib/scoring.js";
+import { total, quizDone, identDone, reachable, waValid } from "./lib/scoring.js";
 import { Header, Stepper, BottomNav } from "./components/Chrome.jsx";
 import Intro from "./components/Intro.jsx";
+import Login from "./components/Login.jsx";
 import Identity from "./components/Identity.jsx";
 import Quiz from "./components/Quiz.jsx";
 import Result from "./components/Result.jsx";
@@ -11,11 +12,12 @@ import Group from "./components/Group.jsx";
 import Market from "./components/Market.jsx";
 import Dash from "./components/Dash.jsx";
 
-const PERSIST = ["screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override",
+const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override",
   "clickedMain", "joinedMain", "tab", "apps", "undang", "myTeam", "applicants", "log"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const fresh = () => ({
+  user: null,
   nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null,
   clickedMain: false, joinedMain: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: []
 });
@@ -27,7 +29,8 @@ function initState() {
     if (saved && typeof saved === "object") PERSIST.forEach((k) => { if (k in saved) st[k] = saved[k]; });
   } catch (e) {}
   if (!SCREENS.includes(st.screen)) st.screen = "intro";
-  if (st.screen !== "intro" && !identDone(st)) st.screen = "intro";
+  if (st.screen !== "intro" && !st.user) st.screen = "intro";
+  else if (!["intro", "login", "identitas"].includes(st.screen) && !identDone(st)) st.screen = "identitas";
   if (["hasil", "grup", "pasar", "dasbor"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
   if ((st.screen === "pasar" || st.screen === "dasbor") && !st.joinedMain) st.screen = "grup";
   return st;
@@ -82,10 +85,12 @@ export default function App() {
 
   function next() {
     switch (st.screen) {
-      case "intro": go("identitas"); break;
+      case "intro": go(st.user ? "identitas" : "login"); break;
       case "identitas": {
         const er = {};
         if (!st.nama.trim()) er.nama = t("identity.errName");
+        if (!st.kota.trim()) er.kota = t("identity.errCity");
+        if (!waValid(st.wa)) er.wa = t("identity.errWa");
         if (st.email.trim() && !EMAIL_RE.test(st.email.trim())) er.email = t("identity.errEmail");
         if (Object.keys(er).length) {
           setErrors(er);
@@ -106,6 +111,7 @@ export default function App() {
   }
   function back() {
     switch (st.screen) {
+      case "login": go("intro"); break;
       case "identitas": go("intro"); break;
       case "kuis": if (st.idx > 0) patch({ idx: st.idx - 1 }); else go("identitas"); break;
       case "hasil": go("kuis", { idx: total() - 1 }); break;
@@ -126,6 +132,15 @@ export default function App() {
     else if (i === 2) go("hasil");
     else go(st.joinedMain ? (st.screen === "dasbor" ? "dasbor" : "pasar") : "grup");
   }
+  function login(u) {
+    setSt((s) => ({
+      ...s, user: { email: u.email, nama: u.nama },
+      nama: s.nama || u.nama, email: u.email, kota: s.kota || u.kota || "", wa: s.wa || u.wa || "", linkedin: s.linkedin || u.linkedin || "",
+      screen: "identitas"
+    }));
+    window.scrollTo({ top: 0 });
+  }
+  function logout() { go("intro", fresh()); }
   function setLang(k) {
     try { localStorage.setItem("hk_lang", k); } catch (e) {}
     patch({ lang: k });
@@ -197,6 +212,7 @@ export default function App() {
   let view;
   switch (st.screen) {
     case "intro": view = <Intro t={t} onNext={next} />; break;
+    case "login": view = <Login t={t} onBack={back} onLogin={login} />; break;
     case "identitas": view = <Identity {...common} errors={errors} />; break;
     case "kuis": view = <Quiz key={st.idx} {...common} />; break;
     case "hasil": view = <Result {...common} onRedo={redo} />; break;
@@ -207,7 +223,7 @@ export default function App() {
 
   return (
     <>
-      <Header st={st} t={t} setLang={setLang} />
+      <Header st={st} t={t} setLang={setLang} onLogout={logout} />
       <div className="wrap">
         <Stepper st={st} get={get} gotoStep={gotoStep} />
         <main id="app" aria-live="polite" data-step={STEP_OF[st.screen]}>{view}</main>

@@ -5,10 +5,10 @@ import { total, reachable } from "../lib/scoring.js";
 
 const Icon = ({ d }) => <svg viewBox="0 0 10 10" shapeRendering="crispEdges" fill="currentColor"><path d={d} /></svg>;
 
-export function Header({ st, t, setLang }) {
+export function Header({ st, t, setLang, onLogout }) {
   return (
     <>
-      <header className="top">
+      <header className={"top" + (st.user ? " has-user" : "")}>
         <div className="wrap">
           <div className="brand">
             <svg width="22" height="22" viewBox="0 0 8 8" shapeRendering="crispEdges" aria-hidden="true">
@@ -21,6 +21,12 @@ export function Header({ st, t, setLang }) {
             <span className="px partners"><i>x</i>SUMOPOD<i>x</i>TENCENT CLOUD</span>
           </div>
           <div className="meta"><span>{t("top.open")}</span><span style={{ color: "var(--line)" }}>|</span><span className="c">{t("top.demo")}</span></div>
+          {st.user && (
+            <div className="user-chip" title={st.user.email}>
+              <span className="as">{t("login.as")}</span><b>{st.user.nama}</b>
+              <button type="button" onClick={onLogout}>{t("login.logout")}</button>
+            </div>
+          )}
           <div className="lang" role="group" aria-label={t("top.langLabel")}>
             {LANGS.map((k) => (
               <button key={k} type="button" lang={k} aria-pressed={k === st.lang} title={I18N[k].meta.name} onClick={() => setLang(k)}>{I18N[k].meta.label}</button>

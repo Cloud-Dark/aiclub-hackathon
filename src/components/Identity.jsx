@@ -20,25 +20,26 @@ export default function Identity({ st, patch, t, get, errors, onNext, onBack }) 
     <section className="screen" style={{ maxWidth: 640, margin: "0 auto" }}>
       <Head prompt={t("identity.step")} onBack={onBack} t={t} />
       <h2>{t("identity.title")}</h2>
+      {st.user && <p className="lead" style={{ margin: "0 0 14px", fontSize: 14 }}>{t("identity.fromAccount")}</p>}
       <form className="card" noValidate style={{ gap: 16 }} onSubmit={(e) => { e.preventDefault(); onNext(); }}>
         <Field label={t("identity.name") + " *"} error={errors.nama}>
           <input name="nama" autoComplete="name" value={st.nama} placeholder={t("identity.namePh")} aria-invalid={!!errors.nama}
             onChange={(e) => patch({ nama: e.target.value }, "nama")} />
         </Field>
         <div className="row2">
-          <Field label={t("identity.city")}>
+          <Field label={t("identity.city") + " *"} error={errors.kota}>
             <input name="kota" autoComplete="address-level2" value={st.kota} placeholder={t("identity.cityPh")}
-              onChange={(e) => patch({ kota: e.target.value })} />
+              aria-invalid={!!errors.kota} onChange={(e) => patch({ kota: e.target.value }, "kota")} />
           </Field>
-          <Field label={t("identity.email")} error={errors.email}>
-            <input name="email" type="email" inputMode="email" autoComplete="email" value={st.email} placeholder={t("identity.emailPh")} aria-invalid={!!errors.email}
+          <Field label={t("identity.email") + (st.user ? " (" + t("identity.emailLocked") + ")" : "")} error={errors.email}>
+            <input name="email" type="email" inputMode="email" autoComplete="email" value={st.email} placeholder={t("identity.emailPh")} aria-invalid={!!errors.email} readOnly={!!st.user}
               onChange={(e) => patch({ email: e.target.value }, "email")} />
           </Field>
         </div>
         <div className="row2">
-          <Field label={t("identity.wa") + opt}>
+          <Field label={t("identity.wa") + " *"} error={errors.wa}>
             <input name="wa" type="tel" inputMode="tel" autoComplete="tel" value={st.wa} placeholder={t("identity.waPh")}
-              onChange={(e) => patch({ wa: e.target.value })} />
+              aria-invalid={!!errors.wa} onChange={(e) => patch({ wa: e.target.value }, "wa")} />
           </Field>
           <Field label={t("identity.linkedin") + opt}>
             <input name="linkedin" inputMode="url" autoComplete="url" value={st.linkedin} placeholder={t("identity.linkedinPh")}
