@@ -241,9 +241,13 @@ export default {
     "openGroup": "OPEN TEAM GROUP",
     "rejectedBtn": "APPLICATION REJECTED",
     "groupSoon": "GROUP LINK COMING",
-    "hint": "You can apply to several teams, but you can only end up in one. Once an application is approved, the others are cancelled automatically.",
+    "hint": "A person can only apply to one team at a time. Want to switch? Withdraw your current application first. The WhatsApp group link only opens once the owner approves you.",
     "lockedOwner": "You own a team. Close it first to apply elsewhere.",
-    "lockedMember": "You're already in a team."
+    "lockedMember": "You're already in a team.",
+    "viewDetail": "VIEW DETAILS",
+    "appliedElsewhere": "ALREADY APPLIED",
+    "shortMember": "ALREADY IN A TEAM",
+    "oneAtATime": "You're still applying to {team}. Withdraw that application first to apply to another team."
   },
   "dash": {
     "greeting": "{name}, NO TEAM YET",
@@ -452,5 +456,34 @@ export default {
     "s1": "1 · YOUR TEAM",
     "s2": "2 · WHO YOU'RE LOOKING FOR",
     "s3": "3 · TEAM WHATSAPP GROUP"
+  },
+  "detail": {
+    "prompt": "detail/{team}",
+    "about": "ABOUT THE TEAM",
+    "city": "CITY",
+    "members": "MEMBERS",
+    "owner": "OWNER",
+    "opened": "OPENED",
+    "days": "{n} days ago",
+    "slots": "OPEN SLOTS",
+    "matchYes": "Matches your track",
+    "matchNo": "Not exactly your track, but you can still apply",
+    "group": "TEAM WHATSAPP GROUP",
+    "groupName": "{team} group",
+    "groupSize": "{n} people in the group",
+    "groupBody": "Daily team discussion. The group link only opens once the owner approves your application.",
+    "how": "HOW TO GET IN",
+    "h1": "Apply to this team",
+    "h2": "Owner approves",
+    "h3": "Join the WhatsApp group",
+    "sNone": "You haven't applied to this team.",
+    "sPending": "Application sent. Waiting for the owner's approval.",
+    "sApproved": "Approved! Time to join the team's WhatsApp group.",
+    "sRejected": "The owner rejected your application. Try another team.",
+    "join": "JOIN TEAM WHATSAPP GROUP",
+    "locked": "GROUP LINK LOCKED · WAITING FOR APPROVAL",
+    "back": "BACK TO TEAM LIST",
+    "otherTeam": "You're applying to {team}. Withdraw that application first to apply to this team.",
+    "inTeam": "You're already in team {team}. Leave first if you want to switch."
   }
 };

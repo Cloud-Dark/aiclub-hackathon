@@ -14,7 +14,7 @@ export function ConfirmButton({ label, sure, onConfirm, className = "cbtn" }) {
   return <button type="button" className={className + (armed ? " sent" : "")} onClick={click}>{armed ? sure : label}</button>;
 }
 
-const FLOW = { grup: 0, pilih: 1, pasar: 2, buat: 2, dasbor: 3 };
+const FLOW = { grup: 0, pilih: 1, pasar: 2, tim: 2, buat: 2, dasbor: 3 };
 
 // indikator langkah kecil di dalam langkah TIM: Grup utama → Pilih → Lamar/Buat → Status
 export function SubSteps({ screen, t, mode }) {

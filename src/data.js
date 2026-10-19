@@ -21,13 +21,14 @@ export const DUMMY_USERS = [
 
 export const WA_LINK_RE = /^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9_-]+/;
 
+// wa = link grup dummy (placeholder). Dengan backend sungguhan, link hanya dikirim setelah lamaran disetujui.
 export const TIM = [
-  { nama: "REKON", kota: "Jakarta", anggota: 3, ceo: "Raka", butuh: ["AI", "DAT"], wa: "" },
-  { nama: "WARUNG TAP", kota: "Bandung", anggota: 2, ceo: "Sari", butuh: ["CTO", "DSG"], wa: "" },
-  { nama: "SIAP RISIKO", kota: "Surabaya", anggota: 4, ceo: "Bintang", butuh: ["DOM", "PM"], wa: "" },
-  { nama: "TANYA OPS", kota: "Yogyakarta", anggota: 2, ceo: "Nadia", butuh: ["AI", "GRW"], wa: "" },
-  { nama: "ANTRE HABIS", kota: "Makassar", anggota: 3, ceo: "Fikri", butuh: ["DAT", "DSG"], wa: "" },
-  { nama: "BACA KONTRAK", kota: "Medan", anggota: 2, ceo: "Ayu", butuh: ["DOM", "CTO"], wa: "" }
+  { nama: "REKON", kota: "Jakarta", anggota: 3, ceo: "Raka", butuh: ["AI", "DAT"], wa: "https://chat.whatsapp.com/DummyRekon01", hari: 5, grupN: 7 },
+  { nama: "WARUNG TAP", kota: "Bandung", anggota: 2, ceo: "Sari", butuh: ["CTO", "DSG"], wa: "https://chat.whatsapp.com/DummyWarungTap02", hari: 3, grupN: 5 },
+  { nama: "SIAP RISIKO", kota: "Surabaya", anggota: 4, ceo: "Bintang", butuh: ["DOM", "PM"], wa: "https://chat.whatsapp.com/DummySiapRisiko03", hari: 8, grupN: 9 },
+  { nama: "TANYA OPS", kota: "Yogyakarta", anggota: 2, ceo: "Nadia", butuh: ["AI", "GRW"], wa: "https://chat.whatsapp.com/DummyTanyaOps04", hari: 2, grupN: 4 },
+  { nama: "ANTRE HABIS", kota: "Makassar", anggota: 3, ceo: "Fikri", butuh: ["DAT", "DSG"], wa: "https://chat.whatsapp.com/DummyAntreHabis05", hari: 6, grupN: 6 },
+  { nama: "BACA KONTRAK", kota: "Medan", anggota: 2, ceo: "Ayu", butuh: ["DOM", "CTO"], wa: "https://chat.whatsapp.com/DummyBacaKontrak06", hari: 4, grupN: 5 }
 ];
 export const BUILDER = [
   { nama: "Dimas", kota: "Semarang", peran: "AI" }, { nama: "Lala", kota: "Denpasar", peran: "DSG" },
@@ -37,8 +38,8 @@ export const BUILDER = [
 // pelamar contoh yang masuk ke tim buatan peserta (index ke BUILDER)
 export const SEED_APPLICANTS = [0, 4];
 
-export const SCREENS = ["intro", "login", "identitas", "kuis", "hasil", "grup", "pilih", "pasar", "buat", "dasbor"];
-export const STEP_OF = { intro: -1, login: -1, identitas: 0, kuis: 1, hasil: 2, grup: 3, pilih: 3, pasar: 3, buat: 3, dasbor: 3 };
+export const SCREENS = ["intro", "login", "identitas", "kuis", "hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor"];
+export const STEP_OF = { intro: -1, login: -1, identitas: 0, kuis: 1, hasil: 2, grup: 3, pilih: 3, pasar: 3, tim: 3, buat: 3, dasbor: 3 };
 
 export const ICONS = {
   home: "M4 1h2v1h1v1h1v1h1v1H8v4H6V7H4v2H2V5H1V4h1V3h1V2h1z",

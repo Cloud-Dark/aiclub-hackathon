@@ -241,9 +241,13 @@ export default {
     "openGroup": "打开队伍群",
     "rejectedBtn": "申请被拒绝",
     "groupSoon": "群链接稍后提供",
-    "hint": "可以申请多支队伍，但最终只能加入一支。一旦某个申请通过，其余申请会自动取消。",
+    "hint": "一个人同一时间只能申请一支队伍。想换队？请先撤回现有申请。队长通过后才会开放 WhatsApp 群链接。",
     "lockedOwner": "你是队长。想申请其他队伍，请先关闭你的队伍。",
-    "lockedMember": "你已经加入一支队伍了。"
+    "lockedMember": "你已经加入一支队伍了。",
+    "viewDetail": "查看详情",
+    "appliedElsewhere": "已申请其他队",
+    "shortMember": "已加入队伍",
+    "oneAtATime": "你还在申请 {team}。想申请其他队伍，请先撤回该申请。"
   },
   "dash": {
     "greeting": "{name}，你还没有队伍",
@@ -452,5 +456,34 @@ export default {
     "s1": "1 · 你的队伍",
     "s2": "2 · 你想找谁",
     "s3": "3 · 队伍 WHATSAPP 群"
+  },
+  "detail": {
+    "prompt": "详情/{team}",
+    "about": "队伍介绍",
+    "city": "城市",
+    "members": "成员",
+    "owner": "队长",
+    "opened": "创建于",
+    "days": "{n} 天前",
+    "slots": "招募中的位置",
+    "matchYes": "匹配你的赛道",
+    "matchNo": "不完全是你的赛道，但仍可申请",
+    "group": "队伍 WHATSAPP 群",
+    "groupName": "{team} 群",
+    "groupSize": "群内 {n} 人",
+    "groupBody": "队内日常讨论。队长通过你的申请后才会开放群链接。",
+    "how": "如何加入",
+    "h1": "申请这支队伍",
+    "h2": "队长通过",
+    "h3": "加入 WhatsApp 群",
+    "sNone": "你还没有申请这支队伍。",
+    "sPending": "申请已发送，等待队长通过。",
+    "sApproved": "已通过！可以加入队伍的 WhatsApp 群了。",
+    "sRejected": "队长拒绝了你的申请，试试其他队伍。",
+    "join": "加入队伍 WHATSAPP 群",
+    "locked": "群链接已锁定 · 等待通过",
+    "back": "返回队伍列表",
+    "otherTeam": "你正在申请 {team}。想申请这支队伍，请先撤回该申请。",
+    "inTeam": "你已加入队伍 {team}。想换队请先退出。"
   }
 };

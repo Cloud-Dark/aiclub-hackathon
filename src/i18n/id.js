@@ -241,9 +241,13 @@ export default {
     "openGroup": "BUKA GRUP TIM",
     "rejectedBtn": "LAMARAN DITOLAK",
     "groupSoon": "LINK GRUP MENYUSUL",
-    "hint": "Kamu boleh melamar ke beberapa tim, tapi hanya bisa masuk ke satu. Begitu satu lamaran disetujui, lamaran lain otomatis dibatalkan.",
+    "hint": "Satu orang hanya bisa melamar ke satu tim dalam satu waktu. Mau pindah? Tarik lamaran yang ada dulu. Link grup WhatsApp baru terbuka setelah owner menyetujui.",
     "lockedOwner": "Kamu owner tim. Tutup tim dulu untuk melamar ke tim lain.",
-    "lockedMember": "Kamu sudah tergabung di satu tim."
+    "lockedMember": "Kamu sudah tergabung di satu tim.",
+    "viewDetail": "LIHAT DETAIL",
+    "appliedElsewhere": "SUDAH MELAMAR",
+    "shortMember": "SUDAH DI TIM",
+    "oneAtATime": "Kamu masih melamar ke {team}. Tarik lamaran itu dulu kalau mau melamar ke tim lain."
   },
   "dash": {
     "greeting": "{name}, BELUM PUNYA TIM",
@@ -452,5 +456,34 @@ export default {
     "s1": "1 · TIMMU",
     "s2": "2 · SIAPA YANG KAMU CARI",
     "s3": "3 · GRUP WHATSAPP TIM"
+  },
+  "detail": {
+    "prompt": "detail/{team}",
+    "about": "TENTANG TIM",
+    "city": "KOTA",
+    "members": "ANGGOTA",
+    "owner": "OWNER",
+    "opened": "DIBUKA",
+    "days": "{n} hari lalu",
+    "slots": "SLOT YANG DICARI",
+    "matchYes": "Cocok dengan jalurmu",
+    "matchNo": "Bukan persis jalurmu, tapi tetap boleh melamar",
+    "group": "GRUP WHATSAPP TIM",
+    "groupName": "Grup {team}",
+    "groupSize": "{n} orang di grup",
+    "groupBody": "Isinya diskusi harian tim. Link grup hanya terbuka setelah owner menyetujui lamaranmu.",
+    "how": "CARA MASUK",
+    "h1": "Lamar tim ini",
+    "h2": "Owner menyetujui",
+    "h3": "Gabung grup WhatsApp",
+    "sNone": "Kamu belum melamar ke tim ini.",
+    "sPending": "Lamaran terkirim. Menunggu persetujuan owner.",
+    "sApproved": "Disetujui! Saatnya gabung ke grup WhatsApp tim.",
+    "sRejected": "Lamaranmu ditolak owner. Coba tim lain.",
+    "join": "GABUNG GRUP WHATSAPP TIM",
+    "locked": "LINK GRUP TERKUNCI · MENUNGGU PERSETUJUAN",
+    "back": "KEMBALI KE DAFTAR TIM",
+    "otherTeam": "Kamu sedang melamar ke {team}. Tarik lamaran itu dulu kalau mau melamar ke tim ini.",
+    "inTeam": "Kamu sudah tergabung di tim {team}. Keluar dulu kalau mau pindah."
   }
 };

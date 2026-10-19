@@ -2,11 +2,11 @@ import React from "react";
 import { Head, Actions } from "./Common.jsx";
 import { TIM } from "../data.js";
 import { aktif } from "../lib/scoring.js";
-import { approvedApp } from "../lib/rules.js";
+import { activeApp } from "../lib/rules.js";
 
 export default function Market({ st, t, get, role, actions, onNext, onBack }) {
   const a = aktif(st);
-  const joined = approvedApp(st);
+  const act = activeApp(st);
   const appOf = (n) => st.apps.find((x) => x.team === n);
 
   return (
@@ -29,7 +29,7 @@ export default function Market({ st, t, get, role, actions, onNext, onBack }) {
           let btn;
           if (status === "approved") btn = <button type="button" className="cbtn go" onClick={() => actions.openTeamGroup(tm)}>{tm.wa ? t("market.openGroup") : t("market.groupSoon")}</button>;
           else if (status === "rejected") btn = <button type="button" className="cbtn off" aria-disabled="true">{t("market.rejectedBtn")}</button>;
-          else if (joined) btn = <button type="button" className="cbtn off" aria-disabled="true">{t("market.lockedMember")}</button>;
+          else if (act && !status) btn = <button type="button" className="cbtn off" aria-disabled="true" onClick={() => actions.toggleApply(tm.nama)}>{act.status === "approved" ? t("market.shortMember") : t("market.appliedElsewhere")}</button>;
           else btn = <button type="button" className={"cbtn " + (status ? "sent" : cocok ? "go" : "")} onClick={() => actions.toggleApply(tm.nama)}>{status ? t("market.withdraw") : t("market.apply")}</button>;
           return (
             <article key={tm.nama} className={"card tcard " + (cocok ? "c" : "")}>
@@ -37,7 +37,10 @@ export default function Market({ st, t, get, role, actions, onNext, onBack }) {
               <div className="txt" style={{ fontSize: 20 }}>{get("teams")[i]}</div>
               <div className="info"><span>{tm.kota}</span><i>|</i><span>{t("market.members", { n: tm.anggota })}</span><i>|</i><span>{t("market.ceo", { name: tm.ceo })}</span></div>
               <div className="slots"><span className="kick" style={{ fontSize: 7 }}>{t("market.slots")}</span><div className="tags">{tm.butuh.map((b) => <span key={b} className={"tag" + (b === a ? " m" : "")}>{role(b).ringkas}</span>)}</div></div>
-              {btn}
+              <div className="cbtn-row">
+                <button type="button" className="cbtn" onClick={() => actions.openDetail(tm.nama)}>{t("market.viewDetail")}</button>
+                {btn}
+              </div>
             </article>
           );
         })}

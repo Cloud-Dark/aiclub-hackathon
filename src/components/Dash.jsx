@@ -46,6 +46,7 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
                         {ap.status === "approved" && (team.wa
                           ? <a className="cbtn go" style={{ alignSelf: "flex-start", marginTop: 6 }} href={team.wa} target="_blank" rel="noopener noreferrer">{t("dash.joinTeam")}</a>
                           : <span className="note">{t("dash.noLink")}</span>)}
+                        <button type="button" className="cbtn" style={{ alignSelf: "flex-start", marginTop: 6 }} onClick={() => actions.openDetail(ap.team)}>{t("market.viewDetail")}</button>
                         {ap.status === "approved" && <div style={{ marginTop: 6 }}><ConfirmButton label={t("choose.leaveTeam")} sure={t("choose.sure")} onConfirm={() => actions.leaveTeam(ap.team)} /></div>}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>

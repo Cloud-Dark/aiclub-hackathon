@@ -11,19 +11,21 @@ import Result from "./components/Result.jsx";
 import Group from "./components/Group.jsx";
 import Choose from "./components/Choose.jsx";
 import Create from "./components/Create.jsx";
+import TeamDetail from "./components/TeamDetail.jsx";
 import Market from "./components/Market.jsx";
 import Dash from "./components/Dash.jsx";
 import { SubSteps } from "./components/Widgets.jsx";
-import { approvedApp, canCreate } from "./lib/rules.js";
+import { activeApp, canCreate } from "./lib/rules.js";
+import { TIM } from "./data.js";
 
 const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override",
-  "clickedMain", "joinedMain", "mode", "tab", "apps", "undang", "myTeam", "applicants", "log"];
+  "clickedMain", "joinedMain", "mode", "viewTeam", "tab", "apps", "undang", "myTeam", "applicants", "log"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const fresh = () => ({
   user: null,
   nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null,
-  clickedMain: false, joinedMain: false, mode: null, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: []
+  clickedMain: false, joinedMain: false, mode: null, viewTeam: null, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: []
 });
 
 function initState() {
@@ -35,9 +37,10 @@ function initState() {
   if (!SCREENS.includes(st.screen)) st.screen = "intro";
   if (st.screen !== "intro" && !st.user) st.screen = "intro";
   else if (!["intro", "login", "identitas"].includes(st.screen) && !identDone(st)) st.screen = "identitas";
-  if (["hasil", "grup", "pilih", "pasar", "buat", "dasbor"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
-  if (["pilih", "pasar", "buat", "dasbor"].includes(st.screen) && !st.joinedMain) st.screen = "grup";
-  if ((st.screen === "pasar" || st.screen === "buat") && st.myTeam) st.screen = "dasbor";
+  if (["hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
+  if (["pilih", "pasar", "tim", "buat", "dasbor"].includes(st.screen) && !st.joinedMain) st.screen = "grup";
+  if ((st.screen === "pasar" || st.screen === "buat" || st.screen === "tim") && st.myTeam) st.screen = "dasbor";
+  if (st.screen === "tim" && !TIM.some((x) => x.nama === st.viewTeam)) st.screen = "pasar";
   if (st.screen === "buat" && !canCreate(st)) st.screen = "pilih";
   return st;
 }
@@ -124,6 +127,7 @@ export default function App() {
       case "grup": go("hasil"); break;
       case "pilih": go("grup"); break;
       case "pasar": go("pilih"); break;
+      case "tim": go("pasar"); break;
       case "buat": go("pilih"); break;
       case "dasbor": go(st.myTeam ? "pilih" : "pasar"); break;
     }
@@ -138,7 +142,7 @@ export default function App() {
       go("kuis", { idx: miss >= 0 ? miss : 0 });
     }
     else if (i === 2) go("hasil");
-    else if (["grup", "pilih", "pasar", "buat", "dasbor"].includes(st.screen)) return;
+    else if (["grup", "pilih", "pasar", "tim", "buat", "dasbor"].includes(st.screen)) return;
     else go(!st.joinedMain ? "grup" : st.myTeam || st.apps.length ? "dasbor" : "pilih");
   }
   function login(u) {
@@ -165,6 +169,7 @@ export default function App() {
       if (!st.joinedMain) { toast(t("group.gate")); return; }
       go("pilih");
     },
+    openDetail(team) { go("tim", { viewTeam: team }); },
     toChoosePage() { go("pilih"); },
     toMarketBack() { go("pasar"); },
     goDash() { go("dasbor"); },
@@ -172,7 +177,8 @@ export default function App() {
     chooseCreate() { go("buat", { mode: "create" }); },
     toggleApply(team) {
       if (st.myTeam) { toast(t("market.lockedOwner")); return; }
-      if (approvedApp(st)) { toast(t("market.lockedMember")); return; }
+      const act = activeApp(st);
+      if (act && act.team !== team) { toast(act.status === "approved" ? t("market.lockedMember") : t("market.oneAtATime", { team: act.team })); return; }
       update((s) => {
         const ex = s.apps.find((x) => x.team === team);
         if (ex) return ex.status === "pending" ? { apps: s.apps.filter((x) => x.team !== team), ...withLog(s, "withdraw", { team }) } : {};
@@ -262,6 +268,7 @@ export default function App() {
     case "grup": view = <Group {...common} actions={actions} />; break;
     case "pilih": view = <Choose {...common} actions={actions} />; break;
     case "pasar": view = <Market {...common} actions={actions} />; break;
+    case "tim": view = <TeamDetail {...common} actions={actions} />; break;
     case "buat": view = <Create {...common} actions={actions} />; break;
     default: view = <Dash {...common} actions={actions} />;
   }
