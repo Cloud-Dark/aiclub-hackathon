@@ -24,7 +24,7 @@ export default function Market({ st, t, get, role, actions, onNext, onBack }) {
           const ap = appOf(tm.nama);
           const cocok = tm.butuh.includes(a);
           const status = ap ? ap.status : null;
-          const stLabel = status === "approved" ? t("market.stApproved") : status === "rejected" ? t("market.stRejected") : status === "pending" ? t("market.stSent") : cocok ? t("market.stMatch") : t("market.stOpen");
+          const stLabel = status === "approved" ? t("market.stApproved") : ap && ap.reason === "expired" ? t("deadline.auto") : status === "rejected" ? t("market.stRejected") : status === "pending" ? t("market.stSent") : cocok ? t("market.stMatch") : t("market.stOpen");
           const stColor = status === "approved" ? "var(--cyan)" : status === "rejected" ? "var(--magenta)" : status ? "var(--yellow)" : cocok ? "var(--cyan)" : "var(--faint)";
           let btn;
           if (status === "approved") btn = <button type="button" className="cbtn go" onClick={() => actions.openTeamGroup(tm)}>{tm.wa ? t("market.openGroup") : t("market.groupSoon")}</button>;

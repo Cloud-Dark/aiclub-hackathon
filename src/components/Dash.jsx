@@ -7,6 +7,8 @@ import { CONFIG, WA_GROUP_URL } from "../data.js";
 import { findTeam } from "../lib/share.js";
 import { aktif } from "../lib/scoring.js";
 import { fmtTime } from "../lib/time.js";
+import { leftHM } from "../lib/rules.js";
+import { AnnTeaser } from "./Announcements.jsx";
 
 const COLOR = { pending: "var(--yellow)", approved: "var(--cyan)", rejected: "var(--magenta)" };
 
@@ -44,7 +46,8 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
                     <div key={ap.team} className="it" style={{ alignItems: "flex-start" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 180px", minWidth: 0 }}>
                         <span className="px" style={{ fontSize: 9 }}>{ap.team}</span>
-                        <span className="mono" style={{ fontSize: 18, color: "var(--dim)" }}>{ket[ap.status]}</span>
+                        <span className="mono" style={{ fontSize: 18, color: "var(--dim)" }}>{ap.reason === "expired" ? t("deadline.expired") : ket[ap.status]}</span>
+                        {ap.status === "pending" && <span className="note deadline">{t("deadline.left", leftHM(ap))}</span>}
                         {ap.status === "approved" && (team && team.wa
                           ? <a className="cbtn go" style={{ alignSelf: "flex-start", marginTop: 6 }} href={team.wa} target="_blank" rel="noopener noreferrer">{t("dash.joinTeam")}</a>
                           : <span className="note">{t("dash.noLink")}</span>)}
@@ -52,7 +55,7 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
                         {ap.status === "approved" && <div style={{ marginTop: 6 }}><ConfirmButton label={t("choose.leaveTeam")} sure={t("choose.sure")} onConfirm={() => actions.leaveTeam(ap.team)} /></div>}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
-                        <span className="px" style={{ fontSize: 7, color: COLOR[ap.status] }}>{stName[ap.status]}</span>
+                        <span className="px" style={{ fontSize: 7, color: COLOR[ap.status] }}>{ap.reason === "expired" ? t("deadline.auto") : stName[ap.status]}</span>
                         {CONFIG.demoOwner && ap.status === "pending" && (
                           <div className="row-btns">
                             <button type="button" className="cbtn go" onClick={() => actions.decideApp(ap.team, "approved")}>{t("dash.simApprove")}</button>
@@ -107,6 +110,7 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
           </div>
         </div>
         <div className="stack">
+          <AnnTeaser st={st} t={t} get={get} onOpen={actions.openAnnFrom} onAll={actions.toAnnouncements} />
           <Prize t={t} />
           <div className="card"><div className="kick c">{t("dash.yourRole")}</div><div className="px" style={{ fontSize: 11, lineHeight: 1.6 }}>{role(a).ringkas}</div><div className="txt">{role(a).desc}</div></div>
           <Challenges get={get} t={t} compact />

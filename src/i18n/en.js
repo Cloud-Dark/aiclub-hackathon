@@ -77,7 +77,9 @@ export default {
     "fromAccount": "Linked to your aiclub.id account. Fill in what's missing; city and WhatsApp are required.",
     "errCity": "Fill in your city first",
     "errWa": "WhatsApp number doesn't look right (9-15 digits)",
-    "emailLocked": "from your aiclub.id account"
+    "emailLocked": "from your aiclub.id account",
+    "github": "GITHUB",
+    "githubPh": "https://github.com/username"
   },
   "quiz": {
     "progress": "scenario {a} of {b}",
@@ -289,7 +291,10 @@ export default {
       "closeTeam": "Closed team {team}",
       "leave": "Left team {team}",
       "autoWithdraw": "Application to {team} cancelled automatically",
-      "withdrawAll": "Withdrew all applications"
+      "withdrawAll": "Withdrew all applications",
+      "autoReject": "Application to {team} rejected automatically (over 24 hours)",
+      "autoRejectWho": "{who}'s application rejected automatically (over 24 hours)",
+      "chat": "Sent a message in {team} chat"
     },
     "myTeam": {
       "title": "MY TEAM",
@@ -402,7 +407,8 @@ export default {
       "wa": "WhatsApp",
       "linkedin": "LinkedIn",
       "role": "Track",
-      "role2": "Second track"
+      "role2": "Second track",
+      "github": "GitHub"
     }
   },
   "login": {
@@ -461,6 +467,79 @@ export default {
     "s1": "1 · YOUR TEAM",
     "s2": "2 · WHO YOU'RE LOOKING FOR",
     "s3": "3 · TEAM WHATSAPP GROUP"
+  },
+  "ann": {
+    "nav": "ANNOUNCEMENTS",
+    "prompt": "info/announcements",
+    "title": "ANNOUNCEMENTS",
+    "lead": "Official updates from the organizers for all participants. Click to read the details.",
+    "pinned": "PINNED",
+    "views": "{n} views",
+    "new": "NEW",
+    "read": "READ",
+    "open": "READ",
+    "back": "BACK TO LIST",
+    "latest": "LATEST ANNOUNCEMENTS",
+    "all": "SEE ALL ANNOUNCEMENTS",
+    "unread": "{n} unread",
+    "demo": "Demo mode: view count = sample number + your views on this device. Each account counts once per announcement."
+  },
+  "announcements": [
+    {
+      "judul": "Finalist and Demo Day schedule",
+      "ringkas": "Finalists announced Nov 14, Demo Day & Awarding Nov 27 in Jakarta.",
+      "isi": [
+        "After the submission deadline on Nov 1, 23:59 WIB, the organizers review every submitted project.",
+        "Finalists are announced on Nov 14. They present their work at Demo Day & Awarding on Nov 27, 13:00–16:00 WIB in Jakarta.",
+        "1st, 2nd, and 3rd place are announced at the event."
+      ]
+    },
+    {
+      "judul": "Reminder: registration closes Nov 1, 23:59 WIB",
+      "ringkas": "Team registration and submissions close Nov 1 at 23:59 WIB.",
+      "isi": [
+        "The team market and registration close on Nov 1 at 23:59 WIB. Agentic AI projects are due by the same deadline.",
+        "Make sure your team is registered on the Tencent portal (step 2) and your project is submitted (step 3) before the deadline."
+      ]
+    },
+    {
+      "judul": "Team rule: owners decide within 24 hours",
+      "ringkas": "Applications not decided by the owner within 24 hours are rejected automatically.",
+      "isi": [
+        "One person can be a member of one team or the owner of one team, and may have only one active application.",
+        "Owners have 24 hours from when an application arrives to approve or reject it. After that it is rejected automatically so the applicant can look for another team.",
+        "While waiting, applicants may withdraw. Once approved, members can see the other team members with their contacts and chat in the team room."
+      ]
+    },
+    {
+      "judul": "AI Agent Hackathon registration is open",
+      "ringkas": "Register on this portal, register your team with Tencent, then submit your project.",
+      "isi": [
+        "Registration opened on Oct 15. There are three steps: register on this portal (details, scenarios, main group, team), register your team on the Tencent portal, then submit your project.",
+        "Join the main WhatsApp group to receive official updates from the organizers."
+      ]
+    }
+  ],
+  "room": {
+    "title": "MEMBERS & CONTACTS",
+    "owner": "OWNER",
+    "you": "YOU",
+    "noContact": "Owner contacts appear once the backend is connected.",
+    "locked": "Members, contacts, and team chat unlock once your application is approved.",
+    "chatTitle": "TEAM CHAT",
+    "ph": "Write a message to your team…",
+    "send": "SEND",
+    "empty": "No messages yet. Say hi to your team.",
+    "welcome": "Hi, welcome to team {team}! Introduce yourself here.",
+    "demo": "Demo mode: messages are stored on this device only. Once the backend is connected, chat syncs to every member.",
+    "errEmpty": "Write a message first",
+    "label": "Team chat message"
+  },
+  "deadline": {
+    "left": "The owner has {h} h {m} min left to decide",
+    "leftOwner": "{h}h {m}m left",
+    "expired": "Rejected automatically: the owner did not decide within 24 hours",
+    "auto": "AUTO-REJECTED"
   },
   "invite": {
     "banner": "You are invited to team {team}. Finish the registration steps and you will be taken straight to this team's page to apply.",

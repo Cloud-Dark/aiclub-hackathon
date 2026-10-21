@@ -77,7 +77,9 @@ export default {
     "fromAccount": "Terhubung dengan akun aiclub.id. Lengkapi data yang masih kosong; kota dan WhatsApp wajib.",
     "errCity": "Isi kota dulu ya",
     "errWa": "Nomor WhatsApp belum benar (9-15 angka)",
-    "emailLocked": "dari akun aiclub.id"
+    "emailLocked": "dari akun aiclub.id",
+    "github": "GITHUB",
+    "githubPh": "https://github.com/username"
   },
   "quiz": {
     "progress": "skenario {a} dari {b}",
@@ -289,7 +291,10 @@ export default {
       "closeTeam": "Menutup tim {team}",
       "leave": "Keluar dari tim {team}",
       "autoWithdraw": "Lamaran ke {team} dibatalkan otomatis",
-      "withdrawAll": "Menarik semua lamaran"
+      "withdrawAll": "Menarik semua lamaran",
+      "autoReject": "Lamaran ke {team} ditolak otomatis (lewat 24 jam)",
+      "autoRejectWho": "Lamaran {who} ditolak otomatis (lewat 24 jam)",
+      "chat": "Mengirim pesan di chat {team}"
     },
     "myTeam": {
       "title": "TIM SAYA",
@@ -402,7 +407,8 @@ export default {
       "wa": "WhatsApp",
       "linkedin": "LinkedIn",
       "role": "Jalur",
-      "role2": "Jalur kedua"
+      "role2": "Jalur kedua",
+      "github": "GitHub"
     }
   },
   "login": {
@@ -461,6 +467,79 @@ export default {
     "s1": "1 · TIMMU",
     "s2": "2 · SIAPA YANG KAMU CARI",
     "s3": "3 · GRUP WHATSAPP TIM"
+  },
+  "ann": {
+    "nav": "PENGUMUMAN",
+    "prompt": "info/pengumuman",
+    "title": "PENGUMUMAN",
+    "lead": "Info resmi panitia untuk semua peserta. Klik untuk membaca detailnya.",
+    "pinned": "DISEMATKAN",
+    "views": "{n}x dilihat",
+    "new": "BARU",
+    "read": "SUDAH DIBACA",
+    "open": "BACA",
+    "back": "KEMBALI KE DAFTAR",
+    "latest": "PENGUMUMAN TERBARU",
+    "all": "LIHAT SEMUA PENGUMUMAN",
+    "unread": "{n} belum dibaca",
+    "demo": "Mode demo: jumlah tayangan = angka contoh + tayanganmu di perangkat ini. Satu akun dihitung satu kali per pengumuman."
+  },
+  "announcements": [
+    {
+      "judul": "Jadwal finalis dan Demo Day",
+      "ringkas": "Finalis diumumkan 14 Nov, Demo Day & Awarding 27 Nov di Jakarta.",
+      "isi": [
+        "Setelah batas pengumpulan karya 1 Nov 23.59 WIB, panitia menilai semua project yang masuk.",
+        "Finalis diumumkan pada 14 Nov. Finalis mempresentasikan karyanya di Demo Day & Awarding, 27 Nov pukul 13.00–16.00 WIB di Jakarta.",
+        "Juara 1, 2, dan 3 diumumkan di acara tersebut."
+      ]
+    },
+    {
+      "judul": "Pengingat: batas pendaftaran 1 Nov 23.59 WIB",
+      "ringkas": "Pendaftaran tim dan pengumpulan karya ditutup 1 Nov pukul 23.59 WIB.",
+      "isi": [
+        "Pasar tim dan pendaftaran ditutup pada 1 Nov pukul 23.59 WIB. Karya Agentic AI dikumpulkan sebelum batas yang sama.",
+        "Pastikan tim sudah terdaftar di portal Tencent (langkah 2) dan project sudah dikirim (langkah 3) sebelum batas waktu."
+      ]
+    },
+    {
+      "judul": "Aturan bentuk tim: keputusan owner maksimal 24 jam",
+      "ringkas": "Lamaran yang tidak diputuskan owner dalam 24 jam ditolak otomatis.",
+      "isi": [
+        "Satu orang hanya bisa menjadi anggota satu tim atau owner satu tim, dan hanya boleh punya satu lamaran aktif.",
+        "Owner punya waktu 24 jam sejak lamaran masuk untuk menyetujui atau menolak. Lewat dari itu, lamaran otomatis ditolak supaya pelamar bisa mencari tim lain.",
+        "Selama menunggu, pelamar boleh menarik lamarannya. Setelah disetujui, anggota bisa melihat anggota tim lain beserta kontaknya dan chat di ruang tim."
+      ]
+    },
+    {
+      "judul": "Pendaftaran AI Agent Hackathon dibuka",
+      "ringkas": "Daftar di portal ini, daftarkan tim ke Tencent, lalu submit project.",
+      "isi": [
+        "Pendaftaran dibuka 15 Okt. Alurnya tiga langkah: daftar di portal ini (data, skenario, grup utama, tim), daftarkan tim ke portal Tencent, lalu submit project.",
+        "Gabung grup WhatsApp utama untuk menerima info resmi dari panitia."
+      ]
+    }
+  ],
+  "room": {
+    "title": "ANGGOTA & KONTAK",
+    "owner": "OWNER",
+    "you": "KAMU",
+    "noContact": "Kontak owner tampil setelah backend tersambung.",
+    "locked": "Anggota, kontak, dan chat tim terbuka setelah lamaranmu disetujui.",
+    "chatTitle": "CHAT TIM",
+    "ph": "Tulis pesan untuk tim…",
+    "send": "KIRIM",
+    "empty": "Belum ada pesan. Sapa timmu duluan.",
+    "welcome": "Halo, selamat datang di tim {team}! Kenalan dulu yuk di sini.",
+    "demo": "Mode demo: pesan hanya tersimpan di perangkat ini. Setelah backend tersambung, chat tersinkron ke semua anggota.",
+    "errEmpty": "Tulis pesan dulu",
+    "label": "Pesan chat tim"
+  },
+  "deadline": {
+    "left": "Owner punya {h} jam {m} menit lagi untuk memutuskan",
+    "leftOwner": "sisa {h}j {m}m",
+    "expired": "Ditolak otomatis: owner tidak memutuskan dalam 24 jam",
+    "auto": "DITOLAK OTOMATIS"
   },
   "invite": {
     "banner": "Kamu diundang ke tim {team}. Selesaikan langkah pendaftaran, lalu kamu langsung diarahkan ke halaman tim ini untuk melamar.",

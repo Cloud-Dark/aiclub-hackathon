@@ -46,6 +46,10 @@ export default function Identity({ st, patch, t, get, errors, onNext, onBack }) 
               onChange={(e) => patch({ linkedin: e.target.value })} />
           </Field>
         </div>
+        <Field label={t("identity.github") + opt}>
+          <input name="github" inputMode="url" autoComplete="url" value={st.github || ""} placeholder={t("identity.githubPh")}
+            onChange={(e) => patch({ github: e.target.value })} />
+        </Field>
         <div className="field">
           <span>{t("identity.now")}</span>
           <Combo id="latar" label={t("identity.now")} options={latarOpts} value={st.latar} t={t} onChange={(v) => patch({ latar: v })} />

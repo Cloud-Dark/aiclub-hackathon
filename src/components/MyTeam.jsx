@@ -2,6 +2,9 @@ import React, { useRef, useState } from "react";
 import { BUILDER, WA_LINK_RE } from "../data.js";
 import { ConfirmButton } from "./Widgets.jsx";
 import { teamLink } from "../lib/share.js";
+import { leftHM } from "../lib/rules.js";
+import { teamMembers, teamMessages } from "../lib/team.js";
+import TeamRoom from "./TeamRoom.jsx";
 
 // owner membagikan link tim; yang membuka link bisa melamar ke tim ini
 function ShareTeam({ st, t, role }) {
@@ -81,11 +84,12 @@ export default function MyTeam({ st, t, get, role, actions }) {
                   </div>
                   {ap.status === "pending" ? (
                     <div className="row-btns">
+                      <span className="note deadline">{t("deadline.leftOwner", leftHM(ap))}</span>
                       <button type="button" className="cbtn go" onClick={() => actions.decideApplicant(i, "approved")}>{m("approve")}</button>
                       <button type="button" className="cbtn" onClick={() => actions.decideApplicant(i, "rejected")}>{m("reject")}</button>
                     </div>
                   ) : (
-                    <span className="px" style={{ fontSize: 7, color: col }}>{m(ap.status)}</span>
+                    <span className="px" style={{ fontSize: 7, color: col }}>{ap.reason === "expired" ? t("deadline.auto") : m(ap.status)}</span>
                   )}
                 </div>
               );
@@ -96,6 +100,8 @@ export default function MyTeam({ st, t, get, role, actions }) {
       </div>
 
       <ShareTeam st={st} t={t} role={role} />
+
+      <TeamRoom st={st} t={t} role={role} team={team} members={teamMembers(st, team)} messages={teamMessages(st, team, t)} onSend={(x) => actions.sendChat(team.nama, x)} />
 
       <div className="card">
         <div className="kick c">{t("dash.inviteTitle")}</div>

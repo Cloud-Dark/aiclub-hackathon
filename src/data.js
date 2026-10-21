@@ -1,5 +1,6 @@
 // demoOwner: tampilkan tombol simulasi keputusan owner (sampai ada backend sungguhan)
-export const CONFIG = { modeDraft: false, quizLen: 6, demoOwner: true };
+// approveHours: batas owner memutuskan lamaran; lewat dari itu lamaran ditolak otomatis
+export const CONFIG = { modeDraft: false, quizLen: 6, demoOwner: true, approveHours: 24 };
 export const URUT = ["CEO", "CTO", "AI", "PM", "DSG", "GRW", "DOM", "DAT"];
 export const WEIGHTS = [
   [{ DOM: 3, PM: 1 }, { PM: 3, AI: 1 }, { CTO: 3, AI: 1 }, { CEO: 3 }, { DAT: 3 }],
@@ -30,16 +31,42 @@ export const TIM = [
   { nama: "ANTRE HABIS", kota: "Makassar", anggota: 3, ceo: "Fikri", butuh: ["DAT", "DSG"], wa: "https://chat.whatsapp.com/DummyAntreHabis05", hari: 6, grupN: 6 },
   { nama: "BACA KONTRAK", kota: "Medan", anggota: 2, ceo: "Ayu", butuh: ["DOM", "CTO"], wa: "https://chat.whatsapp.com/DummyBacaKontrak06", hari: 4, grupN: 5 }
 ];
+// kontak dummy (domain contoh), hanya tampil ke owner setelah pelamar disetujui
+const kontak = (n, i) => ({
+  wa: "0812000000" + String(i).padStart(2, "0"), email: n.toLowerCase() + "@contoh.id",
+  linkedin: "https://linkedin.com/in/contoh-" + n.toLowerCase(), github: "https://github.com/contoh-" + n.toLowerCase()
+});
 export const BUILDER = [
   { nama: "Dimas", kota: "Semarang", peran: "AI" }, { nama: "Lala", kota: "Denpasar", peran: "DSG" },
   { nama: "Hendra", kota: "Palembang", peran: "DOM" }, { nama: "Vina", kota: "Balikpapan", peran: "DAT" },
   { nama: "Arif", kota: "Pontianak", peran: "CTO" }, { nama: "Tari", kota: "Kupang", peran: "GRW" }
+].map((b, i) => ({ ...b, ...kontak(b.nama, 50 + i) }));
+
+// anggota tim contoh beserta kontak; hanya tampil ke pelamar yang sudah disetujui
+const ANGGOTA_RAW = {
+  "REKON": [["Raka", "CEO"], ["Wulan", "CTO"], ["Yoga", "PM"]],
+  "WARUNG TAP": [["Sari", "CEO"], ["Bima", "GRW"]],
+  "SIAP RISIKO": [["Bintang", "CEO"], ["Citra", "AI"], ["Fajar", "CTO"], ["Gita", "DAT"]],
+  "TANYA OPS": [["Nadia", "CEO"], ["Ilham", "CTO"]],
+  "ANTRE HABIS": [["Fikri", "CEO"], ["Joko", "AI"], ["Kirana", "PM"]],
+  "BACA KONTRAK": [["Ayu", "CEO"], ["Lutfi", "AI"]]
+};
+let nomor = 0;
+export const ANGGOTA = Object.fromEntries(Object.entries(ANGGOTA_RAW).map(([tim, xs]) =>
+  [tim, xs.map(([nama, peran], j) => ({ nama, peran, owner: j === 0, ...kontak(nama, ++nomor) }))]));
+
+// pengumuman: teks per bahasa ada di i18n "announcements" (urutan sama), views = tayangan contoh
+export const PENGUMUMAN = [
+  { id: "p-jadwal", at: "2026-10-21T10:00:00+07:00", pin: true, views: 87 },
+  { id: "p-batas-1-nov", at: "2026-10-21T09:00:00+07:00", pin: false, views: 142 },
+  { id: "p-aturan-tim", at: "2026-10-19T13:00:00+07:00", pin: false, views: 196 },
+  { id: "p-dibuka", at: "2026-10-15T09:00:00+07:00", pin: false, views: 318 }
 ];
 // pelamar contoh yang masuk ke tim buatan peserta (index ke BUILDER)
 export const SEED_APPLICANTS = [0, 4];
 
-export const SCREENS = ["intro", "login", "identitas", "kuis", "hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"];
-export const STEP_OF = { intro: -1, login: -1, identitas: 0, kuis: 0, hasil: 0, grup: 0, pilih: 0, pasar: 0, tim: 0, buat: 0, dasbor: 0, tencent: 1, submit: 2 };
+export const SCREENS = ["info", "intro", "login", "identitas", "kuis", "hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"];
+export const STEP_OF = { info: -1, intro: -1, login: -1, identitas: 0, kuis: 0, hasil: 0, grup: 0, pilih: 0, pasar: 0, tim: 0, buat: 0, dasbor: 0, tencent: 1, submit: 2 };
 
 // portal Tencent (lewat link aiclub.id)
 export const TENCENT_REGISTER_URL = "https://aiclub.id/l/O3Sa9yF";
@@ -50,5 +77,6 @@ export const ICONS = {
   user: "M3 1h4v1h1v3H7v1H3V5H2V2h1zM2 7h6v1h1v2H1V8h1z",
   quiz: "M3 0h4v1h1v3H7v1H6v2H4V4h1V3h1V2H4v1H2V1h1zM4 8h2v2H4z",
   path: "M1 1h3v3H1zM6 6h3v3H6zM4 2h4v1H4zM7 3h1v3H7zM2 4h1v4h3v1H2z",
-  team: "M2 1h2v2H2zM6 1h2v2H6zM1 4h4v3H1zM5 4h4v3H5zM2 7h2v2H2zM6 7h2v2H6z"
+  team: "M2 1h2v2H2zM6 1h2v2H6zM1 4h4v3H1zM5 4h4v3H5zM2 7h2v2H2zM6 7h2v2H6z",
+  bell: "M4 0h2v1h1v1h1v4h1v1H1V6h1V2h1V1h1zM4 8h2v1H4z"
 };

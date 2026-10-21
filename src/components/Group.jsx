@@ -17,6 +17,7 @@ export function shareText(st, t, get, role) {
     `${m("latar")}: ${get("identity.latar")[st.latar]}`,
     st.wa.trim() ? `${m("wa")}: ${st.wa.trim()}` : null,
     st.linkedin.trim() ? `${m("linkedin")}: ${st.linkedin.trim()}` : null,
+    (st.github || "").trim() ? `${m("github")}: ${st.github.trim()}` : null,
     `${m("role")}: ${role(a).nama}`,
     `${m("role2")}: ${role(kedua).nama}`
   ];

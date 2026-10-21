@@ -3,10 +3,12 @@ import { I18N, LANGS } from "../i18n/index.js";
 import { asset } from "./Brand.jsx";
 import { ICONS, STEP_OF } from "../data.js";
 import { total, reachable } from "../lib/scoring.js";
+import { unreadCount } from "./Announcements.jsx";
 
 const Icon = ({ d }) => <svg viewBox="0 0 10 10" shapeRendering="crispEdges" fill="currentColor"><path d={d} /></svg>;
 
-export function Header({ st, t, setLang, onLogout }) {
+export function Header({ st, t, setLang, onLogout, onAnn }) {
+  const un = unreadCount(st);
   return (
     <>
       <header className={"top" + (st.user ? " has-user" : "")}>
@@ -20,6 +22,9 @@ export function Header({ st, t, setLang, onLogout }) {
             </span>
           </div>
           <div className="meta"><span>{t("top.open")}</span><span style={{ color: "var(--line)" }}>|</span><span className="c">{t("top.demo")}</span></div>
+          <button type="button" className={"ann-btn" + (st.screen === "info" ? " on" : "")} onClick={onAnn} aria-label={t("ann.nav") + (un ? " · " + t("ann.unread", { n: un }) : "")}>
+            <Icon d={ICONS.bell} /><span className="l">{t("ann.nav")}</span>{un > 0 && <b className="dot-n">{un}</b>}
+          </button>
           {st.user && (
             <div className="user-chip" title={st.user.email}>
               <span className="as">{t("login.as")}</span><b>{st.user.nama}</b>
@@ -54,12 +59,13 @@ export function Stepper({ st, get, gotoStep }) {
   );
 }
 
-export function BottomNav({ st, t, get, gotoStep }) {
+export function BottomNav({ st, t, get, gotoStep, onAnn }) {
+  const un = unreadCount(st);
   const cur = STEP_OF[st.screen];
   const ic = [ICONS.user, ICONS.team, ICONS.path];
   return (
     <nav className="bnav" aria-label="steps">
-      <button type="button" className={cur === -1 ? "cur" : ""} aria-current={cur === -1 ? "page" : undefined} onClick={() => gotoStep(-1)}>
+      <button type="button" className={cur === -1 && st.screen !== "info" ? "cur" : ""} aria-current={cur === -1 && st.screen !== "info" ? "page" : undefined} onClick={() => gotoStep(-1)}>
         <Icon d={ICONS.home} /><span>{t("nav.home")}</span>
       </button>
       {get("steps").map((s, i) => (
@@ -68,6 +74,9 @@ export function BottomNav({ st, t, get, gotoStep }) {
           <Icon d={ic[i]} /><span>{s.label}</span>
         </button>
       ))}
+      <button type="button" className={st.screen === "info" ? "cur" : ""} aria-current={st.screen === "info" ? "page" : undefined} onClick={onAnn}>
+        <Icon d={ICONS.bell} /><span>{t("ann.nav")}</span>{un > 0 && <b className="dot-n">{un}</b>}
+      </button>
     </nav>
   );
 }

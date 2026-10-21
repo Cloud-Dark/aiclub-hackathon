@@ -18,11 +18,12 @@ import Tencent from "./components/Tencent.jsx";
 import Submit from "./components/Submit.jsx";
 import { SubSteps } from "./components/Widgets.jsx";
 import { Footer } from "./components/Brand.jsx";
-import { activeApp, canCreate } from "./lib/rules.js";
+import { activeApp, canCreate, expirePending } from "./lib/rules.js";
+import Announcements from "./components/Announcements.jsx";
 import { TIM } from "./data.js";
 import { readInviteFromUrl, findTeam, newTeamId } from "./lib/share.js";
 
-const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override",
+const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "github", "annViewed", "annOpen", "prevScreen", "chats", "latar", "idx", "jawab", "override",
   "clickedMain", "joinedMain", "mode", "viewTeam", "tencentClicked", "projectReady", "submitClicked", "tab", "apps", "undang", "myTeam", "applicants", "log", "sharedTeams", "invite"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // dibaca sekali saat modul dimuat (bukan di initializer state, yang bisa terpanggil dua kali)
@@ -30,8 +31,8 @@ const URL_INVITE = readInviteFromUrl();
 
 const fresh = () => ({
   user: null,
-  nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null,
-  clickedMain: false, joinedMain: false, mode: null, viewTeam: null, tencentClicked: false, projectReady: false, submitClicked: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: [], sharedTeams: [], invite: null
+  nama: "", kota: "", email: "", wa: "", linkedin: "", github: "", latar: "kerja-tech", idx: 0, jawab: [], override: null,
+  clickedMain: false, joinedMain: false, mode: null, viewTeam: null, tencentClicked: false, projectReady: false, submitClicked: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: [], sharedTeams: [], invite: null, chats: {}, annViewed: [], annOpen: null, prevScreen: null
 });
 
 function initState() {
@@ -40,6 +41,8 @@ function initState() {
     const saved = JSON.parse(localStorage.getItem("hk_state") || "null");
     if (saved && typeof saved === "object") PERSIST.forEach((k) => { if (k in saved) st[k] = saved[k]; });
   } catch (e) {}
+  st.applicants = st.applicants.map((x) => (x.at ? x : { ...x, at: Date.now() }));
+  st.apps = expirePending(st.apps); st.applicants = expirePending(st.applicants);
   if (st.myTeam && !st.myTeam.id) st.myTeam = { ...st.myTeam, id: newTeamId(), at: Date.now() };
   // link undangan tim (?tim=...): simpan timnya, lalu arahkan ke halaman tim setelah syarat terpenuhi
   const inv = URL_INVITE && { ...URL_INVITE };
@@ -56,6 +59,7 @@ function initState() {
     }
   }
   if (!SCREENS.includes(st.screen)) st.screen = "intro";
+  if (st.screen === "info") return st; // pengumuman bisa dibaca tanpa login
   if (st.screen !== "intro" && !st.user) st.screen = "intro";
   else if (!["intro", "login", "identitas"].includes(st.screen) && !identDone(st)) st.screen = "identitas";
   if (["hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
@@ -77,6 +81,20 @@ export default function App() {
   const { t, get, role } = makeT(st.lang);
 
   useEffect(() => { if (st.notice) { toast(t(st.notice)); patch({ notice: null }); } }, []);
+
+  // batas keputusan owner: cek lamaran yang lewat batas setiap 30 detik
+  useEffect(() => {
+    const tick = () => setSt((s) => {
+      const apps = expirePending(s.apps), applicants = expirePending(s.applicants);
+      if (apps === s.apps && applicants === s.applicants) return s;
+      let log = s.log;
+      apps.forEach((x, i) => { if (x !== s.apps[i]) log = [...log, { k: "autoReject", at: x.decidedAt, team: x.team }]; });
+      applicants.forEach((x, i) => { if (x !== s.applicants[i]) log = [...log, { k: "autoRejectWho", at: x.decidedAt, who: BUILDER[x.b].nama }]; });
+      return { ...s, apps, applicants, log: log.slice(-60) };
+    });
+    const id = setInterval(tick, 30000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     try {
@@ -145,6 +163,7 @@ export default function App() {
   }
   function back() {
     switch (st.screen) {
+      case "info": go(st.prevScreen && st.prevScreen !== "info" ? st.prevScreen : "intro", { annOpen: null }); break;
       case "login": go("intro"); break;
       case "identitas": go("intro"); break;
       case "kuis": if (st.idx > 0) patch({ idx: st.idx - 1 }); else go("identitas"); break;
@@ -184,7 +203,7 @@ export default function App() {
   function login(u) {
     setSt((s) => ({
       ...s, user: { email: u.email, nama: u.nama },
-      nama: s.nama || u.nama, email: u.email, kota: s.kota || u.kota || "", wa: s.wa || u.wa || "", linkedin: s.linkedin || u.linkedin || "",
+      nama: s.nama || u.nama, email: u.email, kota: s.kota || u.kota || "", wa: s.wa || u.wa || "", linkedin: s.linkedin || u.linkedin || "", github: s.github || u.github || "",
       screen: "identitas"
     }));
     window.scrollTo({ top: 0 });
@@ -228,7 +247,9 @@ export default function App() {
     decideApp(team, status) {
       update((s) => {
         let log = withLog(s, status, { team });
-        let apps = s.apps.map((x) => (x.team === team ? { ...x, status } : x));
+        const cur = s.apps.find((x) => x.team === team);
+        if (!cur || cur.status !== "pending") return {}; // sudah diputuskan atau ditolak otomatis
+        let apps = s.apps.map((x) => (x.team === team ? { ...x, status, decidedAt: Date.now() } : x));
         if (status === "approved") {
           // satu orang hanya bisa di satu tim: lamaran lain yang masih menunggu dibatalkan
           const others = apps.filter((x) => x.team !== team && x.status === "pending");
@@ -261,7 +282,7 @@ export default function App() {
       if (!canCreate(st)) { toast(t("choose.lockedMember", { team: "" })); return; }
       setSt((s) => ({
         ...s, mode: "create", myTeam: { ...team, id: newTeamId(), at: Date.now() }, undang: [],
-        applicants: SEED_APPLICANTS.map((b) => ({ b, status: "pending" })), ...withLog(s, "openTeam", { team: team.nama }), screen: "dasbor"
+        applicants: SEED_APPLICANTS.map((b) => ({ b, status: "pending", at: Date.now() })), ...withLog(s, "openTeam", { team: team.nama }), screen: "dasbor"
       }));
       window.scrollTo({ top: 0 });
     },
@@ -272,12 +293,25 @@ export default function App() {
     },
     saveTeamLink(wa) { update((s) => ({ myTeam: { ...s.myTeam, wa } })); },
     decideApplicant(i, status) {
-      update((s) => ({
-        applicants: s.applicants.map((x, j) => (j === i ? { ...x, status } : x)),
+      update((s) => s.applicants[i].status !== "pending" ? {} : ({
+        applicants: s.applicants.map((x, j) => (j === i ? { ...x, status, decidedAt: Date.now() } : x)),
         ...withLog(s, status === "approved" ? "approveWho" : "rejectWho", { who: BUILDER[s.applicants[i].b].nama })
       }));
     },
-    restart() { go("intro", fresh()); }
+    restart() { go("intro", fresh()); },
+    // pengumuman: buka daftar dari layar mana pun, catat tayangan sekali per akun
+    toAnnouncements() { if (st.screen !== "info") go("info", { prevScreen: st.screen, annOpen: null }); else go("info", { annOpen: null }); },
+    openAnn(id) {
+      update((s) => ({ annOpen: id, annViewed: id && !s.annViewed.includes(id) ? [...s.annViewed, id] : s.annViewed }));
+      window.scrollTo({ top: 0 });
+    },
+    openAnnFrom(id) { update((s) => ({ prevScreen: s.screen === "info" ? s.prevScreen : s.screen, screen: "info", annOpen: id, annViewed: s.annViewed.includes(id) ? s.annViewed : [...s.annViewed, id] })); window.scrollTo({ top: 0 }); },
+    sendChat(team, text) {
+      update((s) => {
+        const list = (s.chats[team] || []).concat({ me: true, who: s.nama.trim(), text, at: Date.now() }).slice(-200);
+        return { chats: { ...s.chats, [team]: list }, ...withLog(s, "chat", { team }) };
+      });
+    }
   };
   const redo = () => go("kuis", { jawab: [], idx: 0, override: null });
 
@@ -299,6 +333,7 @@ export default function App() {
   const common = { st, patch, t, get, role, onNext: next, onBack: back };
   let view;
   switch (st.screen) {
+    case "info": view = <Announcements {...common} actions={actions} />; break;
     case "intro": view = <Intro t={t} get={get} onNext={next} />; break;
     case "login": view = <Login t={t} onBack={back} onLogin={login} />; break;
     case "identitas": view = <Identity {...common} errors={errors} />; break;
@@ -316,7 +351,7 @@ export default function App() {
 
   return (
     <>
-      <Header st={st} t={t} setLang={setLang} onLogout={logout} />
+      <Header st={st} t={t} setLang={setLang} onLogout={logout} onAnn={actions.toAnnouncements} />
       <div className="wrap">
         <Stepper st={st} get={get} gotoStep={gotoStep} />
         <SubSteps st={st} t={t} onGo={goSub} />
@@ -324,7 +359,7 @@ export default function App() {
         <main id="app" aria-live="polite" data-step={STEP_OF[st.screen]}>{view}</main>
       </div>
       <Footer t={t} />
-      <BottomNav st={st} t={t} get={get} gotoStep={gotoStep} />
+      <BottomNav st={st} t={t} get={get} gotoStep={gotoStep} onAnn={actions.toAnnouncements} />
       <div className={"toast" + (toastMsg ? " on" : "")} role="status">{toastMsg}</div>
     </>
   );

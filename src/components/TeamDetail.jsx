@@ -2,7 +2,9 @@ import React from "react";
 import { Head, Actions } from "./Common.jsx";
 import { findTeam, teamDesc } from "../lib/share.js";
 import { aktif } from "../lib/scoring.js";
-import { activeApp } from "../lib/rules.js";
+import { activeApp, leftHM } from "../lib/rules.js";
+import { teamMembers, teamMessages } from "../lib/team.js";
+import TeamRoom from "./TeamRoom.jsx";
 
 export default function TeamDetail({ st, t, get, role, actions, onBack }) {
   const tm = findTeam(st, st.viewTeam);
@@ -14,7 +16,8 @@ export default function TeamDetail({ st, t, get, role, actions, onBack }) {
   const blocked = act && act.team !== tm.nama ? act : null;
   const cocok = tm.butuh.includes(a);
   const step = status === "approved" ? 3 : status === "pending" ? 2 : 1;
-  const stText = status === "approved" ? t("detail.sApproved") : status === "pending" ? t("detail.sPending") : status === "rejected" ? t("detail.sRejected") : t("detail.sNone");
+  const expired = ap && ap.reason === "expired";
+  const stText = status === "approved" ? t("detail.sApproved") : status === "pending" ? t("detail.sPending") : expired ? t("deadline.expired") : status === "rejected" ? t("detail.sRejected") : t("detail.sNone");
   const stColor = status === "approved" ? "var(--cyan)" : status === "rejected" ? "var(--magenta)" : status ? "var(--yellow)" : "var(--muted)";
   const slug = tm.nama.toLowerCase().replace(/\s+/g, "-");
 
@@ -78,11 +81,15 @@ export default function TeamDetail({ st, t, get, role, actions, onBack }) {
             <div className="mono" style={{ fontSize: 19, color: "var(--cyan)" }}>{t("detail.groupSize", { n: tm.grupN })}</div>
             <div className="txt">{t("detail.groupBody")}</div>
             <div className="status-line" style={{ color: stColor }}>&#9632; {stText}</div>
+            {status === "pending" && <div className="note deadline">{t("deadline.left", leftHM(ap))}</div>}
             {status !== "approved" && <div className="locked-link" aria-label={t("detail.locked")}>&#128274; {t("detail.locked")}</div>}
             {cta}
           </div>
         </div>
       </div>
+      {status === "approved"
+        ? <TeamRoom st={st} t={t} role={role} team={tm} members={teamMembers(st, tm)} messages={teamMessages(st, tm, t)} onSend={(x) => actions.sendChat(tm.nama, x)} />
+        : <div className="empty" style={{ marginTop: 18 }}>&#128274; {t("room.locked")}</div>}
       <Actions onBack={onBack} t={t}>
         <button type="button" className="btn ghost" onClick={onBack}>{t("detail.back")}</button>
       </Actions>
