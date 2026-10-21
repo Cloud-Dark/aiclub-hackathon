@@ -51,6 +51,9 @@ Asumsi:
 | AS-12 | Integritas tautan portal Tencent (`aiclub.id/l/...`) | Sedang | `src/data.js` | Konfigurasi terkontrol |
 | AS-13 | Ketersediaan portal selama masa pendaftaran | Sedang | GitHub Pages | Worker + D1 |
 | AS-14 | Reputasi penyelenggara (AIClub, Tencent) | Sedang | - | - |
+| AS-15 | Kontak anggota tim (WA, email, LinkedIn, GitHub) di ruang tim | Tinggi (data pribadi) | Data contoh (`contoh.id`) di bundel (`ANGGOTA`, `BUILDER`); kontak peserta sendiri di `localStorage` | Hanya dikirim server ke owner dan anggota disetujui di tim yang sama ([../brief.md](../brief.md)) |
+| AS-16 | Pesan chat tim | Sedang sampai tinggi (dapat memuat data pribadi) | `localStorage` (`chats`, 200 pesan per tim), hanya perangkat ini | Disimpan dan dikirim server ke anggota tim saja |
+| AS-17 | Pengumuman resmi dan hitungan tayangan | Sedang (keaslian informasi panitia) | Konstanta `PENGUMUMAN` dan teks i18n di bundel; `annViewed` di `localStorage` | Dikelola panitia di server; tayangan unik per akun dihitung server |
 
 ## 4. Batas Kepercayaan
 
@@ -130,6 +133,8 @@ Skala risiko: T (tinggi), S (sedang), R (rendah); "Kritis" dipakai untuk kebocor
 | T-8 | Tautan WA berbahaya (tautan non-WhatsApp, `javascript:`, atau awalan sah diikuti karakter tambahan) | Keduanya | Pengalihan phishing | S | `WA_LINK_RE` di klien dan server (hanya `https://chat.whatsapp.com/...`). Catatan: ekspresi saat ini hanya berjangkar di awal (`^`) tanpa `$`, sehingga teks setelah kode undangan lolos; sebaiknya diberi jangkar akhir di server. Kolom tautan di `Create.jsx` juga boleh kosong. Tautan dibuka dengan `rel="noopener noreferrer"`. |
 | T-9 | Perubahan bundel hasil build (supply chain: paket npm, CDN font) | Keduanya | Kode jahat tersuntik | S | Kunci versi lewat `package-lock.json`, tinjau dependensi (`react`, `react-dom`, `vite`, `@vitejs/plugin-react`), audit berkala (`npm audit`), pertimbangkan hosting font sendiri. |
 | T-10 | Perubahan tautan portal Tencent di `data.js` oleh pihak tak berwenang | Keduanya | Peserta diarahkan ke situs lain | S | Tinjauan permintaan tarik, proteksi branch `main`, tautan dikelola konfigurasi di server (target). |
+| T-11 | Manipulasi hitungan tayangan pengumuman (mengubah `annViewed`, membuka berulang lewat banyak akun atau permintaan langsung) | Keduanya | Angka tayangan tidak mencerminkan jangkauan sebenarnya | R | Sekarang: angka adalah contoh + tayangan lokal, tidak dipakai untuk keputusan. Target: tayangan unik per `memberId` dengan constraint unik di server, rate limit, abaikan permintaan tanpa session. |
+| T-12 | Mengakali batas keputusan 24 jam dengan mengubah jam perangkat atau `localStorage` (`at`, `status`, `reason`) | Sekarang | Lamaran tidak kedaluwarsa atau kedaluwarsa lebih cepat di perangkat itu | R (sekarang), S bila tetap di klien saat produksi | Target: kedaluwarsa dihitung dari waktu server dan dijalankan server; endpoint keputusan menolak lamaran yang tidak lagi `pending` (FR-063, FR-064). |
 
 ### 6.3 Repudiation (penyangkalan)
 
@@ -156,6 +161,8 @@ Skala risiko: T (tinggi), S (sedang), R (rendah); "Kritis" dipakai untuk kebocor
 | I-10 | Ekspor data pengurus (CSV) bocor atau diakses salah | Target | Kebocoran massal | T | Hanya peran berwenang; unduhan tercatat; masa simpan; enkripsi saat disimpan; tes A-21. |
 | I-11 | Key pengurus `/agent/*` bocor ke klien/bundel | Target | Penyalahgunaan akses pengurus | Kritis | Key tidak pernah di bundel; variabel `VITE_*` terlihat publik, jadi jangan dipakai untuk rahasia; gunakan session member atau service binding ([../brief.md](../brief.md) 4 dan 7). |
 | I-12 | Cache/CDN menyimpan respons berisi data pribadi | Target | Pengguna lain menerima respons orang lain | S | `Cache-Control: private, no-store` pada endpoint berkredensial; `Vary: Cookie`. |
+| I-13 | **Kontak anggota bocor.** Kontak contoh di `ANGGOTA`/`BUILDER` ada di bundel publik walau UI hanya menampilkannya di ruang tim setelah disetujui; pada target, endpoint anggota dapat bocor ke non-anggota bila otorisasi salah | Keduanya | Spam, doxxing, penyalahgunaan nomor WA dan email | T (target), R (sekarang: data contoh `contoh.id`) | Jangan menaruh kontak nyata di repo. Target: kontak hanya untuk owner dan anggota disetujui di tim yang sama, minimisasi kolom, persetujuan peserta sebelum kontak dibagikan ke tim, kontak dicabut saat anggota keluar atau tim ditutup. |
+| I-14 | Pesan chat tim berisi data pribadi (nomor, alamat, dokumen) atau terbaca pihak di luar tim | Keduanya | Kebocoran data pribadi antarpeserta | S | Sekarang: pesan hanya di `localStorage` perangkat ini (ikut terhapus saat logout). Target: akses chat hanya untuk anggota tim, imbauan agar tidak membagikan data sensitif, masa simpan dan penghapusan pesan, pesan tidak ditulis ke log server. |
 
 ### 6.5 Denial of Service
 
@@ -168,6 +175,7 @@ Skala risiko: T (tinggi), S (sedang), R (rendah); "Kritis" dipakai untuk kebocor
 | D-5 | Lonjakan trafik menjelang batas 1 Nov | Keduanya | Portal lambat | S | Aset statis di CDN; kuota Worker/D1 dipantau; uji beban ringan. GitHub Pages memiliki batas lalu lintas dari pihak GitHub: _TBD_. |
 | D-6 | `localStorage` rusak atau penuh membuat aplikasi tidak dapat dimuat | Sekarang | Peserta terkunci | R | Pembacaan dibungkus `try/catch` dan validasi `SCREENS`; petunjuk reset di [17_DEVELOPER_SETUP.md](17_DEVELOPER_SETUP.md). |
 | D-7 | Ketergantungan pada pihak ketiga (GitHub Pages, Google Fonts, `wa.me`, portal Tencent) tidak tersedia | Keduanya | Alur terhenti sebagian | R | Font memiliki fallback; tidak ada mitigasi atas portal Tencent selain komunikasi. |
+| D-8 | Spam atau penyalahgunaan chat tim (banjir pesan, pelecehan, tautan berbahaya) | Keduanya | Anggota terganggu, kuota server habis | S | Sekarang: validasi kosong, maks 1000 karakter, simpan 200 pesan terakhir, hanya lokal. Target: rate limit per `memberId`, batas panjang di server, pesan dirender sebagai teks (tanpa HTML), pelaporan dan moderasi pengurus (_TBD_), anggota yang keluar kehilangan akses. |
 
 ### 6.6 Elevation of Privilege (peningkatan hak)
 
@@ -180,6 +188,8 @@ Skala risiko: T (tinggi), S (sedang), R (rendah); "Kritis" dipakai untuk kebocor
 | E-5 | Menambahkan diri sebagai owner dan anggota sekaligus (melanggar eksklusivitas) | Target | Menguasai dua posisi | S | Validasi di server dalam satu transaksi, tes A-07/A-08. |
 | E-6 | Eskalasi lewat parameter (`role`, `isAdmin`) di badan permintaan atau klaim token | Target | Hak pengurus | T | Peran selalu dibaca dari session/DB, bukan dari masukan klien. |
 | E-7 | Menyalahgunakan CSRF agar korban yang login melakukan aksi (lihat bagian 7.3) | Target | Aksi atas nama korban | T | Lihat mitigasi CSRF. |
+| E-8 | Non-anggota membaca anggota, kontak, atau chat tim lain dengan mengganti ID tim pada endpoint ruang tim | Target | Kebocoran kontak dan isi chat | T | Periksa keanggotaan (owner atau lamaran `approved`) pada setiap permintaan; respons `404` seragam; tes otorisasi dua akun. |
+| E-9 | Peserta selain panitia menerbitkan atau mengubah pengumuman | Target | Informasi palsu atas nama panitia | S | Penulisan pengumuman hanya untuk peran panitia di server; audit log penerbitan. |
 
 ## 7. Topik Khusus
 
@@ -246,6 +256,8 @@ Opsi login B (OAuth/OIDC) dan C (magic link) membawa risikonya sendiri: validasi
 | Kota | Wajib | Level kota saja (bukan alamat). Boleh tampil pada kartu tim/builder; target memakai `cityId`. |
 | Email | Opsional (dari akun) | Tidak ditampilkan ke peserta lain; dipakai untuk undangan. |
 | LinkedIn | Opsional | Hanya bila dibagikan sendiri. |
+| GitHub | Opsional | Hanya bila dibagikan sendiri; ikut pesan perkenalan dan kontak ruang tim. |
+| Kontak di ruang tim (WA, email, LinkedIn, GitHub) | Tampil ke owner dan anggota disetujui (mode demo: data contoh) | Hanya untuk anggota tim yang sama; perlu dasar persetujuan sebelum dibagikan ke tim (pertanyaan 8.5 brief); lihat I-13. |
 | Masa simpan | Belum ditetapkan | _TBD_ (usulan: hapus atau anonimkan setelah event berakhir). |
 | Hak subjek data (akses, koreksi, hapus) | Belum ada | _TBD_; perlu jalur permintaan melalui pengurus. |
 | Dasar hukum dan kebijakan privasi | Belum ada di portal | _TBD_; perlu layar persetujuan sebelum nomor WA tampil ke pengurus atau owner. |
@@ -288,6 +300,9 @@ Sekarang: tidak ada endpoint, jadi brute force tidak relevan; satu-satunya "gerb
 | A17 | Audit dependensi dan kunci versi | T-9 | Keduanya | Sedang | `package-lock.json` ada; audit berkala belum |
 | A18 | Inventaris subdomain `*.aiclub.id` dan peninjauan XSS | S-5 | Target | Tinggi | Belum |
 | A19 | Kebijakan retensi dan hak subjek data | Bagian 7.4 | Target | Tinggi | _TBD_ |
+| A20 | Kontak dan chat tim hanya untuk anggota tim (owner dan `approved`), dengan rate limit dan batas panjang pesan | I-13, I-14, D-8, E-8 | Target | Wajib sebelum produksi fitur ruang tim | Belum ([../brief.md](../brief.md)) |
+| A21 | Kedaluwarsa lamaran dan tayangan pengumuman dihitung server; penerbitan pengumuman hanya peran panitia | T-11, T-12, E-9 | Target | Tinggi | Belum ([../brief.md](../brief.md)) |
+| A22 | Tidak menaruh kontak nyata di `ANGGOTA`/`BUILDER`; hapus data contoh saat integrasi | I-13 | Sekarang | Wajib | Aturan proses; data contoh memakai domain `contoh.id` |
 
 ## 9. Risiko Residual dan Keputusan Terbuka
 
@@ -302,4 +317,4 @@ Sekarang: tidak ada endpoint, jadi brute force tidak relevan; satu-satunya "gerb
 
 - [../brief.md](../brief.md): arsitektur target, aturan bisnis 5.3, kontrak API, kriteria selesai, risiko.
 - [12_TEST_STRATEGY.md](12_TEST_STRATEGY.md): tes A-01 sampai A-22 yang memverifikasi mitigasi di dokumen ini.
-- Kode: `src/lib/rules.js`, `src/data.js` (`WA_LINK_RE`, `TIM`, `DUMMY_USERS`), `src/App.jsx` (`PERSIST`, `hk_state`), `src/components/Login.jsx`, `Group.jsx`, `TeamDetail.jsx`, `Create.jsx`.
+- Kode: `src/lib/rules.js` (termasuk `expirePending`), `src/lib/team.js`, `src/components/TeamRoom.jsx`, `src/components/Announcements.jsx`, `src/data.js` (`WA_LINK_RE`, `TIM`, `DUMMY_USERS`, `ANGGOTA`, `PENGUMUMAN`), `src/App.jsx` (`PERSIST`, `hk_state`), `src/components/Login.jsx`, `Group.jsx`, `TeamDetail.jsx`, `Create.jsx`.

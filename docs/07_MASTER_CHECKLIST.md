@@ -38,6 +38,12 @@ Dasar: riwayat commit 2026-10-19 sampai 2026-10-21.
 - [x] `brief.md`: rencana integrasi login, session, dan database aiclub.id (2026-10-21)
 - [x] Perbaikan `vite.config.js`: `emptyOutDir: false` dan hanya `docs/assets` yang dibersihkan, agar `docs/*.md` tidak terhapus (2026-10-21)
 - [x] Link undangan tim: owner membagikan link `?tim=...`, pengunjung melamar lewat link (FR-059, mode demo)
+- [x] Pengumuman panitia: daftar (disematkan lalu terbaru), detail, tayangan sekali per akun, penanda BARU/SUDAH DIBACA, badge belum dibaca di header dan navigasi bawah, kartu di dasbor, dapat dibaca tanpa login (FR-060 sampai FR-062, mode demo; commit `1ef83f1`)
+- [x] Batas keputusan owner 24 jam (`CONFIG.approveHours`): penolakan otomatis, sisa waktu untuk pelamar dan owner, keputusan tidak dapat diulang (FR-063, FR-064, mode demo; commit `1ef83f1`)
+- [x] Ruang tim: anggota dan kontak (WA, email, LinkedIn, GitHub) setelah disetujui atau bagi owner; terkunci bila belum disetujui (FR-065, data contoh; commit `1ef83f1`)
+- [x] Chat tim di dalam aplikasi: validasi kosong, maks 1000 karakter, 200 pesan terakhir per tim di `localStorage` (FR-066, hanya di perangkat ini; commit `1ef83f1`)
+- [x] Kolom GitHub (opsional) di data diri dan pesan perkenalan (FR-067; commit `1ef83f1`)
+- [x] Teks jadwal header hanya tampil pada lebar 1400 px ke atas agar tidak bertabrakan dengan tombol pengumuman (commit `1ef83f1`)
 - [ ] Dokumentasi proyek (`docs/00` sampai `docs/20`, `standards/`) lengkap dan ditinjau (sedang disusun, status Draft)
 
 ## B. Fase 0 - Keputusan
@@ -70,6 +76,7 @@ Dasar: riwayat commit 2026-10-19 sampai 2026-10-21.
 ## D. Fase 2 - Data Peserta
 
 - [ ] Migrasi `hackathon_participant`
+- [ ] Kolom GitHub peserta tersimpan di server bersama data diri (FR-067; [../brief.md](../brief.md))
 - [ ] `PATCH /api/hackathon/me` dengan validasi input
 - [ ] Jalur resmi dihitung ulang di server dari `jawaban`
 - [ ] Flag `joinedMain`, `tencentClicked`, `projectReady`, `submitClicked` tersimpan di server
@@ -93,10 +100,17 @@ Dasar: riwayat commit 2026-10-19 sampai 2026-10-21.
 - [ ] Uji lamaran bersamaan (race) lolos
 - [ ] Layar Market, TeamDetail, Choose, MyTeam, Create, Dash membaca dari API dengan state memuat, kosong, gagal
 - [ ] Uji end-to-end dua akun nyata
+- [ ] Batas keputusan 24 jam ditegakkan server: lamaran `pending` lewat batas ditolak otomatis tanpa bergantung pada klien yang terbuka; keputusan atas lamaran yang tidak lagi `pending` ditolak (FR-063, FR-064; [../brief.md](../brief.md))
+- [ ] Kontak anggota hanya dikirim ke owner dan anggota disetujui di tim yang sama; `403` untuk pihak lain (FR-065; [../brief.md](../brief.md))
+- [ ] Chat tim tersimpan di server dan tersinkron ke semua anggota, dengan pemeriksaan keanggotaan, batas panjang, dan pembatasan laju (FR-066; [../brief.md](../brief.md))
+- [ ] Pengumuman diambil dari server; tayangan unik per akun dicatat dan dihitung di server; status baca lintas perangkat (FR-060, FR-061; [../brief.md](../brief.md))
+- [ ] Uji: lamaran kedaluwarsa, kontak tidak bocor ke non-anggota, chat dua akun nyata, tayangan tidak bertambah saat dibuka berulang
 
 ## F. Fase 4 - Pembersihan
 
 - [ ] `TIM`, `BUILDER`, `SEED_APPLICANTS`, `CONFIG.demoOwner` dihapus
+- [ ] `ANGGOTA`, kontak contoh di `BUILDER`, angka tayangan contoh `PENGUMUMAN[].views`, dan sapaan owner contoh di chat dihapus
+- [ ] State lokal `chats` dan `annViewed` diganti data server
 - [ ] Teks dan cabang kode mode demo dihapus
 - [ ] `localStorage` hanya berisi preferensi
 - [ ] Pencarian: tidak ada referensi `DUMMY_USERS`, `TIM`, `BUILDER`

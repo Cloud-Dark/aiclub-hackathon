@@ -4,7 +4,7 @@
 > Terakhir diperbarui: 2026-10-21
 > Pemilik: Tim AIClub Hackathon
 
-Dokumen ini mencatat risiko proyek integrasi portal dengan aiclub.id. Sumber: [../brief.md](../brief.md) bagian 11 dan tinjauan kode (`src/App.jsx`, `src/data.js`, `src/lib/rules.js`, `vite.config.js`). Rencana kerja: [06_IMPLEMENTATION_PLAN.md](06_IMPLEMENTATION_PLAN.md). Keputusan terkait: [11_DECISIONS.md](11_DECISIONS.md).
+Dokumen ini mencatat risiko proyek integrasi portal dengan aiclub.id. Sumber: [../brief.md](../brief.md) bagian 11 dan tinjauan kode (`src/App.jsx`, `src/data.js`, `src/lib/rules.js`, `src/lib/team.js`, `src/components/TeamRoom.jsx`, `src/components/Announcements.jsx`, `vite.config.js`). Rencana kerja: [06_IMPLEMENTATION_PLAN.md](06_IMPLEMENTATION_PLAN.md). Keputusan terkait: [11_DECISIONS.md](11_DECISIONS.md).
 
 Skala: Likelihood dan Impact bernilai Rendah, Sedang, atau Tinggi. Nilai adalah penilaian awal per 2026-10-21 dan perlu ditinjau ulang setelah Fase 0. Nama pemilik perorangan: _TBD_; kolom Owner memuat peran.
 
@@ -28,14 +28,18 @@ Skala: Likelihood dan Impact bernilai Rendah, Sedang, atau Tinggi. Nilai adalah 
 | R14 | Identitas peserta aiclub.id tidak dapat dicocokkan dengan pendaftar portal Tencent (link `aiclub.id/l/...` hanya short link tanpa data balik) | brief 8.6 | Sedang | Sedang | Putuskan di Fase 0 apakah pencocokan lewat email atau `memberId` diperlukan; bila ya, minta mekanisme dari Tencent/pengelola | Pengelola aiclub.id + Tim AIClub Hackathon | Terbuka |
 | R15 | Lokasi dan detail Demo Day belum final (`event.venue`: "lokasi detail menyusul") sehingga teks portal bisa usang | `src/i18n/id.js` | Sedang | Rendah | Perbarui i18n id/en/zh saat info tersedia | Tim AIClub Hackathon | Terbuka |
 | R16 | Peran admin tidak ditentukan sehingga data peserta (termasuk WA) dapat dilihat pihak yang tidak berwenang | brief 8.7 | Sedang | Tinggi | Tetapkan peran di Fase 0; otorisasi endpoint admin; ekspor hanya peran berwenang | Pengelola aiclub.id | Terbuka |
+| R17 | Kontak anggota (WA, email, LinkedIn, GitHub) di ruang tim bocor ke non-anggota, atau dibagikan tanpa persetujuan peserta | Kode `TeamRoom.jsx`, `src/lib/team.js`, `ANGGOTA`; [../brief.md](../brief.md) | Sedang | Tinggi | Mode demo hanya memakai kontak contoh (`contoh.id`); target: kontak dikirim server hanya ke owner dan anggota disetujui, dasar persetujuan dipastikan (brief 8.5), kontak dicabut saat keluar atau tim ditutup | Tim AIClub Hackathon | Terbuka |
+| R18 | Spam atau penyalahgunaan chat tim, termasuk pesan berisi data pribadi | Kode `TeamRoom.jsx` (FR-066) | Sedang | Sedang | Sekarang: chat hanya lokal, maks 1000 karakter, 200 pesan per tim. Target: rate limit, akses hanya anggota, moderasi dan pelaporan (_TBD_), masa simpan pesan, imbauan tidak membagikan data sensitif | Tim AIClub Hackathon | Terbuka |
+| R19 | Hitungan tayangan pengumuman dapat dimanipulasi atau menyesatkan (mode demo memakai angka contoh) | Kode `Announcements.jsx` (`annViews`) | Tinggi (dummy) / Rendah (produksi) | Rendah | Catatan mode demo tampil di layar; target: tayangan unik per akun dihitung server | Tim AIClub Hackathon | Terbuka |
+| R20 | Penolakan otomatis 24 jam hanya berjalan di klien (jam perangkat, aplikasi harus terbuka) sehingga tidak konsisten antarperangkat dan dapat diakali; tanpa server, owner nyata tidak menerima lamaran sehingga lamaran tetap kedaluwarsa | Kode `rules.js` (`expirePending`), `App.jsx` | Tinggi (dummy) | Sedang | Jalankan kedaluwarsa di server dengan waktu server; notifikasi owner (FR-030) agar keputusan tidak terlewat; endpoint keputusan menolak lamaran yang tidak `pending` | Tim AIClub Hackathon | Terbuka |
 
 ## 2. Peta Singkat
 
 | Impact \ Likelihood | Rendah | Sedang | Tinggi |
 |---|---|---|---|
-| Tinggi | R10 | R1, R3, R4, R9, R16 | R2, R8 |
-| Sedang | - | R7, R14, R11 (setelah perbaikan: rendah) | R5, R6 |
-| Rendah | - | R12, R13, R15 | - |
+| Tinggi | R10 | R1, R3, R4, R9, R16, R17 | R2, R8 |
+| Sedang | - | R7, R14, R18, R11 (setelah perbaikan: rendah) | R5, R6, R20 |
+| Rendah | - | R12, R13, R15 | R19 |
 
 Pemetaan menggunakan nilai pada tabel; perbedaan kecil (mis. R6 dan R7 yang bergantung konteks dummy atau produksi) dijelaskan di kolom Likelihood.
 

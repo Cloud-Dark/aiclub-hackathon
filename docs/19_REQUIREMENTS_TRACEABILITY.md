@@ -71,6 +71,14 @@ Pemetaan FR ke TR disusun dari judul dan isi kedua dokumen pada 2026-10-21; peru
 | FR-057 | Mitra dan identitas merek | US-001 | TR-007, TR-006 |
 | FR-059 | Link undangan tim (bagikan dan gabung lewat link) | US-014, US-015, US-016, US-019 | TR-061, TR-062, TR-063 |
 | FR-058 | Admin dan ekspor data peserta untuk pengurus | US-032 | TR-068, TR-064 |
+| FR-060 | Layar pengumuman: daftar dan detail | US-035 | TR-009, TR-012, TR-053 |
+| FR-061 | Tayangan dan status baca pengumuman | US-036 | TR-009, TR-024 |
+| FR-062 | Akses pengumuman dari header, navigasi bawah, dan dasbor | US-035, US-036 | TR-048, TR-051 |
+| FR-063 | Batas keputusan owner 24 jam dan penolakan otomatis | US-037 | TR-013, TR-016, TR-024 |
+| FR-064 | Sisa waktu keputusan dan keputusan sekali | US-037 | TR-024, TR-064 |
+| FR-065 | Ruang tim: anggota dan kontak | US-038 | TR-061, TR-064, TR-068 |
+| FR-066 | Chat tim di dalam aplikasi | US-039 | TR-009, TR-060, TR-066 |
+| FR-067 | Kolom GitHub di data diri | US-003, US-011, US-038 | TR-018, TR-050 |
 
 ## 2. Matriks US ke FR
 
@@ -78,7 +86,7 @@ Pemetaan FR ke TR disusun dari judul dan isi kedua dokumen pada 2026-10-21; peru
 |---|---|
 | US-001 | FR-056, FR-057 |
 | US-002 | FR-001, FR-002, FR-004 |
-| US-003 | FR-005, FR-007, FR-009 |
+| US-003 | FR-005, FR-007, FR-009, FR-067 |
 | US-004 | FR-006, FR-008 |
 | US-005 | FR-010, FR-011 |
 | US-006 | FR-012 |
@@ -86,7 +94,7 @@ Pemetaan FR ke TR disusun dari judul dan isi kedua dokumen pada 2026-10-21; peru
 | US-008 | FR-014 |
 | US-009 | FR-014 |
 | US-010 | FR-016, FR-018 |
-| US-011 | FR-017 |
+| US-011 | FR-017, FR-067 |
 | US-012 | FR-020 |
 | US-013 | FR-021, FR-022 |
 | US-014 | FR-023, FR-024 |
@@ -110,6 +118,11 @@ Pemetaan FR ke TR disusun dari judul dan isi kedua dokumen pada 2026-10-21; peru
 | US-032 | FR-058 |
 | US-033 | FR-054 |
 | US-034 | FR-027, FR-030 |
+| US-035 | FR-060, FR-062 |
+| US-036 | FR-061, FR-062 |
+| US-037 | FR-063, FR-064 |
+| US-038 | FR-065, FR-067 |
+| US-039 | FR-066 |
 
 ## 3. Matriks TR ke FR
 
@@ -125,22 +138,22 @@ TR tanpa FR adalah kebutuhan non-fungsional (platform, performa, keamanan, opera
 | TR-006 | Font eksternal Google Fonts (As-built) | FR-057 |
 | TR-007 | Aset brand statis (As-built) | FR-056, FR-057 |
 | TR-008 | State aplikasi tunggal di komponen App (As-built) | Non-fungsional |
-| TR-009 | Persistensi `hk_state` lewat daftar `PERSIST` (As-built) | FR-003, FR-014, FR-053 |
+| TR-009 | Persistensi `hk_state` lewat daftar `PERSIST` (As-built) | FR-003, FR-014, FR-053, FR-060, FR-061, FR-066 |
 | TR-010 | Preferensi bahasa `hk_lang` (As-built) | FR-046 |
 | TR-011 | Akses `localStorage` aman gagal (As-built) | FR-003 |
-| TR-012 | Pemulihan layar saat rehidrasi (As-built) | FR-008, FR-018, FR-053 |
-| TR-013 | Log aktivitas lokal berbatas (As-built) | FR-036, FR-037 |
+| TR-012 | Pemulihan layar saat rehidrasi (As-built) | FR-008, FR-018, FR-053, FR-060 |
+| TR-013 | Log aktivitas lokal berbatas (As-built) | FR-036, FR-037, FR-063 |
 | TR-014 | Ganti persistensi klien menjadi hanya preferensi (Rencana) | FR-053 |
 | TR-015 | Aturan satu orang satu tim (As-built, sisi klien) | FR-008, FR-020, FR-021, FR-055 |
-| TR-016 | Satu lamaran aktif per orang (As-built, sisi klien) | FR-020, FR-021, FR-026, FR-029 |
+| TR-016 | Satu lamaran aktif per orang (As-built, sisi klien) | FR-020, FR-021, FR-026, FR-029, FR-063 |
 | TR-017 | Perhitungan jalur peran deterministik (As-built) | FR-010, FR-013, FR-014, FR-024 |
-| TR-018 | Validasi input di klien (As-built) | FR-001, FR-005, FR-006, FR-007, FR-011, FR-031 |
+| TR-018 | Validasi input di klien (As-built) | FR-001, FR-005, FR-006, FR-007, FR-011, FR-031, FR-067 |
 | TR-019 | Login memakai session aiclub.id (Rencana) | FR-004 |
 | TR-020 | Atribut cookie session (Rencana) | FR-004 |
 | TR-021 | Klien API `src/lib/api.js` (Rencana) | FR-004 |
 | TR-022 | BFF Cloudflare (Rencana) | FR-004 |
 | TR-023 | Akses database D1 (Rencana) | FR-038 |
-| TR-024 | Aturan bisnis ditegakkan server dan constraint DB (Rencana) | FR-019, FR-022, FR-026, FR-029, FR-033, FR-035, FR-038, FR-044 |
+| TR-024 | Aturan bisnis ditegakkan server dan constraint DB (Rencana) | FR-019, FR-022, FR-026, FR-029, FR-033, FR-035, FR-038, FR-044, FR-061, FR-063, FR-064 |
 | TR-025 | Kontrak endpoint (Rencana) | FR-009, FR-019, FR-030, FR-034 |
 | TR-026 | Pembacaan profil dari aiclub.id (Rencana) | FR-009 |
 | TR-027 | Skor jalur resmi dihitung ulang server (Rencana) | FR-015 |
@@ -164,27 +177,27 @@ TR tanpa FR adalah kebutuhan non-fungsional (platform, performa, keamanan, opera
 | TR-045 | Bahasa dokumen dan judul (As-built) | FR-056 |
 | TR-046 | Manajemen fokus saat pindah layar (As-built) | FR-052, FR-054 |
 | TR-047 | Wilayah live dan toast (As-built) | FR-054 |
-| TR-048 | Navigasi langkah (As-built) | FR-049, FR-050, FR-051 |
+| TR-048 | Navigasi langkah (As-built) | FR-049, FR-050, FR-051, FR-062 |
 | TR-049 | Pintasan keyboard kuis (As-built) | FR-012 |
-| TR-050 | Formulir yang dapat diakses (As-built) | FR-005 |
-| TR-051 | Gerak berkurang dan ikon dekoratif (As-built) | FR-051, FR-054 |
+| TR-050 | Formulir yang dapat diakses (As-built) | FR-005, FR-067 |
+| TR-051 | Gerak berkurang dan ikon dekoratif (As-built) | FR-051, FR-054, FR-062 |
 | TR-052 | Audit aksesibilitas formal (Rencana, `_TBD_`) | Non-fungsional |
-| TR-053 | Tiga bahasa (As-built) | FR-045 |
+| TR-053 | Tiga bahasa (As-built) | FR-045, FR-060 |
 | TR-054 | Deteksi bahasa (As-built) | FR-046 |
 | TR-055 | Fallback kunci dan interpolasi (As-built) | FR-047 |
 | TR-056 | Format waktu per lokal (As-built) | FR-048 |
 | TR-057 | Font untuk aksara Mandarin (As-built) | FR-048 |
 | TR-058 | Paritas kamus otomatis (Rencana) | FR-045 |
 | TR-059 | Tidak ada rahasia di bundel klien (As-built, wajib dipertahankan) | FR-027 |
-| TR-060 | Pencegahan XSS (As-built) | Non-fungsional |
-| TR-061 | Tautan keluar aman (As-built) | FR-016, FR-039, FR-043 |
+| TR-060 | Pencegahan XSS (As-built) | FR-066 |
+| TR-061 | Tautan keluar aman (As-built) | FR-016, FR-039, FR-043, FR-065 |
 | TR-062 | Validasi skema tautan WhatsApp (As-built klien, Rencana server) | FR-031, FR-032 |
 | TR-063 | Kontrol akses `wa_link` (Rencana) | FR-023, FR-025, FR-027, FR-030, FR-032 |
-| TR-064 | Otorisasi dan kode status (Rencana) | FR-022, FR-033, FR-058 |
+| TR-064 | Otorisasi dan kode status (Rencana) | FR-022, FR-033, FR-058, FR-064, FR-065 |
 | TR-065 | Perlindungan CSRF dan CORS (Rencana) | Non-fungsional |
-| TR-066 | Pembatasan laju dan pencegahan penyalahgunaan (Rencana, `_TBD_`) | Non-fungsional |
+| TR-066 | Pembatasan laju dan pencegahan penyalahgunaan (Rencana, `_TBD_`) | FR-066 |
 | TR-067 | Header keamanan (Rencana) | Non-fungsional |
-| TR-068 | Privasi data pribadi (Rencana) | FR-058 |
+| TR-068 | Privasi data pribadi (Rencana) | FR-058, FR-065 |
 | TR-069 | Penanganan galat tanpa kebocoran (Rencana) | Non-fungsional |
 | TR-070 | Log dan retensi (Rencana, `_TBD_`) | Non-fungsional |
 | TR-071 | Deploy GitHub Pages dari `docs/` (As-built) | Non-fungsional |
@@ -198,7 +211,7 @@ TR tanpa FR adalah kebutuhan non-fungsional (platform, performa, keamanan, opera
 
 ## 4. Ringkasan
 
-- FR: 59; US: 34; TR: 78.
+- FR: 67; US: 39; TR: 78.
 - FR tanpa US: FR-003, FR-019, FR-028, FR-041, FR-044, FR-046, FR-047, FR-050, FR-051, FR-055.
-- TR tanpa FR (non-fungsional): 26.
+- TR tanpa FR (non-fungsional): 24 (TR-060 dan TR-066 kini terkait FR-066).
 - Cara memelihara: tambah baris saat FR/TR baru terbit; jangan menomori ulang ID yang sudah ada.

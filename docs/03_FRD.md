@@ -25,11 +25,11 @@ Seluruh path relatif terhadap `/home/user/aiclub-hackathon/`. `C:` = `src/compon
 
 ### 1.4 Penyimpanan state (as-built)
 
-State peserta disimpan di `localStorage` kunci `hk_state` untuk kunci berikut (`PERSIST` di `src/App.jsx`): `user, screen, nama, kota, email, wa, linkedin, latar, idx, jawab, override, clickedMain, joinedMain, mode, viewTeam, tencentClicked, projectReady, submitClicked, tab, apps, undang, myTeam, applicants, log`. Bahasa disimpan terpisah di kunci `hk_lang`.
+State peserta disimpan di `localStorage` kunci `hk_state` untuk kunci berikut (`PERSIST` di `src/App.jsx`): `user, screen, nama, kota, email, wa, linkedin, github, annViewed, annOpen, prevScreen, chats, latar, idx, jawab, override, clickedMain, joinedMain, mode, viewTeam, tencentClicked, projectReady, submitClicked, tab, apps, undang, myTeam, applicants, log, sharedTeams, invite`. Bahasa disimpan terpisah di kunci `hk_lang`.
 
 ### 1.5 Layar dan kode layar (`SCREENS`, `src/data.js`)
 
-`intro`, `login`, `identitas`, `kuis`, `hasil`, `grup`, `pilih`, `pasar`, `tim` (detail tim), `buat`, `dasbor`, `tencent`, `submit`. Pemetaan layar ke langkah besar (`STEP_OF`): `intro` dan `login` = -1; `identitas` sampai `dasbor` = 0 (Daftar); `tencent` = 1; `submit` = 2.
+`info` (pengumuman), `intro`, `login`, `identitas`, `kuis`, `hasil`, `grup`, `pilih`, `pasar`, `tim` (detail tim), `buat`, `dasbor`, `tencent`, `submit`. Pemetaan layar ke langkah besar (`STEP_OF`): `info`, `intro`, dan `login` = -1; `identitas` sampai `dasbor` = 0 (Daftar); `tencent` = 1; `submit` = 2.
 
 ## 2. Indeks kebutuhan
 
@@ -46,9 +46,10 @@ State peserta disimpan di `localStorage` kunci `hk_state` untuk kunci berikut (`
 | I. Submit project | FR-042 sampai FR-044 | 3 |
 | J. Internasionalisasi (id/en/zh) | FR-045 sampai FR-048 | 4 |
 | K. Navigasi dan stepper | FR-049 sampai FR-055 | 7 |
-| L. Informasi event dan administrasi | FR-056 sampai FR-058 | 3 |
+| L. Informasi event dan administrasi (termasuk link undangan tim) | FR-056 sampai FR-059 | 4 |
+| M. Pengumuman, batas keputusan owner, dan ruang tim | FR-060 sampai FR-067 | 8 |
 
-Total: 58 kebutuhan (48 berstatus Ada, 10 berstatus Rencana: FR-004, 009, 015, 019, 022, 030, 038, 041, 044, 058).
+Total: 67 kebutuhan (57 berstatus Ada, 10 berstatus Rencana: FR-004, 009, 015, 019, 022, 030, 038, 041, 044, 058). FR-060 sampai FR-067 berjalan di mode demo; kebutuhan backend-nya dicatat di masing-masing FR dan dirinci di [../brief.md](../brief.md).
 
 ---
 
@@ -518,6 +519,7 @@ Acceptance criteria:
 - G: peserta menekan SETUJUI; T: status lamaran menjadi approved dan log "approved" tercatat; lamaran pending lain (bila ada) dihapus dengan log "autoWithdraw".
 - G: peserta menekan TOLAK; T: status rejected dan log "rejected" tercatat.
 - G: `CONFIG.demoOwner` salah; T: tombol simulasi dan catatan demo tidak tampil.
+- G: lamaran sudah diputuskan atau ditolak otomatis; T: keputusan tidak dapat diulang (FR-064); lamaran pending yang lewat 24 jam ditolak otomatis (FR-063).
 - Seluruh logika ini dihapus pada integrasi (brief bagian 7, butir 5).
 
 ### FR-029 Keluar dari tim, tarik semua lamaran
@@ -666,7 +668,7 @@ Acceptance criteria:
 | Terkait | US-024 |
 
 Acceptance criteria:
-- G: peserta melakukan aksi bertanda log (joinMain, apply, withdraw, approved, rejected, invite, uninvite, openTeam, approveWho, rejectWho, closeTeam, leave, autoWithdraw, withdrawAll); T: entri `{k, at, ...}` ditambahkan.
+- G: peserta melakukan aksi bertanda log (joinMain, apply, withdraw, approved, rejected, invite, uninvite, openTeam, approveWho, rejectWho, closeTeam, leave, autoWithdraw, withdrawAll, autoReject, autoRejectWho, chat); T: entri `{k, at, ...}` ditambahkan.
 - G: lebih dari 60 entri; T: hanya 60 terakhir disimpan.
 - G: dasbor; T: entri tampil dari terbaru ke terlama dengan waktu terformat sesuai bahasa (hari, bulan singkat, jam, menit) dan kalimat dari kunci i18n.
 - G: tidak ada aktivitas; T: "Belum ada aktivitas."
@@ -984,7 +986,7 @@ Acceptance criteria:
 - G: informasi event; T: total hadiah USD 3.100 (Juara 1 USD 1.800; Juara 2 USD 800; Juara 3 USD 500); tanggal penting: 15 OKT pendaftaran dibuka; 1 NOV batas pendaftaran dan pengumpulan karya 23.59 WIB; 14 NOV pengumuman finalis; 27 NOV Demo Day dan Awarding, Jakarta, 13.00-16.00 WIB.
 - G: tantangan; T: tiga kartu: The Workplace Brain (LEARN ANYWHERE), The Office Agent (AUTOMATE BETTER), The Creator Agent (CREATE BOLDER) dengan deskripsi.
 - G: tombol MULAI PENDAFTARAN; T: `login` bila belum masuk, atau `identitas` bila sudah.
-- Teks header: "pendaftaran 15 Okt - 1 Nov" dan "demo day akhir Nov - Jakarta". Data dari <https://aiclub.id/event/tencent-cloud-hackathon-2026>; lokasi detail Demo Day: "menyusul" (_TBD_).
+- Teks header: "pendaftaran 15 Okt - 1 Nov" dan "demo day akhir Nov - Jakarta". Teks ini tampil di header pada lebar layar 1400 px ke atas dan di bawah header pada layar yang lebih sempit (FR-062). Data dari <https://aiclub.id/event/tencent-cloud-hackathon-2026>; lokasi detail Demo Day: "menyusul" (_TBD_).
 
 ### FR-057 Mitra dan identitas merek
 
@@ -1041,7 +1043,166 @@ Acceptance criteria:
 
 ---
 
-## 15. Matriks ringkas: FR terhadap status, sumber, dan user story
+## 15. Modul M: Pengumuman, batas keputusan owner, dan ruang tim
+
+Modul ini mencakup pengumuman resmi panitia, batas waktu keputusan owner atas lamaran, ruang tim (anggota, kontak, dan chat), serta kolom GitHub di data diri. Seluruh FR di modul ini berjalan di mode demo; kebutuhan backend-nya (tabel, endpoint, dan aturan server) dirinci di [../brief.md](../brief.md) (bagian 5.2, 5.3, dan 6.3 sampai 6.5). Dokumen ini tidak menyalin detail tersebut.
+
+### FR-060 Layar pengumuman: daftar dan detail
+
+| Atribut | Nilai |
+|---|---|
+| Status | Ada (as-built, dummy) |
+| Prioritas | Should |
+| Sumber | `C:Announcements.jsx` (`Announcements`), `App.jsx` (`toAnnouncements`, `openAnn`, `back`, `initState`), `src/data.js` (`PENGUMUMAN`, `SCREENS`, `STEP_OF.info = -1`), `I:id.js` (`ann.*`, `announcements`) |
+| Terkait | US-035; FR-052, FR-053, FR-061, FR-062 |
+
+Layar `info` memuat daftar pengumuman panitia. Metadata (id, waktu terbit, sematan, tayangan contoh) ada di `PENGUMUMAN`; teks judul, ringkasan, dan isi per bahasa ada di kunci i18n `announcements` dengan urutan yang sama.
+
+Acceptance criteria:
+- G: peserta membuka layar `info`; W: dirender; T: judul "PENGUMUMAN", kalimat pengantar, dan daftar pengumuman berisi judul, ringkasan, waktu terbit, jumlah tayangan, serta penanda baca (FR-061).
+- G: daftar pengumuman; T: pengumuman yang disematkan (`pin: true`, berlabel "DISEMATKAN") tampil paling atas, sisanya diurutkan dari waktu terbit terbaru.
+- G: peserta mengklik satu pengumuman; W: `openAnn(id)`; T: layar detail menampilkan judul, metadata, dan seluruh paragraf isi; halaman digulir ke atas.
+- G: layar detail; W: menekan "KEMBALI KE DAFTAR" atau Kembali; T: kembali ke daftar pengumuman (`annOpen = null`).
+- G: layar daftar; W: menekan Kembali; T: kembali ke layar asal (`prevScreen`), atau `intro` bila tidak ada layar asal.
+- G: pengunjung belum login; W: membuka layar `info` (termasuk saat memuat ulang halaman); T: pengumuman tetap dapat dibaca tanpa dialihkan ke `intro` atau `login`.
+- G: layar `info`; T: `STEP_OF` bernilai -1 sehingga tidak ada langkah besar yang aktif di stepper.
+- G: bahasa diganti; T: teks pengumuman mengikuti bahasa aktif (id/en/zh).
+- Kebutuhan backend: pengumuman dikelola panitia dan diambil dari server, bukan dari konstanta di bundel klien ([../brief.md](../brief.md)).
+
+### FR-061 Tayangan dan status baca pengumuman
+
+| Atribut | Nilai |
+|---|---|
+| Status | Ada (as-built, dummy) |
+| Prioritas | Should |
+| Sumber | `C:Announcements.jsx` (`annViews`, `unreadCount`, `Meta`), `App.jsx` (`openAnn`, `openAnnFrom`), state `annViewed` |
+| Terkait | US-036; FR-060, FR-062 |
+
+Acceptance criteria:
+- G: peserta membuka detail pengumuman yang belum pernah dibuka; T: id pengumuman ditambahkan ke `annViewed` satu kali.
+- G: peserta membuka pengumuman yang sama lagi; T: `annViewed` tidak berubah (tayangan dihitung sekali per akun).
+- G: daftar atau detail; T: jumlah tayangan = `views` contoh di `PENGUMUMAN` ditambah 1 bila id ada di `annViewed`, dengan teks "{n}x dilihat".
+- G: pengumuman belum dibuka; T: penanda "BARU". G: sudah dibuka; T: penanda "SUDAH DIBACA".
+- G: layar daftar dan detail; T: catatan mode demo tampil: jumlah tayangan adalah angka contoh ditambah tayangan di perangkat ini.
+- Batasan mode demo: `annViewed` tersimpan di `localStorage` perangkat ini, sehingga "sekali per akun" belum berlaku lintas perangkat dan angka tayangan bukan data nyata.
+- Kebutuhan backend: pencatatan tayangan unik per akun dan penghitungan total di server ([../brief.md](../brief.md)).
+
+### FR-062 Akses pengumuman dari header, navigasi bawah, dan dasbor
+
+| Atribut | Nilai |
+|---|---|
+| Status | Ada (as-built, dummy) |
+| Prioritas | Should |
+| Sumber | `C:Chrome.jsx` (`Header`, `BottomNav`), `C:Dash.jsx`, `C:Announcements.jsx` (`AnnTeaser`, `unreadCount`), `src/styles.css` (`.ann-btn`, `.dot-n`, `.meta`, `.sub-meta`), `src/data.js` (`ICONS.bell`) |
+| Terkait | US-035, US-036; FR-051, FR-056, FR-060, FR-061 |
+
+Acceptance criteria:
+- G: lebar layar 768 px ke atas; T: header memuat tombol "PENGUMUMAN" berikon lonceng; tombol berstatus aktif saat berada di layar `info`.
+- G: layar kecil; T: navigasi bawah memuat tombol "PENGUMUMAN" di ujung kanan dengan `aria-current="page"` saat berada di layar `info`; tombol Awal tidak ikut aktif di layar `info`.
+- G: ada pengumuman yang belum dibuka; T: badge angka jumlah belum dibaca tampil pada tombol header dan navigasi bawah; label aksesibel tombol memuat "{n} belum dibaca". G: semua sudah dibuka; T: badge tidak tampil.
+- G: tombol pengumuman ditekan dari layar mana pun; W: `toAnnouncements`; T: layar `info` (daftar) terbuka dan layar asal disimpan di `prevScreen`.
+- G: layar `dasbor`; T: kolom kanan memuat kartu "PENGUMUMAN TERBARU" berisi tiga pengumuman teratas (urutan FR-060), jumlah belum dibaca, dan tombol "LIHAT SEMUA PENGUMUMAN".
+- G: peserta mengklik pengumuman di kartu dasbor; W: `openAnnFrom(id)`; T: detail pengumuman terbuka, tayangan tercatat (FR-061), dan Kembali dari daftar kembali ke `dasbor`.
+- G: lebar layar di bawah 1400 px; T: teks jadwal header ("pendaftaran 15 Okt - 1 Nov", "demo day akhir Nov - Jakarta") disembunyikan dari header dan ditampilkan di bawah header (`.sub-meta`); pada 1400 px ke atas teks jadwal tampil di header. Sebelumnya ambang ini 1000 px; dinaikkan agar tidak bertabrakan dengan tombol pengumuman.
+
+### FR-063 Batas keputusan owner 24 jam dan penolakan otomatis
+
+| Atribut | Nilai |
+|---|---|
+| Status | Ada (as-built, dummy) |
+| Prioritas | Must |
+| Sumber | `L:rules.js` (`DEADLINE_MS`, `deadlineOf`, `expirePending`), `App.jsx` (`initState`, efek interval 30 detik), `src/data.js` (`CONFIG.approveHours = 24`), `I:id.js` (`deadline.*`, `dash.log.autoReject`, `dash.log.autoRejectWho`) |
+| Terkait | US-037; FR-026, FR-028, FR-033, FR-037 |
+
+Owner memiliki waktu `CONFIG.approveHours` (24) jam sejak lamaran masuk (`at`) untuk memutuskan. Aturan berlaku untuk lamaran milik peserta (`apps`) dan pelamar di tim milik owner (`applicants`).
+
+Acceptance criteria:
+- G: lamaran berstatus `pending` dengan `at + 24 jam <= sekarang`; W: aplikasi dibuka (`initState`); T: lamaran menjadi `{status: "rejected", reason: "expired", decidedAt: at + 24 jam}`.
+- G: aplikasi sedang terbuka; W: pengecekan berkala tiap 30 detik menemukan lamaran yang lewat batas; T: status diubah seperti di atas dan log "autoReject" (lamaran peserta, "Lamaran ke {team} ditolak otomatis (lewat 24 jam)") atau "autoRejectWho" (pelamar di tim owner) tercatat.
+- G: tidak ada lamaran yang lewat batas; T: state tidak diubah (tidak memicu render ulang).
+- G: lamaran ditolak otomatis; T: label status "DITOLAK OTOMATIS" tampil di dasbor, pasar tim, dan panel pelamar owner; keterangan di dasbor dan detail tim: "Ditolak otomatis: owner tidak memutuskan dalam 24 jam".
+- G: lamaran peserta ditolak otomatis; T: peserta tidak lagi memiliki lamaran aktif dan dapat melamar ke tim lain (FR-026).
+- G: data lama berisi pelamar tanpa `at`; W: aplikasi dibuka; T: `at` diisi waktu saat itu sehingga batas dihitung mulai dari pemuatan tersebut.
+- G: lamaran kedaluwarsa ketika aplikasi sedang tertutup; W: aplikasi dibuka; T: status diubah dan log "autoReject"/"autoRejectWho" tetap tercatat dengan waktu batasnya (`expireAll` di `App.jsx`, dipakai `initState` dan pengecekan berkala).
+- Kebutuhan backend: penolakan otomatis dijalankan di server (terjadwal atau saat dibaca), tidak bergantung pada aplikasi peserta yang terbuka ([../brief.md](../brief.md)).
+
+### FR-064 Sisa waktu keputusan dan keputusan sekali
+
+| Atribut | Nilai |
+|---|---|
+| Status | Ada (as-built, dummy) |
+| Prioritas | Must |
+| Sumber | `L:rules.js` (`msLeft`, `leftHM`), `App.jsx` (`decideApp`, `decideApplicant`, `toggleApply`), `C:Dash.jsx`, `C:TeamDetail.jsx`, `C:MyTeam.jsx`, `C:Market.jsx` |
+| Terkait | US-037; FR-026, FR-028, FR-033, FR-063 |
+
+Acceptance criteria:
+- G: lamaran peserta berstatus `pending`; W: dasbor atau detail tim dibuka; T: tampil "Owner punya {h} jam {m} menit lagi untuk memutuskan" (menit dibulatkan ke atas).
+- G: owner melihat pelamar berstatus `pending`; T: panel pelamar menampilkan "sisa {h}j {m}m" di samping tombol SETUJUI dan TOLAK.
+- G: lamaran peserta berstatus `pending`; W: menekan TARIK LAMARAN; T: lamaran dihapus dan log "withdraw" tercatat (FR-026).
+- G: lamaran sudah berstatus `approved` atau `rejected` (termasuk ditolak otomatis); W: keputusan dipanggil lagi (`decideApp` atau `decideApplicant`), misalnya dari tab lain atau klik terlambat; T: tidak ada perubahan state.
+- G: lamaran diputuskan owner atau simulasi; T: `decidedAt` diisi waktu keputusan.
+- Kebutuhan backend: sisa waktu dihitung dari waktu server, dan endpoint keputusan menolak lamaran yang tidak lagi `pending` ([../brief.md](../brief.md)).
+
+### FR-065 Ruang tim: anggota dan kontak
+
+| Atribut | Nilai |
+|---|---|
+| Status | Ada (as-built, dummy; anggota dan kontak contoh) |
+| Prioritas | Should |
+| Sumber | `C:TeamRoom.jsx` (`TeamRoom`, `Contacts`), `L:team.js` (`teamMembers`, `isOwnTeam`), `C:TeamDetail.jsx`, `C:MyTeam.jsx`, `src/data.js` (`ANGGOTA`, `BUILDER` dengan kontak), `I:id.js` (`room.*`) |
+| Terkait | US-038; FR-025, FR-027, FR-033, FR-059 |
+
+Acceptance criteria:
+- G: lamaran peserta ke tim X disetujui; W: detail tim X dibuka; T: kartu "ANGGOTA & KONTAK" menampilkan jumlah dan daftar anggota (dari `ANGGOTA`) ditambah peserta sendiri berlabel "KAMU"; owner berlabel "OWNER".
+- G: peserta adalah owner; W: dasbor (panel TIM SAYA); T: kartu yang sama menampilkan owner (peserta sendiri) dan pelamar yang sudah disetujui beserta kontaknya (dari `BUILDER`).
+- G: anggota memiliki kontak; T: tampil tautan WA (`wa.me`, nomor `08...` diubah menjadi `628...`), email (`mailto:`), LinkedIn, dan GitHub; seluruh tautan dibuka di tab baru (`noopener noreferrer`).
+- G: nilai LinkedIn atau GitHub tidak diawali `https://`; T: tautan tersebut tidak ditampilkan.
+- G: lamaran belum ada, masih `pending`, atau ditolak; W: detail tim; T: anggota, kontak, dan chat tidak dirender; tampil pesan terkunci "Anggota, kontak, dan chat tim terbuka setelah lamaranmu disetujui."
+- G: tim berasal dari link undangan (`?tim=`, FR-059) dan lamaran disetujui (simulasi); T: owner tampil tanpa kontak dengan catatan "Kontak owner tampil setelah backend tersambung."
+- Batasan mode demo: kontak anggota adalah data contoh (domain `contoh.id`) di bundel klien; penyembunyian hanya di UI.
+- Kebutuhan backend: kontak anggota hanya dikirim server kepada owner dan anggota yang disetujui di tim yang sama ([../brief.md](../brief.md)).
+
+### FR-066 Chat tim di dalam aplikasi
+
+| Atribut | Nilai |
+|---|---|
+| Status | Ada (as-built, dummy; hanya di perangkat ini) |
+| Prioritas | Should |
+| Sumber | `C:TeamRoom.jsx`, `L:team.js` (`teamMessages`), `App.jsx` (`sendChat`), state `chats`, `I:id.js` (`room.*`, `dash.log.chat`) |
+| Terkait | US-039; FR-037, FR-065 |
+
+Acceptance criteria:
+- G: peserta berada di ruang tim (owner atau anggota disetujui); T: kartu "CHAT TIM - {nama tim}" menampilkan riwayat pesan, kolom isian, dan tombol KIRIM.
+- G: peserta adalah anggota (bukan owner); T: pesan pertama adalah sapaan contoh dari owner: "Halo, selamat datang di tim {team}! Kenalan dulu yuk di sini."
+- G: kolom kosong atau hanya spasi; W: KIRIM; T: pesan galat "Tulis pesan dulu" dan tidak ada pesan dikirim.
+- G: teks valid; W: KIRIM atau Enter; T: pesan `{me: true, who, text, at}` ditambahkan ke `chats[nama tim]`, kolom dikosongkan, log "chat" tercatat, dan daftar pesan digulir ke bawah.
+- G: teks lebih dari 1000 karakter; T: kolom membatasi masukan (`maxLength = 1000`) dan pesan dipotong menjadi 1000 karakter.
+- G: lebih dari 200 pesan dalam satu tim; T: hanya 200 pesan terakhir disimpan.
+- G: daftar pesan; T: setiap pesan menampilkan pengirim ("KAMU" untuk pesan sendiri) dan waktu sesuai bahasa; isi ditampilkan sebagai teks biasa (tidak dirender sebagai HTML); daftar memakai `role="log"` dan `aria-live="polite"`.
+- G: belum ada pesan; T: "Belum ada pesan. Sapa timmu duluan."
+- Batasan mode demo: pesan hanya tersimpan di `localStorage` perangkat ini dan tidak terkirim ke anggota lain; keterangan ini tampil di bawah kartu chat.
+- Kebutuhan backend: penyimpanan pesan, pengiriman ke semua anggota, pembatasan laju, dan pemeriksaan keanggotaan di server ([../brief.md](../brief.md)).
+
+### FR-067 Kolom GitHub di data diri
+
+| Atribut | Nilai |
+|---|---|
+| Status | Ada (as-built, dummy) |
+| Prioritas | Could |
+| Sumber | `C:Identity.jsx`, `C:Group.jsx` (`shareText`), `App.jsx` (`login`, `fresh`, `PERSIST`), `I:id.js` (`identity.github`, `identity.githubPh`, `group.msg.github`) |
+| Terkait | US-003, US-011, US-038; FR-005, FR-017, FR-065 |
+
+Acceptance criteria:
+- G: layar `identitas`; T: kolom "GITHUB (opsional)" tampil dengan placeholder `https://github.com/username`.
+- G: kolom dikosongkan; W: LANJUT; T: tidak ada galat (kolom opsional).
+- G: kolom terisi; W: pesan perkenalan grup utama disusun (FR-017); T: baris "GitHub: {nilai}" ikut dalam pesan. G: kosong; T: baris tidak disertakan.
+- G: akun login memiliki GitHub; W: login; T: kolom terisi bila sebelumnya kosong.
+- G: peserta menjadi anggota atau owner; T: GitHub peserta tampil sebagai kontak di ruang tim bila diawali `https://` (FR-065).
+- Kebutuhan backend: kolom GitHub disimpan bersama data peserta ([../brief.md](../brief.md)).
+
+---
+
+## 16. Matriks ringkas: FR terhadap status, sumber, dan user story
 
 | FR | Modul | Status | Sumber utama | US |
 |---|---|---|---|---|
@@ -1103,13 +1264,24 @@ Acceptance criteria:
 | FR-056 | Info event | Ada | `Intro.jsx`, `EventInfo.jsx` | US-001 |
 | FR-057 | Info event | Ada | `Brand.jsx`, `Chrome.jsx` | US-001 |
 | FR-058 | Admin | Rencana | brief 8.7, 9 | US-032 |
+| FR-059 | Info event (link tim) | Ada | `share.js`, `MyTeam.jsx`, `App.jsx` | US-014, US-015, US-016, US-019 |
+| FR-060 | Pengumuman | Ada | `Announcements.jsx`, `App.jsx`, `data.js` | US-035 |
+| FR-061 | Pengumuman | Ada (demo) | `Announcements.jsx`, `App.jsx` | US-036 |
+| FR-062 | Pengumuman | Ada | `Chrome.jsx`, `Dash.jsx`, `Announcements.jsx` | US-035, US-036 |
+| FR-063 | Batas keputusan | Ada (demo) | `rules.js`, `App.jsx`, `data.js` | US-037 |
+| FR-064 | Batas keputusan | Ada (demo) | `rules.js`, `App.jsx`, `Dash.jsx`, `MyTeam.jsx`, `TeamDetail.jsx` | US-037 |
+| FR-065 | Ruang tim | Ada (contoh) | `TeamRoom.jsx`, `team.js`, `data.js` | US-038 |
+| FR-066 | Ruang tim | Ada (demo) | `TeamRoom.jsx`, `team.js`, `App.jsx` | US-039 |
+| FR-067 | Data diri | Ada | `Identity.jsx`, `Group.jsx` | US-003, US-011, US-038 |
 
-## 16. Hal yang belum didefinisikan (_TBD_)
+## 17. Hal yang belum didefinisikan (_TBD_)
 
 | Butir | Catatan |
 |---|---|
 | Opsi login final (A, B, atau C) | Menunggu jawaban pengelola aiclub.id (brief 8.1 sampai 8.3) |
 | Bentuk notifikasi ke owner | Tidak ada di as-built maupun brief |
+| Pengelolaan pengumuman oleh panitia (siapa yang menulis, menyematkan, dan menghapus) | Pengumuman as-built berupa konstanta `PENGUMUMAN` dan teks i18n; kebutuhan backend di [../brief.md](../brief.md) |
+| Moderasi chat tim (laporan, hapus pesan, retensi) | Chat as-built hanya lokal (FR-066); kebijakan moderasi belum ditetapkan |
 | Layar persetujuan penggunaan data | Disebut di brief 8.5; belum ada FR rinci |
 | Mekanisme pencocokan identitas dengan Tencent | Brief 8.6 |
 | Cakupan akses admin (pusat atau kota) dan format ekspor | Brief 8.7 |

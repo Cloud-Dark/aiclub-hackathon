@@ -42,7 +42,7 @@ Bukan tujuan: mengganti portal Tencent, menilai karya, atau mengelola grup Whats
 |---|---|---|---|
 | Peserta mandiri ("builder") | Individu tanpa tim; latar: kerja di perusahaan teknologi, non-teknologi, mahasiswa/pelajar, freelance/kontraktor, sedang membangun usaha, sedang cari kerja (enam nilai `LATAR`) | Tahu perannya, menemukan tim yang membutuhkan kemampuannya | `Identity.jsx`, `Market.jsx` |
 | Owner tim | Peserta yang membuka tim (tidak harus berjalur CEO; `CONFIG.modeDraft = false`) | Menyaring pelamar, mengundang builder, membagikan link grup hanya ke anggota sah | `Create.jsx`, `MyTeam.jsx` |
-| Anggota tim | Peserta yang lamarannya disetujui | Masuk grup tim, lanjut ke Tencent dan submit | `TeamDetail.jsx`, `Dash.jsx` |
+| Anggota tim | Peserta yang lamarannya disetujui | Masuk grup tim, melihat anggota dan kontak, chat tim, lanjut ke Tencent dan submit | `TeamDetail.jsx`, `Dash.jsx` |
 | Pengurus aiclub.id | Pengelola komunitas pusat atau kota | Memantau pendaftar, ekspor data (Rencana, _TBD_) | tidak ada di as-built |
 
 ### 4.2 Delapan jalur peran (`URUT`, `src/data.js`)
@@ -99,6 +99,10 @@ Kolom FR merujuk ke [03_FRD.md](03_FRD.md).
 | F-22 | Keluar tim dan tutup tim dengan konfirmasi dua klik | FR-029, FR-035 | Ada (as-built, dummy) |
 | F-23 | Notifikasi ke owner saat ada lamaran baru | FR-030 | Rencana (integrasi aiclub.id), bentuk _TBD_ |
 | F-24 | Layar persetujuan penggunaan data (WhatsApp, kota) | _TBD_ (brief 8.5) | Rencana, belum ada FR |
+| F-28 | Pengumuman panitia: daftar, detail, tayangan, penanda baca, badge belum dibaca, kartu di dasbor; dapat dibaca tanpa login | FR-060, FR-061, FR-062 | Ada (as-built, dummy); backend: Rencana |
+| F-29 | Batas keputusan owner 24 jam dengan penolakan otomatis dan tampilan sisa waktu | FR-063, FR-064 | Ada (as-built, dummy); penegakan server: Rencana |
+| F-30 | Ruang tim: anggota dan kontak (WA, email, LinkedIn, GitHub) setelah disetujui | FR-065, FR-067 | Ada (as-built, dummy; data contoh); backend: Rencana |
+| F-31 | Chat tim di dalam aplikasi | FR-066 | Ada (as-built, dummy; hanya di perangkat ini); backend: Rencana |
 
 ### 5.3 Could have
 
@@ -114,7 +118,7 @@ Kolom FR merujuk ke [03_FRD.md](03_FRD.md).
 |---|---|
 | Penilaian juri atau skor karya di portal | Di luar lingkup; dilakukan penyelenggara |
 | Pembuatan grup WhatsApp otomatis | Dibuat manual; portal hanya menyimpan link |
-| Chat internal antarpeserta | Koordinasi lewat WhatsApp |
+| Chat antarpeserta di luar tim (pesan pribadi atau forum umum) | Koordinasi umum lewat grup WhatsApp; chat dalam aplikasi hanya untuk anggota satu tim (F-31) |
 | Pembayaran atau tiket | Event gratis |
 | Aplikasi native | Web responsif sudah memadai |
 | Mengubah alur 3 langkah | Dinyatakan di luar cakupan ([../brief.md](../brief.md) bagian 1) |
@@ -127,7 +131,7 @@ Format: Sebagai [peran], saya ingin [kemampuan], agar [manfaat]. Kolom FR meruju
 |---|---|---|---|---|
 | US-001 | Sebagai calon peserta, saya ingin melihat informasi event (hadiah, tanggal, tantangan) sebelum mendaftar, agar tahu apakah layak ikut. | M | FR-056, FR-057 | Ada (as-built, dummy) |
 | US-002 | Sebagai calon peserta, saya ingin masuk dengan akun aiclub.id, agar datanya terhubung tanpa membuat akun baru. | M | FR-001, FR-002, FR-004 | Ada (dummy); sungguhan: Rencana |
-| US-003 | Sebagai peserta, saya ingin data diri saya terisi dari profil dan hanya melengkapi yang kosong, agar tidak mengetik ulang. | M | FR-005, FR-007, FR-009 | Ada (prefill dari akun dummy); profil sungguhan: Rencana |
+| US-003 | Sebagai peserta, saya ingin data diri saya terisi dari profil dan hanya melengkapi yang kosong, agar tidak mengetik ulang. | M | FR-005, FR-007, FR-009, FR-067 | Ada (prefill dari akun dummy); profil sungguhan: Rencana |
 | US-004 | Sebagai peserta, saya ingin diberi tahu bila kota atau nomor WhatsApp belum benar, agar bisa diperbaiki sebelum lanjut. | M | FR-006, FR-008 | Ada (as-built, dummy) |
 | US-005 | Sebagai peserta, saya ingin menjawab skenario singkat satu per satu, agar sistem memahami cara kerja saya. | M | FR-010, FR-011 | Ada (as-built, dummy) |
 | US-006 | Sebagai peserta, saya ingin memakai keyboard untuk memilih jawaban, agar lebih cepat. | S | FR-012 | Ada (as-built, dummy) |
@@ -135,7 +139,7 @@ Format: Sebagai [peran], saya ingin [kemampuan], agar [manfaat]. Kolom FR meruju
 | US-008 | Sebagai peserta, saya ingin mengoreksi jalur bila sistem keliru, agar pencarian tim memakai peran yang saya yakini. | M | FR-014 | Ada (as-built, dummy) |
 | US-009 | Sebagai peserta, saya ingin menjawab ulang skenario, agar bisa memperbaiki hasil. | S | FR-014 | Ada (as-built, dummy) |
 | US-010 | Sebagai peserta, saya ingin bergabung ke grup WhatsApp utama, agar menerima info resmi dan pengumuman. | M | FR-016, FR-018 | Ada (as-built, dummy) |
-| US-011 | Sebagai peserta, saya ingin pesan perkenalan tersusun otomatis dari data saya, agar mudah memperkenalkan diri di grup. | S | FR-017 | Ada (as-built, dummy) |
+| US-011 | Sebagai peserta, saya ingin pesan perkenalan tersusun otomatis dari data saya, agar mudah memperkenalkan diri di grup. | S | FR-017, FR-067 | Ada (as-built, dummy) |
 | US-012 | Sebagai peserta, saya ingin memilih antara gabung tim atau buat tim, agar sesuai dengan kondisi saya. | M | FR-020 | Ada (as-built, dummy) |
 | US-013 | Sebagai peserta, saya ingin dicegah menjadi anggota satu tim sekaligus owner tim lain, agar tidak terjadi konflik. | M | FR-021, FR-022 | Ada (klien); server: Rencana |
 | US-014 | Sebagai peserta, saya ingin melihat daftar tim, slot yang dicari, dan kecocokan dengan jalur saya, agar memilih tim yang tepat. | M | FR-023, FR-024 | Ada (as-built, dummy) |
@@ -159,6 +163,11 @@ Format: Sebagai [peran], saya ingin [kemampuan], agar [manfaat]. Kolom FR meruju
 | US-032 | Sebagai pengurus aiclub.id, saya ingin memantau pendaftar dan tim serta mengekspor datanya, agar bisa menindaklanjuti. | C | FR-058 | Rencana (integrasi aiclub.id) |
 | US-033 | Sebagai pengguna pembaca layar atau keyboard, saya ingin fokus berpindah ke judul layar dan perubahan status diumumkan, agar dapat memakai portal. | S | FR-054 | Ada (as-built, dummy) |
 | US-034 | Sebagai peserta, saya ingin hanya orang yang berhak melihat link grup tim saya, agar grup tidak dibanjiri pihak luar. | M | FR-027, FR-030 | Ada (penyembunyian di UI); penegakan server: Rencana |
+| US-035 | Sebagai peserta atau calon peserta, saya ingin membaca pengumuman resmi panitia di portal, termasuk sebelum login, agar tidak tertinggal informasi jadwal dan aturan. | S | FR-060, FR-062 | Ada (as-built, dummy); pengelolaan pengumuman di server: Rencana |
+| US-036 | Sebagai peserta, saya ingin tahu pengumuman mana yang belum saya baca dan berapa kali sebuah pengumuman dilihat, agar fokus ke info yang baru. | S | FR-061, FR-062 | Ada (as-built, dummy; tayangan contoh); penghitungan di server: Rencana |
+| US-037 | Sebagai pelamar, saya ingin lamaran yang tidak diputuskan owner dalam 24 jam ditolak otomatis dan sisa waktunya terlihat, agar saya tidak menunggu tanpa kepastian dan bisa mencari tim lain. | M | FR-063, FR-064 | Ada (as-built, dummy); penegakan server: Rencana |
+| US-038 | Sebagai anggota atau owner tim, saya ingin melihat anggota tim beserta kontaknya (WA, email, LinkedIn, GitHub) setelah lamaran disetujui, agar dapat langsung berkoordinasi. | S | FR-065, FR-067 | Ada (as-built, dummy; kontak contoh); pembatasan akses di server: Rencana |
+| US-039 | Sebagai anggota atau owner tim, saya ingin mengobrol dengan tim di dalam portal, agar koordinasi awal tidak harus menunggu grup WhatsApp tim. | S | FR-066 | Ada (as-built, dummy; hanya di perangkat ini); sinkronisasi antaranggota: Rencana |
 
 ## 7. Alur pengguna ringkas
 
@@ -202,7 +211,7 @@ Detail teknis di [04_TRD.md](04_TRD.md); keamanan di [14_SECURITY_THREAT_MODEL.m
 |---|---|---|
 | Aksesibilitas | Fokus ke judul pada perpindahan layar, `aria-live`, `aria-current`, `role=radio`, pengurangan gerak (`prefers-reduced-motion`) | Ada |
 | Responsif | Layar kecil didukung dengan navigasi bawah | Ada |
-| Privasi | WhatsApp dan kota tidak tampil di daftar publik; persetujuan penggunaan data | Belum diterapkan; Rencana |
+| Privasi | WhatsApp dan kota tidak tampil di daftar publik; kontak anggota hanya untuk owner dan anggota yang disetujui di tim yang sama; persetujuan penggunaan data | Kontak hanya ditampilkan di UI ruang tim (data contoh); penegakan server dan persetujuan data: Rencana |
 | Keamanan | Tidak ada rahasia di bundel klien; aturan di server | Tidak ada rahasia karena tidak ada backend; aturan hanya di klien |
 | Hosting | Statis (GitHub Pages) untuk demo; subdomain aiclub.id untuk produksi | Demo saja |
 | Lokalisasi | id, en, zh dengan fallback ke id | Ada |

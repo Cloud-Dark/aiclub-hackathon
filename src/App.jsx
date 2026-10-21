@@ -35,6 +35,16 @@ const fresh = () => ({
   clickedMain: false, joinedMain: false, mode: null, viewTeam: null, tencentClicked: false, projectReady: false, submitClicked: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: [], sharedTeams: [], invite: null, chats: {}, annViewed: [], annOpen: null, prevScreen: null
 });
 
+// tolak otomatis lamaran yang lewat batas keputusan, dan catat di log; null bila tidak ada perubahan
+function expireAll(s) {
+  const apps = expirePending(s.apps), applicants = expirePending(s.applicants);
+  if (apps === s.apps && applicants === s.applicants) return null;
+  let log = s.log;
+  apps.forEach((x, i) => { if (x !== s.apps[i]) log = [...log, { k: "autoReject", at: x.decidedAt, team: x.team }]; });
+  applicants.forEach((x, i) => { if (x !== s.applicants[i]) log = [...log, { k: "autoRejectWho", at: x.decidedAt, who: BUILDER[x.b].nama }]; });
+  return { apps, applicants, log: log.slice(-60) };
+}
+
 function initState() {
   const st = { ...fresh(), lang: detectLang(), screen: "intro" };
   try {
@@ -42,7 +52,7 @@ function initState() {
     if (saved && typeof saved === "object") PERSIST.forEach((k) => { if (k in saved) st[k] = saved[k]; });
   } catch (e) {}
   st.applicants = st.applicants.map((x) => (x.at ? x : { ...x, at: Date.now() }));
-  st.apps = expirePending(st.apps); st.applicants = expirePending(st.applicants);
+  Object.assign(st, expireAll(st));
   if (st.myTeam && !st.myTeam.id) st.myTeam = { ...st.myTeam, id: newTeamId(), at: Date.now() };
   // link undangan tim (?tim=...): simpan timnya, lalu arahkan ke halaman tim setelah syarat terpenuhi
   const inv = URL_INVITE && { ...URL_INVITE };
@@ -84,14 +94,7 @@ export default function App() {
 
   // batas keputusan owner: cek lamaran yang lewat batas setiap 30 detik
   useEffect(() => {
-    const tick = () => setSt((s) => {
-      const apps = expirePending(s.apps), applicants = expirePending(s.applicants);
-      if (apps === s.apps && applicants === s.applicants) return s;
-      let log = s.log;
-      apps.forEach((x, i) => { if (x !== s.apps[i]) log = [...log, { k: "autoReject", at: x.decidedAt, team: x.team }]; });
-      applicants.forEach((x, i) => { if (x !== s.applicants[i]) log = [...log, { k: "autoRejectWho", at: x.decidedAt, who: BUILDER[x.b].nama }]; });
-      return { ...s, apps, applicants, log: log.slice(-60) };
-    });
+    const tick = () => setSt((s) => { const ex = expireAll(s); return ex ? { ...s, ...ex } : s; });
     const id = setInterval(tick, 30000);
     return () => clearInterval(id);
   }, []);

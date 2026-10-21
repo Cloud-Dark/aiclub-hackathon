@@ -17,10 +17,22 @@ Hash di dalam kurung adalah commit sumber. Entri 2026-10-21 bagian "Fixed" dan s
 ### Added
 
 - Link undangan tim: owner dapat menyalin atau membagikan link `?tim=...` (WhatsApp, Web Share API). Pengunjung yang membuka link melihat banner undangan, lalu setelah menyelesaikan pendaftaran langsung diarahkan ke detail tim untuk melamar. Tim dari link tampil di pasar tim dengan penanda "LEWAT LINK". Teks tersedia dalam id/en/zh. Lihat FR-059 di [03_FRD.md](03_FRD.md).
+- Pengumuman panitia (layar `info`, `src/components/Announcements.jsx`): daftar dengan pengumuman disematkan di atas lalu terbaru, detail per pengumuman, tayangan dicatat sekali per akun (mode demo: angka contoh ditambah 1 bila akun ini sudah membuka), penanda BARU dan SUDAH DIBACA, badge jumlah belum dibaca di header (desktop) dan navigasi bawah (mobile), kartu "PENGUMUMAN TERBARU" di dasbor. Pengumuman dapat dibaca tanpa login. Data di `PENGUMUMAN` (`src/data.js`) dan kunci i18n `ann`/`announcements`. Lihat FR-060 sampai FR-062.
+- Batas keputusan owner `CONFIG.approveHours` (24 jam): lamaran `pending` yang lewat batas ditolak otomatis (`status: "rejected"`, `reason: "expired"`), dicek saat aplikasi dibuka dan setiap 30 detik, dan dicatat di log aktivitas (`autoReject`, `autoRejectWho`). Sisa waktu tampil ke pelamar (dasbor, detail tim) dan owner (panel pelamar); label "DITOLAK OTOMATIS". Lihat FR-063 dan FR-064.
+- Ruang tim (`src/components/TeamRoom.jsx`, `src/lib/team.js`): setelah lamaran disetujui, atau bagi owner, tampil anggota tim beserta kontak (WA, email, LinkedIn, GitHub); bila belum disetujui atau ditolak, ruang tim terkunci. Anggota dan kontak contoh di `ANGGOTA` dan `BUILDER` (`src/data.js`). Owner tim dari link (`?tim=`) belum memiliki kontak di mode demo. Lihat FR-065.
+- Chat tim di dalam aplikasi: kirim pesan dengan validasi kosong, maksimum 1000 karakter, 200 pesan terakhir per tim disimpan di state `chats` (`localStorage`), sapaan contoh dari owner. Mode demo: pesan hanya ada di perangkat ini. Lihat FR-066.
+- Kolom GitHub (opsional) di data diri; ikut dalam pesan perkenalan grup utama. Lihat FR-067.
+- Kunci `PERSIST` baru: `github`, `annViewed`, `annOpen`, `prevScreen`, `chats` ([16_CONFIG_REFERENCE.md](16_CONFIG_REFERENCE.md)).
+- Kebutuhan backend untuk pengumuman, batas 24 jam, anggota dan kontak, serta chat dicatat di [../brief.md](../brief.md) (bagian 5.2, 5.3, 6.3 sampai 6.5).
+- Seluruh butir pengumuman, batas 24 jam, ruang tim, chat, dan kolom GitHub di atas berasal dari commit `1ef83f1`.
 
 ### Changed
 
 - Pasar tim, detail tim, dan dasbor membaca daftar gabungan tim contoh dan tim dari link (`src/lib/share.js`). Tim baru kini menyimpan `id` dan `at`.
+- Teks jadwal di header kini hanya tampil pada lebar layar 1400 px ke atas (sebelumnya 1000 px) agar tidak bertabrakan dengan tombol pengumuman; di bawah ambang itu teks tampil di bawah header.
+- Keputusan owner (`decideApp`, `decideApplicant`) hanya berlaku untuk lamaran yang masih `pending` dan kini menyimpan `decidedAt`; lamaran yang sudah diputuskan atau kedaluwarsa tidak dapat diputuskan lagi.
+- Pelamar contoh di tim owner kini menyimpan waktu masuk (`at`); data lama tanpa `at` diisi saat aplikasi dibuka.
+- `BUILDER` kini memuat kontak contoh (domain `contoh.id`), dan layar `info` ditambahkan ke `SCREENS` dengan `STEP_OF.info = -1`.
 
 ## [2026-10-21]
 

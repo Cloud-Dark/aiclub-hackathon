@@ -25,7 +25,7 @@ Konvensi: `_TBD_` berarti belum diputuskan atau belum diketahui; rujukan **Q8.n*
 ## 2. `CONFIG` di `src/data.js`
 
 ```js
-export const CONFIG = { modeDraft: false, quizLen: 6, demoOwner: true };
+export const CONFIG = { modeDraft: false, quizLen: 6, demoOwner: true, approveHours: 24 };
 ```
 
 | Kunci | Tipe | Nilai sekarang | Dipakai di | Efek |
@@ -33,6 +33,7 @@ export const CONFIG = { modeDraft: false, quizLen: 6, demoOwner: true };
 | `modeDraft` | boolean | `false` | `Result.jsx` | `canTeam = (jalur aktif === "CEO") \|\| !CONFIG.modeDraft`. Bila `true`, hanya jalur CEO yang diberi opsi membuat tim (teks `result.openTeam` vs `result.openTeamLocked`). Bila `false`, semua jalur boleh membuat tim. Tidak memengaruhi `canCreate()` di `rules.js`. |
 | `quizLen` | number | `6` | `lib/scoring.js` (`total()`) | Jumlah pertanyaan kuis = `min(quizLen, WEIGHTS.length)`. Saat ini `WEIGHTS` berisi 6 baris sehingga nilai di atas 6 tidak menambah pertanyaan. Mengubahnya memengaruhi `quizDone`, `reachable`, dan teks langkah `{n}`. |
 | `demoOwner` | boolean | `true` | `Dash.jsx` | Menampilkan tombol simulasi Setujui/Tolak untuk lamaran `pending` pada tim contoh serta catatan `dash.demoNote`. **Wajib dimatikan/dihapus saat backend tersambung** (README; brief bagian 7 butir 5). |
+| `approveHours` | number | `24` | `lib/rules.js` (`DEADLINE_MS`, `deadlineOf`, `expirePending`, `leftHM`), `App.jsx` | Batas waktu owner memutuskan lamaran, dihitung dari `at` lamaran. Lamaran `pending` yang melewati batas diubah menjadi `{status: "rejected", reason: "expired", decidedAt}` saat aplikasi dibuka dan setiap 30 detik (interval tetap di `App.jsx`). Teks i18n `deadline.*` dan pengumuman menyebut "24 jam" secara harfiah, sehingga mengubah nilai ini juga menuntut perubahan teks di ketiga kamus. Pada integrasi, batas yang berlaku adalah nilai di server ([../brief.md](../brief.md)); FR-063, FR-064. |
 
 Catatan:
 
@@ -101,6 +102,9 @@ Konstanta lain di luar `data.js`:
 | Batas log | `src/App.jsx` (`withLog`) | 60 entri terakhir | `slice(-60)`. |
 | Waktu konfirmasi dua klik | `src/components/Widgets.jsx` (`ConfirmButton`) | 4000 ms | Tombol kembali ke keadaan semula bila tidak diklik lagi. |
 | Waktu toast | `src/App.jsx` (`toast`) | 2200 ms | |
+| Interval cek kedaluwarsa lamaran | `src/App.jsx` (efek `setInterval`) | 30000 ms | Menjalankan `expirePending` pada `apps` dan `applicants`. |
+| Panjang maksimum pesan chat | `src/components/TeamRoom.jsx` | 1000 karakter | `maxLength` pada kolom dan `slice(0, 1000)` saat kirim. |
+| Batas riwayat chat per tim | `src/App.jsx` (`sendChat`) | 200 pesan terakhir | `slice(-200)`. |
 | Aset brand | `src/components/Brand.jsx` | `asset(name)` = `import.meta.env.BASE_URL + "brand/" + name` | Berkas di `public/brand/`. |
 
 ## 5. Data dummy di `src/data.js`
@@ -111,13 +115,19 @@ Akan dihapus saat integrasi (kecuali yang disebut dipertahankan; [../brief.md](.
 |---|---|---|---|
 | `DUMMY_USERS` | 3 akun demo: `rani@aiclub.id` (profil kosong), `bagas@aiclub.id` (kota Malang), `salsa@aiclub.id` (kota Bandung + LinkedIn) | `{email, nama, kota, wa, linkedin}` | Dihapus |
 | `TIM` | 6 tim contoh: REKON (Jakarta), WARUNG TAP (Bandung), SIAP RISIKO (Surabaya), TANYA OPS (Yogyakarta), ANTRE HABIS (Makassar), BACA KONTRAK (Medan) | `{nama, kota, anggota, ceo, butuh[], wa, hari, grupN}` | Dihapus; diganti `GET /teams` |
-| `BUILDER` | 6 builder contoh: Dimas, Lala, Hendra, Vina, Arif, Tari | `{nama, kota, peran}` | Dihapus; diganti `GET /builders` |
+| `BUILDER` | 6 builder contoh: Dimas, Lala, Hendra, Vina, Arif, Tari, masing-masing dengan kontak contoh | `{nama, kota, peran, wa, email, linkedin, github}` | Dihapus; diganti `GET /builders` (kontak hanya untuk pihak berhak) |
+| `ANGGOTA` | Anggota contoh per tim `TIM` (indeks berupa nama tim), anggota pertama adalah owner | `{[namaTim]: [{nama, peran, owner, wa, email, linkedin, github}]}` | Dihapus; diganti data anggota dari server, hanya untuk owner dan anggota disetujui ([../brief.md](../brief.md)) |
+| `PENGUMUMAN` | 4 pengumuman: `p-jadwal` (disematkan, 87 tayangan contoh), `p-batas-1-nov` (142), `p-aturan-tim` (196), `p-dibuka` (318) | `{id, at (ISO 8601, +07:00), pin, views}` | Diganti data pengumuman dan tayangan dari server ([../brief.md](../brief.md)) |
 | `SEED_APPLICANTS` | `[0, 4]` (indeks ke `BUILDER`) | array indeks | Dihapus; pelamar sungguhan dari DB |
-| `SCREENS` | 13 nama layar | array string | Dipertahankan |
-| `STEP_OF` | peta layar ke langkah (-1, 0, 1, 2) | objek | Dipertahankan |
-| `ICONS` | path SVG piksel (`home, user, quiz, path, team`) | objek string | Dipertahankan |
+| `SCREENS` | 14 nama layar (termasuk `info` untuk pengumuman) | array string | Dipertahankan |
+| `STEP_OF` | peta layar ke langkah (-1, 0, 1, 2); `info` = -1 | objek | Dipertahankan |
+| `ICONS` | path SVG piksel (`home, user, quiz, path, team, bell`) | objek string | Dipertahankan |
 
 Catatan `TIM`: field `wa` adalah tautan placeholder (mis. `https://chat.whatsapp.com/DummyRekon01`). Field `hari` dan `grupN` adalah data tampilan dummy. Teks deskripsi tim contoh berada di `teams[]` pada kamus i18n (berindeks sama dengan `TIM`), dan deskripsi builder contoh di `builders[]`.
+
+Catatan kontak contoh: nomor WA berpola `0812000000NN`, email `<nama>@contoh.id`, LinkedIn `https://linkedin.com/in/contoh-<nama>`, GitHub `https://github.com/contoh-<nama>`. Data ini bukan milik orang nyata dan hanya ditampilkan di ruang tim (FR-065).
+
+Catatan `PENGUMUMAN`: judul, ringkasan, dan isi per bahasa berada di kunci i18n `announcements[]` dengan urutan yang sama dengan `PENGUMUMAN`. Menambah pengumuman berarti menambah entri di `PENGUMUMAN` dan di `announcements` ketiga kamus pada posisi yang sama. Urutan tampil dihitung saat render (disematkan dulu, lalu `at` terbaru), bukan dari urutan array.
 
 ## 6. `vite.config.js`
 
@@ -154,11 +164,11 @@ Hal yang perlu diperhatikan saat pindah hosting (rencana): `base: "./"` tetap va
 
 Semua akses dibungkus `try/catch` (TR-011). Peserta yang membuka portal di browser lain atau perangkat lain tidak membawa data (sumber kebenaran tunggal belum ada).
 
-### 7.2 Daftar `PERSIST` (24 kunci)
+### 7.2 Daftar `PERSIST` (31 kunci)
 
 ```js
-const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override",
-  "clickedMain", "joinedMain", "mode", "viewTeam", "tencentClicked", "projectReady", "submitClicked", "tab", "apps", "undang", "myTeam", "applicants", "log"];
+const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "github", "annViewed", "annOpen", "prevScreen", "chats", "latar", "idx", "jawab", "override",
+  "clickedMain", "joinedMain", "mode", "viewTeam", "tencentClicked", "projectReady", "submitClicked", "tab", "apps", "undang", "myTeam", "applicants", "log", "sharedTeams", "invite"];
 ```
 
 | Kunci | Tipe | Nilai awal (`fresh()`) | Arti |
@@ -170,6 +180,11 @@ const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "l
 | `email` | string | `""` | Email (opsional) |
 | `wa` | string | `""` | Nomor WhatsApp (wajib, 9 sampai 15 digit) |
 | `linkedin` | string | `""` | Tautan LinkedIn |
+| `github` | string | `""` | Tautan GitHub (opsional); ikut di pesan perkenalan dan kontak ruang tim (FR-067) |
+| `annViewed` | array string | `[]` | Id pengumuman yang sudah dibuka; dasar penanda BARU/SUDAH DIBACA, badge belum dibaca, dan tambahan 1 tayangan (FR-061). Ikut terhapus saat logout (`fresh()`). |
+| `annOpen` | string atau `null` | `null` | Id pengumuman yang sedang dibuka di layar `info`; `null` = daftar |
+| `prevScreen` | string atau `null` | `null` | Layar asal sebelum membuka layar `info`; tujuan tombol Kembali dari daftar pengumuman |
+| `chats` | objek | `{}` | Chat tim per nama tim: `{[namaTim]: [{me, who, text, at}]}`, maksimal 200 pesan per tim (FR-066) |
 | `latar` | string | `"kerja-tech"` | Salah satu `LATAR` |
 | `idx` | number | `0` | Indeks pertanyaan kuis saat ini |
 | `jawab` | array | `[]` | Indeks opsi per pertanyaan |
@@ -182,11 +197,13 @@ const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "l
 | `projectReady` | boolean | `false` | Centang project selesai |
 | `submitClicked` | boolean | `false` | Sudah mengeklik tautan submit |
 | `tab` | string | `"tim"` | Tab (warisan; tersimpan, tidak dipakai di komponen saat ini) |
-| `apps` | array | `[]` | Lamaran `{team, status, at}` |
+| `apps` | array | `[]` | Lamaran `{team, status, at, decidedAt?, reason?}`; `reason: "expired"` menandai penolakan otomatis (FR-063) |
 | `undang` | array | `[]` | Nama builder yang diundang |
 | `myTeam` | objek atau `null` | `null` | Tim milik peserta sebagai owner |
-| `applicants` | array | `[]` | Pelamar ke tim sendiri `{b, status}` |
+| `applicants` | array | `[]` | Pelamar ke tim sendiri `{b, status, at, decidedAt?, reason?}`; `at` diisi saat aplikasi dibuka bila belum ada |
 | `log` | array | `[]` | Log aktivitas, maksimal 60 |
+| `sharedTeams` | array | `[]` | Tim yang diterima lewat link undangan `?tim=` (FR-059) |
+| `invite` | objek atau `null` | `null` | Undangan tim yang sedang menunggu syarat pendaftaran terpenuhi (FR-059) |
 
 Kunci state di luar `PERSIST`: `lang` (disimpan terpisah sebagai `hk_lang`). Nilai awal `lang` = `detectLang()`.
 
