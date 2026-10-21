@@ -37,6 +37,7 @@ Dasar: riwayat commit 2026-10-19 sampai 2026-10-21.
 - [x] Apps Script dihapus (2026-10-19)
 - [x] `brief.md`: rencana integrasi login, session, dan database aiclub.id (2026-10-21)
 - [x] Perbaikan `vite.config.js`: `emptyOutDir: false` dan hanya `docs/assets` yang dibersihkan, agar `docs/*.md` tidak terhapus (2026-10-21)
+- [x] Link undangan tim: owner membagikan link `?tim=...`, pengunjung melamar lewat link (FR-059, mode demo)
 - [ ] Dokumentasi proyek (`docs/00` sampai `docs/20`, `standards/`) lengkap dan ditinjau (sedang disusun, status Draft)
 
 ## B. Fase 0 - Keputusan

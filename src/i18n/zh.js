@@ -241,7 +241,8 @@ export default {
     "viewDetail": "查看详情",
     "appliedElsewhere": "已申请其他队",
     "shortMember": "已加入队伍",
-    "oneAtATime": "你还在申请 {team}。想申请其他队伍，请先撤回该申请。"
+    "oneAtATime": "你还在申请 {team}。想申请其他队伍，请先撤回该申请。",
+    "viaLink": "来自链接"
   },
   "dash": {
     "greeting": "{name}，你还没有队伍",
@@ -319,7 +320,16 @@ export default {
       "noLink": "还没有群链接 · 请在上面添加",
       "close": "关闭队伍",
       "invite": "邀请",
-      "invited": "已发送"
+      "invited": "已发送",
+      "shareTitle": "分享团队链接",
+      "shareBody": "把此链接发给潜在成员。打开链接的人完成报名后即可查看你的团队并申请加入。",
+      "copy": "复制链接",
+      "copied": "团队链接已复制",
+      "copyFail": "复制失败，请从上方框中手动复制",
+      "shareWa": "分享到 WHATSAPP",
+      "shareMore": "分享…",
+      "shareMsg": "加入 AI Agent Hackathon 的 {team} 团队！我们在找：{slots}。通过此链接申请：",
+      "shareDemo": "演示模式：在接入 aiclub.id 后端之前，通过链接提交的申请不会进入你的申请收件箱。此链接不包含团队 WhatsApp 群链接。"
     },
     "changeChoice": "更改选择",
     "memberTag": "成员",
@@ -451,6 +461,11 @@ export default {
     "s1": "1 · 你的队伍",
     "s2": "2 · 你想找谁",
     "s3": "3 · 队伍 WHATSAPP 群"
+  },
+  "invite": {
+    "banner": "你被邀请加入 {team} 团队。完成报名步骤后，将直接跳转到该团队页面进行申请。",
+    "bad": "团队链接无效或已损坏",
+    "own": "这是你自己的团队链接"
   },
   "detail": {
     "prompt": "详情/{team}",

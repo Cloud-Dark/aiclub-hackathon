@@ -1017,6 +1017,30 @@ Acceptance criteria:
 
 ---
 
+### FR-059 Link undangan tim (bagikan dan gabung lewat link)
+
+| Atribut | Nilai |
+|---|---|
+| Status | Ada (as-built, dummy) |
+| Prioritas | Should |
+| Sumber | `src/lib/share.js`, `src/components/MyTeam.jsx` (`ShareTeam`), `src/App.jsx` (`URL_INVITE`, `initState`, `confirmMain`), `src/components/Market.jsx`, `src/components/TeamDetail.jsx` |
+| Terkait | US-019, US-014, US-015, US-016; FR-023, FR-025, FR-026, FR-031 |
+
+Owner tim mendapat link `?tim=<kode>` di dasbor. Kode berisi id tim, nama, deskripsi, kota, slot yang dicari, nama owner, dan waktu dibuat dalam JSON base64url. Link grup WhatsApp tim **tidak** dimasukkan ke kode agar tetap terkunci sampai lamaran disetujui (FR-027).
+
+Acceptance criteria:
+- G: owner sudah membuat tim; W: membuka dasbor; T: kartu "Bagikan link tim" menampilkan link, tombol Salin link, Bagikan ke WhatsApp (`wa.me` berisi pesan dan link), dan Bagikan (Web Share API, hanya bila peramban mendukung).
+- G: pengunjung membuka link valid; W: halaman dimuat; T: tim disimpan ke `sharedTeams`, parameter `tim` dihapus dari URL, dan banner undangan tampil selama syarat pendaftaran belum terpenuhi.
+- G: pengunjung menyelesaikan login, data diri, skenario, dan grup utama; W: menekan "Saya sudah gabung"; T: diarahkan langsung ke detail tim tersebut, bukan ke layar pilih jalan.
+- G: pengunjung sudah memenuhi semua syarat saat membuka link; T: langsung membuka detail tim.
+- G: tim dari link; T: tampil di pasar tim dengan penanda "LEWAT LINK" dan dapat dilamar dengan aturan yang sama (satu lamaran aktif, FR-026).
+- G: kode rusak atau tidak lolos validasi (id, panjang teks, slot di luar `URUT`); T: toast "Link tim tidak valid atau rusak", tidak ada tim ditambahkan.
+- G: owner membuka link timnya sendiri; T: toast "Ini link timmu sendiri", tim tidak ditambahkan ke `sharedTeams`.
+- G: nama tim dari link sama dengan tim lain; T: nama diberi akhiran ` · <4 karakter id>`.
+- Batasan mode demo: lamaran lewat link tidak masuk ke kotak pelamar owner dan link grup tim tidak terkirim sampai backend tersedia (FR-030). Keterangan ini ditampilkan di kartu bagikan.
+
+---
+
 ## 15. Matriks ringkas: FR terhadap status, sumber, dan user story
 
 | FR | Modul | Status | Sumber utama | US |

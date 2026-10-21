@@ -241,7 +241,8 @@ export default {
     "viewDetail": "LIHAT DETAIL",
     "appliedElsewhere": "SUDAH MELAMAR",
     "shortMember": "SUDAH DI TIM",
-    "oneAtATime": "Kamu masih melamar ke {team}. Tarik lamaran itu dulu kalau mau melamar ke tim lain."
+    "oneAtATime": "Kamu masih melamar ke {team}. Tarik lamaran itu dulu kalau mau melamar ke tim lain.",
+    "viaLink": "LEWAT LINK"
   },
   "dash": {
     "greeting": "{name}, BELUM PUNYA TIM",
@@ -319,7 +320,16 @@ export default {
       "noLink": "Belum ada link grup · tambahkan di atas",
       "close": "TUTUP TIM",
       "invite": "UNDANG",
-      "invited": "TERKIRIM"
+      "invited": "TERKIRIM",
+      "shareTitle": "BAGIKAN LINK TIM",
+      "shareBody": "Kirim link ini ke calon anggota. Orang yang membukanya bisa melihat timmu dan melamar setelah menyelesaikan pendaftaran.",
+      "copy": "SALIN LINK",
+      "copied": "Link tim disalin",
+      "copyFail": "Gagal menyalin, salin manual dari kotak di atas",
+      "shareWa": "BAGIKAN KE WHATSAPP",
+      "shareMore": "BAGIKAN…",
+      "shareMsg": "Gabung tim {team} di AI Agent Hackathon! Kami mencari: {slots}. Lamar lewat link ini:",
+      "shareDemo": "Mode demo: lamaran lewat link belum masuk ke kotak pelamarmu sampai backend aiclub.id tersambung. Link grup WhatsApp tim tidak ikut di link ini."
     },
     "changeChoice": "GANTI PILIHAN",
     "memberTag": "ANGGOTA",
@@ -451,6 +461,11 @@ export default {
     "s1": "1 · TIMMU",
     "s2": "2 · SIAPA YANG KAMU CARI",
     "s3": "3 · GRUP WHATSAPP TIM"
+  },
+  "invite": {
+    "banner": "Kamu diundang ke tim {team}. Selesaikan langkah pendaftaran, lalu kamu langsung diarahkan ke halaman tim ini untuk melamar.",
+    "bad": "Link tim tidak valid atau rusak",
+    "own": "Ini link timmu sendiri"
   },
   "detail": {
     "prompt": "detail/{team}",

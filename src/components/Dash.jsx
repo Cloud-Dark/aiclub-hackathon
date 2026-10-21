@@ -3,7 +3,8 @@ import { Head, Actions } from "./Common.jsx";
 import MyTeam from "./MyTeam.jsx";
 import { ConfirmButton } from "./Widgets.jsx";
 import { Prize, Challenges } from "./EventInfo.jsx";
-import { TIM, CONFIG, WA_GROUP_URL } from "../data.js";
+import { CONFIG, WA_GROUP_URL } from "../data.js";
+import { findTeam } from "../lib/share.js";
 import { aktif } from "../lib/scoring.js";
 import { fmtTime } from "../lib/time.js";
 
@@ -38,13 +39,13 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
             {rows ? (
               <div className="hist">
                 {st.apps.map((ap) => {
-                  const team = TIM.find((x) => x.nama === ap.team);
+                  const team = findTeam(st, ap.team);
                   return (
                     <div key={ap.team} className="it" style={{ alignItems: "flex-start" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 180px", minWidth: 0 }}>
                         <span className="px" style={{ fontSize: 9 }}>{ap.team}</span>
                         <span className="mono" style={{ fontSize: 18, color: "var(--dim)" }}>{ket[ap.status]}</span>
-                        {ap.status === "approved" && (team.wa
+                        {ap.status === "approved" && (team && team.wa
                           ? <a className="cbtn go" style={{ alignSelf: "flex-start", marginTop: 6 }} href={team.wa} target="_blank" rel="noopener noreferrer">{t("dash.joinTeam")}</a>
                           : <span className="note">{t("dash.noLink")}</span>)}
                         <button type="button" className="cbtn" style={{ alignSelf: "flex-start", marginTop: 6 }} onClick={() => actions.openDetail(ap.team)}>{t("market.viewDetail")}</button>

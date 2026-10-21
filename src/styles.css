@@ -362,3 +362,10 @@ html[lang=zh] .prize-row .px{font-size:12px}
 .cards.compact{grid-template-columns:1fr}
 .chal svg{flex:none}
 @media(max-width:767px){body{padding-bottom:calc(var(--navh) + env(safe-area-inset-bottom) + 24px)}}
+
+/* link undangan tim */
+.share-url{background:var(--bg);border:2px dashed var(--line);color:var(--muted);font-size:17px;padding:10px 12px;width:100%;min-height:46px;border-radius:0;text-overflow:ellipsis}
+.share-url:focus{outline:none;border-color:var(--cyan);color:var(--ink)}
+a.cbtn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.tag.via{margin-left:8px;font-size:13px;padding:2px 6px;vertical-align:middle}
+.invite-bar{margin:14px 0 0;font-family:var(--mono);font-size:19px;line-height:1.35}

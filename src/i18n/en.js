@@ -241,7 +241,8 @@ export default {
     "viewDetail": "VIEW DETAILS",
     "appliedElsewhere": "ALREADY APPLIED",
     "shortMember": "ALREADY IN A TEAM",
-    "oneAtATime": "You're still applying to {team}. Withdraw that application first to apply to another team."
+    "oneAtATime": "You're still applying to {team}. Withdraw that application first to apply to another team.",
+    "viaLink": "VIA LINK"
   },
   "dash": {
     "greeting": "{name}, NO TEAM YET",
@@ -319,7 +320,16 @@ export default {
       "noLink": "No group link yet · add it above",
       "close": "CLOSE TEAM",
       "invite": "INVITE",
-      "invited": "SENT"
+      "invited": "SENT",
+      "shareTitle": "SHARE TEAM LINK",
+      "shareBody": "Send this link to potential members. Anyone who opens it can see your team and apply after completing registration.",
+      "copy": "COPY LINK",
+      "copied": "Team link copied",
+      "copyFail": "Copy failed, copy it manually from the box above",
+      "shareWa": "SHARE TO WHATSAPP",
+      "shareMore": "SHARE…",
+      "shareMsg": "Join team {team} at the AI Agent Hackathon! We are looking for: {slots}. Apply via this link:",
+      "shareDemo": "Demo mode: applications via link do not reach your applicant inbox until the aiclub.id backend is connected. The team WhatsApp group link is not included in this link."
     },
     "changeChoice": "CHANGE MY CHOICE",
     "memberTag": "MEMBER",
@@ -451,6 +461,11 @@ export default {
     "s1": "1 · YOUR TEAM",
     "s2": "2 · WHO YOU'RE LOOKING FOR",
     "s3": "3 · TEAM WHATSAPP GROUP"
+  },
+  "invite": {
+    "banner": "You are invited to team {team}. Finish the registration steps and you will be taken straight to this team's page to apply.",
+    "bad": "Team link is invalid or broken",
+    "own": "This is your own team link"
   },
   "detail": {
     "prompt": "detail/{team}",

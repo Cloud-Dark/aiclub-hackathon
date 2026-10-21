@@ -1,6 +1,6 @@
 import React from "react";
 import { Head, Actions } from "./Common.jsx";
-import { TIM } from "../data.js";
+import { allTeams, teamDesc } from "../lib/share.js";
 import { aktif } from "../lib/scoring.js";
 import { activeApp } from "../lib/rules.js";
 
@@ -20,7 +20,7 @@ export default function Market({ st, t, get, role, actions, onNext, onBack }) {
       </div>
       <div className="note" style={{ marginBottom: 14 }}>{t("market.hint")}</div>
       <div className="cards">
-        {TIM.map((tm, i) => {
+        {allTeams(st).map((tm) => {
           const ap = appOf(tm.nama);
           const cocok = tm.butuh.includes(a);
           const status = ap ? ap.status : null;
@@ -33,8 +33,8 @@ export default function Market({ st, t, get, role, actions, onNext, onBack }) {
           else btn = <button type="button" className={"cbtn " + (status ? "sent" : cocok ? "go" : "")} onClick={() => actions.toggleApply(tm.nama)}>{status ? t("market.withdraw") : t("market.apply")}</button>;
           return (
             <article key={tm.nama} className={"card tcard " + (cocok ? "c" : "")}>
-              <div className="hd"><span className="nm">{tm.nama}</span><span className="st" style={{ color: stColor }}>{stLabel}</span></div>
-              <div className="txt" style={{ fontSize: 20 }}>{get("teams")[i]}</div>
+              <div className="hd"><span className="nm">{tm.nama}{tm.shared && <span className="tag m via">{t("market.viaLink")}</span>}</span><span className="st" style={{ color: stColor }}>{stLabel}</span></div>
+              <div className="txt" style={{ fontSize: 20 }}>{teamDesc(tm, get)}</div>
               <div className="info"><span>{tm.kota}</span><i>|</i><span>{t("market.members", { n: tm.anggota })}</span><i>|</i><span>{t("market.ceo", { name: tm.ceo })}</span></div>
               <div className="slots"><span className="kick" style={{ fontSize: 7 }}>{t("market.slots")}</span><div className="tags">{tm.butuh.map((b) => <span key={b} className={"tag" + (b === a ? " m" : "")}>{role(b).ringkas}</span>)}</div></div>
               <div className="cbtn-row">

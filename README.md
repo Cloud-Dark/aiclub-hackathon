@@ -12,6 +12,7 @@ Login dummy: pilih salah satu akun demo di halaman login (`rani@aiclub.id`, `bag
 - Pilih jalan: gabung tim atau buat tim. Satu orang hanya bisa jadi anggota satu tim, atau owner satu tim, tidak keduanya.
   - Gabung: lihat detail tim dan grupnya, lalu lamar. Hanya boleh satu lamaran aktif; mau pindah, tarik lamaran dulu. Link grup WhatsApp baru terbuka setelah owner menyetujui.
   - Buat: isi nama, slot yang dicari, dan link grup WhatsApp tim.
+  - Bagikan: di dasbor owner ada link tim (`?tim=...`) untuk disalin atau dikirim ke WhatsApp. Orang yang membuka link melihat undangan, menyelesaikan pendaftaran, lalu langsung masuk ke halaman tim untuk melamar. Link grup WhatsApp tim tidak ikut di link ini.
   - Mau pindah pilihan: owner menutup tim dulu, anggota keluar dari tim dulu, atau tarik lamaran yang masih menunggu.
 - Status: lamaran, tim saya (pelamar masuk, undang builder), aktivitas, timeline sampai demo day
 
@@ -30,6 +31,7 @@ logo dan poster di `public/brand/`.
 Belum ada backend. Login, daftar tim, pelamar, dan keputusan owner semuanya data dummy yang tersimpan di `localStorage` browser masing-masing.
 
 - Akun demo: `DUMMY_USERS` di `src/data.js`
+- Link undangan tim: data tim dikodekan di URL (`src/lib/share.js`) dan disimpan di browser pengunjung. Lamaran lewat link belum sampai ke owner; itu butuh backend.
 - Tim dan builder contoh: `TIM`, `BUILDER` di `src/data.js`. Link grup tim contoh (`wa`) hanya placeholder; dengan backend sungguhan, link hanya boleh dikirim setelah lamaran disetujui.
 - Link portal Tencent: `TENCENT_REGISTER_URL`, `TENCENT_SUBMIT_URL` di `src/data.js`
 - Tombol Setujui/Tolak untuk tim contoh: `CONFIG.demoOwner` di `src/data.js` (matikan saat backend tersambung)

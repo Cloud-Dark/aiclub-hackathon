@@ -69,6 +69,7 @@ Pemetaan FR ke TR disusun dari judul dan isi kedua dokumen pada 2026-10-21; peru
 | FR-055 | Aturan perpindahan langkah besar | _TBD_ | TR-015, TR-032, TR-033 |
 | FR-056 | Halaman awal dan informasi event | US-001 | TR-045, TR-007 |
 | FR-057 | Mitra dan identitas merek | US-001 | TR-007, TR-006 |
+| FR-059 | Link undangan tim (bagikan dan gabung lewat link) | US-014, US-015, US-016, US-019 | TR-061, TR-062, TR-063 |
 | FR-058 | Admin dan ekspor data peserta untuk pengurus | US-032 | TR-068, TR-064 |
 
 ## 2. Matriks US ke FR
@@ -197,7 +198,7 @@ TR tanpa FR adalah kebutuhan non-fungsional (platform, performa, keamanan, opera
 
 ## 4. Ringkasan
 
-- FR: 58; US: 34; TR: 78.
+- FR: 59; US: 34; TR: 78.
 - FR tanpa US: FR-003, FR-019, FR-028, FR-041, FR-044, FR-046, FR-047, FR-050, FR-051, FR-055.
 - TR tanpa FR (non-fungsional): 26.
 - Cara memelihara: tambah baris saat FR/TR baru terbit; jangan menomori ulang ID yang sudah ada.

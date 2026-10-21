@@ -20,15 +20,18 @@ import { SubSteps } from "./components/Widgets.jsx";
 import { Footer } from "./components/Brand.jsx";
 import { activeApp, canCreate } from "./lib/rules.js";
 import { TIM } from "./data.js";
+import { readInviteFromUrl, findTeam, newTeamId } from "./lib/share.js";
 
 const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "latar", "idx", "jawab", "override",
-  "clickedMain", "joinedMain", "mode", "viewTeam", "tencentClicked", "projectReady", "submitClicked", "tab", "apps", "undang", "myTeam", "applicants", "log"];
+  "clickedMain", "joinedMain", "mode", "viewTeam", "tencentClicked", "projectReady", "submitClicked", "tab", "apps", "undang", "myTeam", "applicants", "log", "sharedTeams", "invite"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// dibaca sekali saat modul dimuat (bukan di initializer state, yang bisa terpanggil dua kali)
+const URL_INVITE = readInviteFromUrl();
 
 const fresh = () => ({
   user: null,
   nama: "", kota: "", email: "", wa: "", linkedin: "", latar: "kerja-tech", idx: 0, jawab: [], override: null,
-  clickedMain: false, joinedMain: false, mode: null, viewTeam: null, tencentClicked: false, projectReady: false, submitClicked: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: []
+  clickedMain: false, joinedMain: false, mode: null, viewTeam: null, tencentClicked: false, projectReady: false, submitClicked: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: [], sharedTeams: [], invite: null
 });
 
 function initState() {
@@ -37,13 +40,29 @@ function initState() {
     const saved = JSON.parse(localStorage.getItem("hk_state") || "null");
     if (saved && typeof saved === "object") PERSIST.forEach((k) => { if (k in saved) st[k] = saved[k]; });
   } catch (e) {}
+  if (st.myTeam && !st.myTeam.id) st.myTeam = { ...st.myTeam, id: newTeamId(), at: Date.now() };
+  // link undangan tim (?tim=...): simpan timnya, lalu arahkan ke halaman tim setelah syarat terpenuhi
+  const inv = URL_INVITE && { ...URL_INVITE };
+  if (inv === null) st.notice = "invite.bad";
+  else if (inv) {
+    if (st.myTeam && st.myTeam.id === inv.id) st.notice = "invite.own";
+    else {
+      const others = st.sharedTeams.filter((x) => x.id !== inv.id);
+      if (TIM.some((x) => x.nama === inv.nama) || others.some((x) => x.nama === inv.nama)) inv.nama += " · " + inv.id.slice(0, 4).toUpperCase();
+      const old = st.sharedTeams.find((x) => x.id === inv.id);
+      if (old) inv.nama = old.nama; // nama tetap agar lamaran yang sudah ada tidak putus
+      st.sharedTeams = [...others, inv];
+      st.invite = inv.nama;
+    }
+  }
   if (!SCREENS.includes(st.screen)) st.screen = "intro";
   if (st.screen !== "intro" && !st.user) st.screen = "intro";
   else if (!["intro", "login", "identitas"].includes(st.screen) && !identDone(st)) st.screen = "identitas";
   if (["hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
   if (["pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"].includes(st.screen) && !st.joinedMain) st.screen = "grup";
   if ((st.screen === "pasar" || st.screen === "buat" || st.screen === "tim") && st.myTeam) st.screen = "dasbor";
-  if (st.screen === "tim" && !TIM.some((x) => x.nama === st.viewTeam)) st.screen = "pasar";
+  if (st.invite && st.user && identDone(st) && quizDone(st.jawab) && st.joinedMain) { st.screen = "tim"; st.viewTeam = st.invite; st.invite = null; }
+  if (st.screen === "tim" && !findTeam(st, st.viewTeam)) st.screen = "pasar";
   if (st.screen === "buat" && !canCreate(st)) st.screen = "pilih";
   return st;
 }
@@ -56,6 +75,8 @@ export default function App() {
   const [toastMsg, setToastMsg] = useState("");
   const toastT = useRef();
   const { t, get, role } = makeT(st.lang);
+
+  useEffect(() => { if (st.notice) { toast(t(st.notice)); patch({ notice: null }); } }, []);
 
   useEffect(() => {
     try {
@@ -177,14 +198,15 @@ export default function App() {
   const actions = {
     confirmMain() {
       if (!st.clickedMain) { toast(t("group.confirmHint")); return; }
-      setSt((s) => ({ ...s, joinedMain: true, ...withLog(s, "joinMain"), screen: "pilih" }));
+      setSt((s) => ({ ...s, joinedMain: true, ...withLog(s, "joinMain"), ...(s.invite ? { screen: "tim", viewTeam: s.invite, invite: null } : { screen: "pilih" }) }));
       window.scrollTo({ top: 0 });
     },
     toChoose() {
       if (!st.joinedMain) { toast(t("group.gate")); return; }
-      go("pilih");
+      if (st.invite) go("tim", { viewTeam: st.invite, invite: null });
+      else go("pilih");
     },
-    openDetail(team) { go("tim", { viewTeam: team }); },
+    openDetail(team) { go("tim", { viewTeam: team, ...(st.invite === team ? { invite: null } : null) }); },
     toTencent() { go("tencent"); },
     toTeamStep() { go(st.myTeam || st.apps.length ? "dasbor" : "pilih"); },
     toChoosePage() { go("pilih"); },
@@ -238,7 +260,7 @@ export default function App() {
     createTeam(team) {
       if (!canCreate(st)) { toast(t("choose.lockedMember", { team: "" })); return; }
       setSt((s) => ({
-        ...s, mode: "create", myTeam: team, undang: [],
+        ...s, mode: "create", myTeam: { ...team, id: newTeamId(), at: Date.now() }, undang: [],
         applicants: SEED_APPLICANTS.map((b) => ({ b, status: "pending" })), ...withLog(s, "openTeam", { team: team.nama }), screen: "dasbor"
       }));
       window.scrollTo({ top: 0 });
@@ -298,6 +320,7 @@ export default function App() {
       <div className="wrap">
         <Stepper st={st} get={get} gotoStep={gotoStep} />
         <SubSteps st={st} t={t} onGo={goSub} />
+        {st.invite && st.screen !== "tim" && <div className="card y invite-bar" role="status">{t("invite.banner", { team: st.invite })}</div>}
         <main id="app" aria-live="polite" data-step={STEP_OF[st.screen]}>{view}</main>
       </div>
       <Footer t={t} />

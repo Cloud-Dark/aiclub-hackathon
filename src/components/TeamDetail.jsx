@@ -1,12 +1,12 @@
 import React from "react";
 import { Head, Actions } from "./Common.jsx";
-import { TIM } from "../data.js";
+import { findTeam, teamDesc } from "../lib/share.js";
 import { aktif } from "../lib/scoring.js";
 import { activeApp } from "../lib/rules.js";
 
 export default function TeamDetail({ st, t, get, role, actions, onBack }) {
-  const i = TIM.findIndex((x) => x.nama === st.viewTeam);
-  const tm = TIM[i];
+  const tm = findTeam(st, st.viewTeam);
+  if (!tm) return null;
   const a = aktif(st);
   const ap = st.apps.find((x) => x.team === tm.nama);
   const status = ap ? ap.status : null;
@@ -20,7 +20,9 @@ export default function TeamDetail({ st, t, get, role, actions, onBack }) {
 
   let cta;
   if (status === "approved") {
-    cta = <a className="btn gold cta-link" href={tm.wa} target="_blank" rel="noopener noreferrer">{t("detail.join")} <span aria-hidden="true">&#9654;</span></a>;
+    cta = tm.wa
+      ? <a className="btn gold cta-link" href={tm.wa} target="_blank" rel="noopener noreferrer">{t("detail.join")} <span aria-hidden="true">&#9654;</span></a>
+      : <button type="button" className="btn ghost" aria-disabled="true">{t("market.groupSoon")}</button>;
   } else if (status === "pending") {
     cta = <button type="button" className="btn ghost" onClick={() => actions.toggleApply(tm.nama)}>{t("market.withdraw")}</button>;
   } else if (status === "rejected") {
@@ -38,7 +40,7 @@ export default function TeamDetail({ st, t, get, role, actions, onBack }) {
     <section className="screen" style={{ maxWidth: 860, margin: "0 auto" }}>
       <Head prompt={t("detail.prompt", { team: slug })} onBack={onBack} t={t} />
       <h2>{tm.nama}</h2>
-      <p className="lead" style={{ marginBottom: 18, fontSize: 17 }}>{get("teams")[i]}</p>
+      <p className="lead" style={{ marginBottom: 18, fontSize: 17 }}>{teamDesc(tm, get)}</p>
 
       <div className="grid2 even">
         <div className="stack">

@@ -14,7 +14,13 @@ Hash di dalam kurung adalah commit sumber. Entri 2026-10-21 bagian "Fixed" dan s
 
 ## [Belum Dirilis]
 
-Belum ada perubahan di luar entri 2026-10-21.
+### Added
+
+- Link undangan tim: owner dapat menyalin atau membagikan link `?tim=...` (WhatsApp, Web Share API). Pengunjung yang membuka link melihat banner undangan, lalu setelah menyelesaikan pendaftaran langsung diarahkan ke detail tim untuk melamar. Tim dari link tampil di pasar tim dengan penanda "LEWAT LINK". Teks tersedia dalam id/en/zh. Lihat FR-059 di [03_FRD.md](03_FRD.md).
+
+### Changed
+
+- Pasar tim, detail tim, dan dasbor membaca daftar gabungan tim contoh dan tim dari link (`src/lib/share.js`). Tim baru kini menyimpan `id` dan `at`.
 
 ## [2026-10-21]
 
