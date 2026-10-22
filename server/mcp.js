@@ -76,9 +76,12 @@ const TOOLS = [
     }
   },
   { name: "list_announcements", description: "Semua pengumuman (draft/published/archived) dengan jumlah tayangan unik.", schema: obj(), run: via(ct.adminListAnnouncements) },
+  { name: "get_announcement", description: "Baca satu pengumuman lengkap: status dan teks semua bahasa (untuk diedit).", schema: obj(idProp, ["id"]), run: via(ct.adminGetAnnouncement) },
   { name: "create_announcement", description: "Buat pengumuman berstatus draft. Terbitkan dengan publish_announcement.", schema: obj({ id: { type: "string", description: "slug opsional" }, pinned: { type: "boolean" }, ...textsProp }, ["texts"]), run: via(ct.adminCreateAnnouncement, true) },
   { name: "update_announcement", description: "Ubah teks (per bahasa) atau sematkan/lepas.", schema: obj({ ...idProp, pinned: { type: "boolean" }, ...textsProp }, ["id"]), run: via(ct.adminPatchAnnouncement, true) },
   { name: "publish_announcement", description: "Terbitkan pengumuman (tampil publik).", schema: obj(idProp, ["id"]), run: via(ct.adminPublish) },
+  { name: "unpublish_announcement", description: "Tarik pengumuman kembali menjadi draft (tidak lagi publik).", schema: obj(idProp, ["id"]), run: via(ct.adminUnpublish) },
+  { name: "delete_announcement", description: "HAPUS PERMANEN pengumuman beserta teks dan data tayangannya. Untuk sekadar menyembunyikan, pakai archive_announcement.", schema: obj(idProp, ["id"]), run: via(ct.adminDeleteAnnouncement) },
   { name: "archive_announcement", description: "Arsipkan pengumuman (disembunyikan dari publik).", schema: obj(idProp, ["id"]), run: via(ct.adminArchive) },
   { name: "list_admins", description: "Daftar akun admin (yang bisa login ke MCP).", schema: obj(), async run(c) {
       const r = await c.db.prepare("SELECT id AS member_id, email, nama, created_at FROM hackathon_member WHERE role = 'admin' ORDER BY created_at").all();

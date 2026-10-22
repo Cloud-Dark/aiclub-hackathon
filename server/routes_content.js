@@ -103,6 +103,32 @@ export async function adminPatchAnnouncement(c) {
   await c.db.batch(stmts);
   return c.json({ ok: true });
 }
+export async function adminGetAnnouncement(c) {
+  const a = await annExists(c);
+  const [t, v] = await Promise.all([
+    c.db.prepare("SELECT lang, title, summary, body FROM hackathon_announcement_i18n WHERE announcement_id = ?").bind(a.id).all(),
+    c.db.prepare("SELECT COUNT(*) n FROM hackathon_announcement_view WHERE announcement_id = ?").bind(a.id).first()
+  ]);
+  return c.json({
+    id: a.id, status: a.status, pinned: !!a.pinned, published_at: a.published_at, created_at: a.created_at, updated_at: a.updated_at, views: v.n,
+    texts: Object.fromEntries(t.results.map(({ lang, ...x }) => [lang, x]))
+  });
+}
+export async function adminUnpublish(c) {
+  const a = await annExists(c);
+  await c.db.prepare("UPDATE hackathon_announcement SET status = 'draft', updated_at = ? WHERE id = ?").bind(c.now, a.id).run();
+  return c.json({ id: a.id, status: "draft" });
+}
+// hapus permanen beserta teks dan tayangannya; untuk menyembunyikan saja, pakai arsip
+export async function adminDeleteAnnouncement(c) {
+  const a = await annExists(c);
+  await c.db.batch([
+    c.db.prepare("DELETE FROM hackathon_announcement_view WHERE announcement_id = ?").bind(a.id),
+    c.db.prepare("DELETE FROM hackathon_announcement_i18n WHERE announcement_id = ?").bind(a.id),
+    c.db.prepare("DELETE FROM hackathon_announcement WHERE id = ?").bind(a.id)
+  ]);
+  return c.json({ id: a.id, deleted: true });
+}
 export async function adminPublish(c) {
   const a = await annExists(c);
   await c.db.prepare("UPDATE hackathon_announcement SET status = 'published', published_at = COALESCE(published_at, ?), updated_at = ? WHERE id = ?").bind(c.now, c.now, a.id).run();

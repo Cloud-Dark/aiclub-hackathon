@@ -277,7 +277,10 @@ console.log("admin");
   check("ubah + sematkan", (await client()("GET", `/hackathon/announcements?lang=zh`)).data.announcements[0].title === "测试");
   await u.api("POST", `/hackathon/announcements/uji-${RUN}/view`);
   check("views admin", (await ad.api("GET", `/hackathon/admin/announcements/uji-${RUN}/views`)).data.unique_views === 1);
+  check("REST: baca lengkap", (await ad.api("GET", `/hackathon/admin/announcements/uji-${RUN}`)).data.texts.zh.title === "测试");
+  check("member biasa tidak bisa hapus = 403", (await u.api("DELETE", `/hackathon/admin/announcements/uji-${RUN}`)).status === 403);
   check("arsip menyembunyikan", (await ad.api("POST", `/hackathon/admin/announcements/uji-${RUN}/archive`)).status === 200 && (await client()("GET", `/hackathon/announcements/uji-${RUN}`)).status === 404);
+  check("REST: hapus pengumuman", (await ad.api("DELETE", `/hackathon/admin/announcements/uji-${RUN}`)).status === 200 && (await ad.api("GET", `/hackathon/admin/announcements/uji-${RUN}`)).status === 404);
   const csv = await ad.api("GET", "/hackathon/admin/participants.csv");
   check("ekspor csv oleh admin", csv.status === 200 && typeof csv.data === "string" && csv.data.startsWith("id,nama,email") && csv.data.includes("081234567890"), String(csv.data).slice(0, 80));
 }
@@ -337,7 +340,7 @@ if (!process.env.SKIP_MCP) {
   check("initialize", init.data.result.serverInfo.name === "aiclub-hackathon" && init.data.result.capabilities.tools, init.data);
   check("notifikasi = 202", (await rpc({ jsonrpc: "2.0", method: "notifications/initialized" })).status === 202);
   const tl = await rpc({ jsonrpc: "2.0", id: 2, method: "tools/list" });
-  check("tools/list", tl.data.result.tools.length >= 14 && tl.data.result.tools.every((x) => x.inputSchema.type === "object"), tl.data.result.tools.length);
+  check("tools/list", tl.data.result.tools.length >= 17 && tl.data.result.tools.every((x) => x.inputSchema.type === "object"), tl.data.result.tools.length);
   check("overview", JSON.parse((await call("overview")).out).members >= 0);
   const slug = "mcp-" + RUN;
   check("create_announcement", JSON.parse((await call("create_announcement", { id: slug, texts: { id: { title: "Dari MCP", summary: "Ringkas", body: ["A", "B"] } } })).out).status === "draft");
@@ -345,7 +348,16 @@ if (!process.env.SKIP_MCP) {
   await call("publish_announcement", { id: slug });
   check("publish -> publik", (await client()("GET", "/hackathon/announcements/" + slug)).data.title === "Dari MCP");
   check("validasi: id bahasa wajib", (await call("create_announcement", { texts: { en: { title: "a", summary: "b", body: "c" } } })).err === true);
+  const full = JSON.parse((await call("get_announcement", { id: slug })).out);
+  check("get_announcement: semua bahasa + status", full.status === "published" && full.texts.id.title === "Dari MCP" && full.texts.id.body === "A\n\nB", full);
+  await call("update_announcement", { id: slug, texts: { en: { title: "From MCP", summary: "Sum", body: "Body" } } });
+  check("update_announcement menambah bahasa", (await client()("GET", `/hackathon/announcements/${slug}?lang=en`)).data.title === "From MCP");
+  await call("unpublish_announcement", { id: slug });
+  check("unpublish -> tidak publik", (await client()("GET", "/hackathon/announcements/" + slug)).status === 404);
+  await call("publish_announcement", { id: slug });
   await call("archive_announcement", { id: slug });
+  check("arsip -> tidak publik", (await client()("GET", "/hackathon/announcements/" + slug)).status === 404);
+  check("delete_announcement", JSON.parse((await call("delete_announcement", { id: slug })).out).deleted === true && (await call("get_announcement", { id: slug })).err === true);
   check("list_participants", JSON.parse((await call("list_participants", { q: "Owner", limit: 5 })).out).participants.length > 0);
   const tms = JSON.parse((await call("list_teams", { status: "open" })).out).teams;
   const gt = JSON.parse((await call("get_team", { id: tms[0].id })).out);

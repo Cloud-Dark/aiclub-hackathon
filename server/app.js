@@ -45,7 +45,10 @@ const ROUTES = [
   ["GET", "/hackathon/admin/participants.csv", ct.adminExportParticipants, "admin"],
   ["GET", "/hackathon/admin/announcements", ct.adminListAnnouncements, "admin"],
   ["POST", "/hackathon/admin/announcements", ct.adminCreateAnnouncement, "admin"],
+  ["GET", "/hackathon/admin/announcements/:id", ct.adminGetAnnouncement, "admin"],
   ["PATCH", "/hackathon/admin/announcements/:id", ct.adminPatchAnnouncement, "admin"],
+  ["DELETE", "/hackathon/admin/announcements/:id", ct.adminDeleteAnnouncement, "admin"],
+  ["POST", "/hackathon/admin/announcements/:id/unpublish", ct.adminUnpublish, "admin"],
   ["POST", "/hackathon/admin/announcements/:id/publish", ct.adminPublish, "admin"],
   ["POST", "/hackathon/admin/announcements/:id/archive", ct.adminArchive, "admin"],
   ["GET", "/hackathon/admin/announcements/:id/views", ct.adminAnnouncementViews, "admin"]

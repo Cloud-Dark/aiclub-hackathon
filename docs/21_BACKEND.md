@@ -16,7 +16,7 @@ Backend mengikuti [../brief.md](../brief.md) bagian 5 sampai 6, dengan satu perb
 | `server/routes_content.js` | Pengumuman, chat, admin (ringkasan, ekspor CSV) |
 | `migrations/` | Skema D1 dan seed pengumuman (`scripts/gen-seed.mjs` membuatnya dari `src/i18n`) |
 | `wrangler.toml` | Binding D1 `DB`; `ADMIN_EMAILS` (secret) |
-| `scripts/test-api.mjs` | Tes integrasi (157 kasus, termasuk OAuth dan MCP; `SKIP_MCP=1` untuk melewatinya, mis. saat menguji server jarak jauh tanpa akun admin uji) |
+| `scripts/test-api.mjs` | Tes integrasi (165 kasus, termasuk OAuth dan MCP; `SKIP_MCP=1` untuk melewatinya, mis. saat menguji server jarak jauh tanpa akun admin uji) |
 
 ## Auth
 
@@ -46,7 +46,7 @@ Sama dengan [../brief.md](../brief.md) bagian 6 (kecuali `GET .../stream`: WebSo
 - Access token berlaku 1 jam, refresh token 30 hari (dirotasi, sekali pakai).
 - Admin awal: `apipedia22@gmail.com` (dibuat langsung di DB; pendaftaran publik tidak bisa merebut email itu karena sudah terpakai).
 - Admin lain: lewat tool MCP `add_admin` (akun baru dibuat dengan sandi acak yang tampil sekali; akun yang sudah ada dinaikkan). `remove_admin`, `list_admins`, `change_password` juga tersedia.
-- Tool lain: `overview`, `list_participants`, `export_participants_csv`, `list_teams`, `get_team`, `list_announcements`, `create_announcement`, `update_announcement`, `publish_announcement`, `archive_announcement`, `announcement_views`. Data peserta berisi kontak pribadi.
+- Tool lain: `overview`, `list_participants`, `export_participants_csv`, `list_teams`, `get_team`, `list_announcements`, `get_announcement`, `create_announcement`, `update_announcement`, `publish_announcement`, `unpublish_announcement`, `archive_announcement`, `delete_announcement` (hapus permanen), `announcement_views`. Data peserta berisi kontak pribadi.
 
 Claude Code: `claude mcp add --transport http hackathon https://aicandoit.aiclub.id/mcp`, lalu `/mcp` dan pilih Authenticate. Claude.ai: tambah custom connector dengan URL yang sama.
 
