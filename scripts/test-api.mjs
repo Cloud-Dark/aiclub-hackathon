@@ -282,28 +282,69 @@ console.log("admin");
   check("ekspor csv oleh admin", csv.status === 200 && typeof csv.data === "string" && csv.data.startsWith("id,nama,email") && csv.data.includes("081234567890"), String(csv.data).slice(0, 80));
 }
 
-console.log("mcp");
-if (process.env.MCP_TOKEN) {
-  const rpc = async (body, token = process.env.MCP_TOKEN) => {
+console.log("mcp + oauth");
+if (!process.env.SKIP_MCP) {
+  const { createHash, randomBytes } = await import("node:crypto");
+  const b64 = (buf) => buf.toString("base64url");
+  const REDIR = "http://localhost:9999/callback";
+  const post = (path, form) => fetch(BASE + path, { method: "POST", redirect: "manual", headers: { "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(form).toString() });
+  const reg = await (await fetch(BASE + "/oauth/register", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ redirect_uris: [REDIR], client_name: "Tes" }) })).json();
+  check("registrasi klien", !!reg.client_id, reg);
+  check("redirect_uri berbahaya ditolak", (await fetch(BASE + "/oauth/register", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ redirect_uris: ["javascript:alert(1)"] }) })).status === 400);
+  const md = await (await fetch(BASE + "/.well-known/oauth-authorization-server")).json();
+  const pr = await (await fetch(BASE + "/.well-known/oauth-protected-resource")).json();
+  check("metadata OAuth", md.code_challenge_methods_supported[0] === "S256" && md.token_endpoint.endsWith("/oauth/token") && pr.resource.endsWith("/mcp"), [md, pr]);
+
+  const verifier = b64(randomBytes(32)), challenge = b64(createHash("sha256").update(verifier).digest());
+  const base = { client_id: reg.client_id, redirect_uri: REDIR, response_type: "code", code_challenge: challenge, code_challenge_method: "S256", state: "st-1" };
+  const authUrl = BASE + "/oauth/authorize?" + new URLSearchParams(base);
+  const pg = await fetch(authUrl);
+  const html = await pg.text();
+  check("halaman login", pg.status === 200 && html.includes("Masuk pengurus") && pg.headers.get("x-frame-options") === "DENY");
+  check("redirect_uri tak terdaftar = halaman galat (bukan redirect)", (await fetch(BASE + "/oauth/authorize?" + new URLSearchParams({ ...base, redirect_uri: "https://evil.example/cb" }), { redirect: "manual" })).status === 400);
+  check("tanpa PKCE = redirect error", ((await fetch(BASE + "/oauth/authorize?" + new URLSearchParams({ ...base, code_challenge: "" }), { redirect: "manual" })).headers.get("location") || "").includes("error=invalid_request"));
+  const bad = await post("/oauth/authorize", { ...base, email: "admin@test.id", password: "salah-salah" });
+  check("sandi salah = tidak ada code", bad.status === 401 && (await bad.text()).includes("sandi salah"));
+  const nonAdmin = await user("BukanAdmin");
+  const na = await post("/oauth/authorize", { ...base, email: nonAdmin.email, password: "rahasia123" });
+  check("akun non-admin ditolak", na.status === 401 && (await na.text()).includes("bukan admin"));
+  const ok = await post("/oauth/authorize", { ...base, email: "admin@test.id", password: "rahasia123" });
+  const loc = new URL(ok.headers.get("location") || "http://x/");
+  check("admin login -> redirect dengan code & state", ok.status === 302 && loc.origin + loc.pathname === REDIR && loc.searchParams.get("state") === "st-1" && !!loc.searchParams.get("code"), ok.headers.get("location"));
+  const code = loc.searchParams.get("code");
+  const tok = (form) => post("/oauth/token", { client_id: reg.client_id, ...form });
+  check("verifier salah ditolak", (await tok({ grant_type: "authorization_code", code, redirect_uri: REDIR, code_verifier: b64(randomBytes(32)) })).status === 400);
+  check("code hangus setelah dicoba", (await tok({ grant_type: "authorization_code", code, redirect_uri: REDIR, code_verifier: verifier })).status === 400);
+  const ok2 = await post("/oauth/authorize", { ...base, email: "admin@test.id", password: "rahasia123" });
+  const code2 = new URL(ok2.headers.get("location")).searchParams.get("code");
+  check("redirect_uri beda saat tukar ditolak", (await tok({ grant_type: "authorization_code", code: code2, redirect_uri: "http://localhost:9999/x", code_verifier: verifier })).status === 400);
+  const ok3 = await post("/oauth/authorize", { ...base, email: "admin@test.id", password: "rahasia123" });
+  const code3 = new URL(ok3.headers.get("location")).searchParams.get("code");
+  const t = await (await tok({ grant_type: "authorization_code", code: code3, redirect_uri: REDIR, code_verifier: verifier })).json();
+  check("tukar code -> access + refresh token", t.token_type === "Bearer" && !!t.access_token && !!t.refresh_token && t.expires_in === 3600, t);
+  let TOKEN = t.access_token;
+
+  const rpc = async (body, token = TOKEN) => {
     const r = await fetch(BASE + "/mcp", { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: "Bearer " + token } : {}) }, body: JSON.stringify(body) });
-    const t = await r.text(); return { status: r.status, data: t ? JSON.parse(t) : null };
+    const tx = await r.text(); return { status: r.status, headers: r.headers, data: tx ? JSON.parse(tx) : null };
   };
   const call = async (name, args = {}) => { const r = await rpc({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name, arguments: args } }); return { ...r, out: r.data.result?.content?.[0]?.text, err: r.data.result?.isError }; };
-  check("tanpa token = 401", (await rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, "")).status === 401);
-  check("token salah = 401", (await rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, "x".repeat(40))).status === 401);
-  check("GET = 405", (await fetch(BASE + "/mcp", { headers: { authorization: "Bearer " + process.env.MCP_TOKEN } })).status === 405);
+  const un = await rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, "");
+  check("tanpa token = 401 + resource_metadata", un.status === 401 && /resource_metadata=".*oauth-protected-resource"/.test(un.headers.get("www-authenticate")), un.headers.get("www-authenticate"));
+  check("token asal = 401", (await rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, "x".repeat(40))).status === 401);
+  check("GET = 405", (await fetch(BASE + "/mcp", { headers: { authorization: "Bearer " + TOKEN } })).status === 405);
   const init = await rpc({ jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-03-26", capabilities: {}, clientInfo: { name: "t", version: "1" } } });
   check("initialize", init.data.result.serverInfo.name === "aiclub-hackathon" && init.data.result.capabilities.tools, init.data);
   check("notifikasi = 202", (await rpc({ jsonrpc: "2.0", method: "notifications/initialized" })).status === 202);
   const tl = await rpc({ jsonrpc: "2.0", id: 2, method: "tools/list" });
-  check("tools/list", tl.data.result.tools.length >= 10 && tl.data.result.tools.every((t) => t.inputSchema.type === "object"), tl.data.result.tools.length);
+  check("tools/list", tl.data.result.tools.length >= 14 && tl.data.result.tools.every((x) => x.inputSchema.type === "object"), tl.data.result.tools.length);
   check("overview", JSON.parse((await call("overview")).out).members >= 0);
   const slug = "mcp-" + RUN;
   check("create_announcement", JSON.parse((await call("create_announcement", { id: slug, texts: { id: { title: "Dari MCP", summary: "Ringkas", body: ["A", "B"] } } })).out).status === "draft");
   check("draf belum publik", (await client()("GET", "/hackathon/announcements/" + slug)).status === 404);
   await call("publish_announcement", { id: slug });
   check("publish -> publik", (await client()("GET", "/hackathon/announcements/" + slug)).data.title === "Dari MCP");
-  check("validasi: id wajib", (await call("create_announcement", { texts: { en: { title: "a", summary: "b", body: "c" } } })).err === true);
+  check("validasi: id bahasa wajib", (await call("create_announcement", { texts: { en: { title: "a", summary: "b", body: "c" } } })).err === true);
   await call("archive_announcement", { id: slug });
   check("list_participants", JSON.parse((await call("list_participants", { q: "Owner", limit: 5 })).out).participants.length > 0);
   const tms = JSON.parse((await call("list_teams", { status: "open" })).out).teams;
@@ -311,7 +352,32 @@ if (process.env.MCP_TOKEN) {
   check("list_teams + get_team", tms.length > 0 && Array.isArray(gt.members) && Array.isArray(gt.applications));
   check("tool tidak dikenal = error", (await rpc({ jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "hapus_semua" } })).data.error.code === -32602);
   check("export csv", (await call("export_participants_csv")).out.startsWith("id,nama"));
-} else console.log("  (lewati: MCP_TOKEN tidak di-set)");
+
+  // kelola admin
+  const newAdmin = `admin2-${RUN}@test.id`;
+  const add = JSON.parse((await call("add_admin", { email: newAdmin })).out);
+  check("add_admin buat akun + sandi sekali tampil", add.created && add.password_sekali_tampil.length >= 12, add);
+  const okN = await post("/oauth/authorize", { ...base, email: newAdmin, password: add.password_sekali_tampil });
+  check("admin baru bisa login OAuth", okN.status === 302);
+  const codeN = new URL(okN.headers.get("location")).searchParams.get("code");
+  const tn = await (await tok({ grant_type: "authorization_code", code: codeN, redirect_uri: REDIR, code_verifier: verifier })).json();
+  check("admin baru bisa panggil MCP", (await rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, tn.access_token)).status === 200);
+  check("list_admins memuat keduanya", JSON.parse((await call("list_admins")).out).admins.length >= 2);
+  const promo = JSON.parse((await call("add_admin", { email: nonAdmin.email })).out);
+  check("add_admin akun ada = dinaikkan", promo.promoted === true && !promo.password_sekali_tampil);
+  check("tidak bisa cabut diri sendiri", (await call("remove_admin", { email: "admin@test.id" })).err === true);
+  await call("remove_admin", { email: newAdmin });
+  check("setelah dicabut: token admin baru ditolak", (await rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, tn.access_token)).status === 401);
+  await call("remove_admin", { email: nonAdmin.email });
+  check("setelah dicabut: login OAuth ditolak", (await post("/oauth/authorize", { ...base, email: nonAdmin.email, password: "rahasia123" })).status === 401);
+  check("change_password ringkas ditolak", (await call("change_password", { new_password: "123" })).err === true);
+
+  // refresh token (rotasi)
+  const rf = await (await tok({ grant_type: "refresh_token", refresh_token: t.refresh_token })).json();
+  check("refresh token -> token baru", !!rf.access_token && rf.refresh_token !== t.refresh_token, rf);
+  check("refresh token lama hangus", (await tok({ grant_type: "refresh_token", refresh_token: t.refresh_token })).status === 400);
+  check("token baru bekerja", (await rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, rf.access_token)).status === 200);
+} else console.log("  (dilewati)");
 
 console.log(`\n${pass} lulus, ${fail} gagal`);
 process.exit(fail ? 1 : 0);
