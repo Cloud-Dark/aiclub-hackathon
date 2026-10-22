@@ -19,7 +19,7 @@ function Pixel({ rows, color }) {
 export function Poster({ t }) {
   return (
     <figure className="poster">
-      <img src={asset("poster.jpg")} alt={t("event.posterAlt")} width="720" height="900" />
+      <img src={asset("poster.jpg")} alt={t("event.posterAlt")} width="1024" height="1024" />
     </figure>
   );
 }
