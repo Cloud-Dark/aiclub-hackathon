@@ -282,5 +282,36 @@ console.log("admin");
   check("ekspor csv oleh admin", csv.status === 200 && typeof csv.data === "string" && csv.data.startsWith("id,nama,email") && csv.data.includes("081234567890"), String(csv.data).slice(0, 80));
 }
 
+console.log("mcp");
+if (process.env.MCP_TOKEN) {
+  const rpc = async (body, token = process.env.MCP_TOKEN) => {
+    const r = await fetch(BASE + "/mcp", { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: "Bearer " + token } : {}) }, body: JSON.stringify(body) });
+    const t = await r.text(); return { status: r.status, data: t ? JSON.parse(t) : null };
+  };
+  const call = async (name, args = {}) => { const r = await rpc({ jsonrpc: "2.0", id: 1, method: "tools/call", params: { name, arguments: args } }); return { ...r, out: r.data.result?.content?.[0]?.text, err: r.data.result?.isError }; };
+  check("tanpa token = 401", (await rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, "")).status === 401);
+  check("token salah = 401", (await rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, "x".repeat(40))).status === 401);
+  check("GET = 405", (await fetch(BASE + "/mcp", { headers: { authorization: "Bearer " + process.env.MCP_TOKEN } })).status === 405);
+  const init = await rpc({ jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-03-26", capabilities: {}, clientInfo: { name: "t", version: "1" } } });
+  check("initialize", init.data.result.serverInfo.name === "aiclub-hackathon" && init.data.result.capabilities.tools, init.data);
+  check("notifikasi = 202", (await rpc({ jsonrpc: "2.0", method: "notifications/initialized" })).status === 202);
+  const tl = await rpc({ jsonrpc: "2.0", id: 2, method: "tools/list" });
+  check("tools/list", tl.data.result.tools.length >= 10 && tl.data.result.tools.every((t) => t.inputSchema.type === "object"), tl.data.result.tools.length);
+  check("overview", JSON.parse((await call("overview")).out).members >= 0);
+  const slug = "mcp-" + RUN;
+  check("create_announcement", JSON.parse((await call("create_announcement", { id: slug, texts: { id: { title: "Dari MCP", summary: "Ringkas", body: ["A", "B"] } } })).out).status === "draft");
+  check("draf belum publik", (await client()("GET", "/hackathon/announcements/" + slug)).status === 404);
+  await call("publish_announcement", { id: slug });
+  check("publish -> publik", (await client()("GET", "/hackathon/announcements/" + slug)).data.title === "Dari MCP");
+  check("validasi: id wajib", (await call("create_announcement", { texts: { en: { title: "a", summary: "b", body: "c" } } })).err === true);
+  await call("archive_announcement", { id: slug });
+  check("list_participants", JSON.parse((await call("list_participants", { q: "Owner", limit: 5 })).out).participants.length > 0);
+  const tms = JSON.parse((await call("list_teams", { status: "open" })).out).teams;
+  const gt = JSON.parse((await call("get_team", { id: tms[0].id })).out);
+  check("list_teams + get_team", tms.length > 0 && Array.isArray(gt.members) && Array.isArray(gt.applications));
+  check("tool tidak dikenal = error", (await rpc({ jsonrpc: "2.0", id: 3, method: "tools/call", params: { name: "hapus_semua" } })).data.error.code === -32602);
+  check("export csv", (await call("export_participants_csv")).out.startsWith("id,nama"));
+} else console.log("  (lewati: MCP_TOKEN tidak di-set)");
+
 console.log(`\n${pass} lulus, ${fail} gagal`);
 process.exit(fail ? 1 : 0);

@@ -16,7 +16,7 @@ Backend mengikuti [../brief.md](../brief.md) bagian 5 sampai 6, dengan satu perb
 | `server/routes_content.js` | Pengumuman, chat, admin (ringkasan, ekspor CSV) |
 | `migrations/` | Skema D1 dan seed pengumuman (`scripts/gen-seed.mjs` membuatnya dari `src/i18n`) |
 | `wrangler.toml` | Binding D1 `DB`; `ADMIN_EMAILS` (secret) |
-| `scripts/test-api.mjs` | Tes integrasi (117 kasus) |
+| `scripts/test-api.mjs` | Tes integrasi (132 kasus, termasuk MCP bila `MCP_TOKEN` di-set) |
 
 ## Auth
 
@@ -39,13 +39,19 @@ Sama dengan [../brief.md](../brief.md) bagian 6 (kecuali `GET .../stream`: WebSo
 - Chat: polling saja, 1000 karakter, 20 pesan/menit dan 500/hari per member.
 - Belum ada: notifikasi, WebSocket, retensi chat, kota berbasis `cityId` (kota berupa teks).
 
+## MCP untuk pengurus
+
+`POST https://aicandoit.aiclub.id/mcp` (MCP Streamable HTTP, JSON-RPC tanpa sesi, tanpa SSE). Auth: header `Authorization: Bearer <MCP_TOKEN>`; `MCP_TOKEN` adalah secret Pages (minimal 24 karakter), tanpa itu endpoint membalas `503`. Tool: `overview`, `list_participants`, `export_participants_csv`, `list_teams`, `get_team`, `list_announcements`, `create_announcement`, `update_announcement`, `publish_announcement`, `archive_announcement`, `announcement_views`. Data peserta berisi kontak pribadi; mutasi hanya untuk pengumuman. Ganti token: `wrangler pages secret put MCP_TOKEN --project-name aiclub-hackathon`.
+
+Contoh Claude Code: `claude mcp add --transport http hackathon https://aicandoit.aiclub.id/mcp --header "Authorization: Bearer <token>"`.
+
 ## Menjalankan
 
 ```
-echo 'ADMIN_EMAILS=admin@test.id' > .dev.vars
+printf 'ADMIN_EMAILS=admin@test.id\nMCP_TOKEN=token-lokal-minimal-24-karakter\n' > .dev.vars
 npm run db:migrate:local
 npm run build && npm run dev:api        # http://localhost:8788
-npm run test:api
+MCP_TOKEN=token-lokal-minimal-24-karakter npm run test:api
 ```
 
 Produksi: `npm run db:migrate` (butuh `CLOUDFLARE_API_TOKEN`), lalu deploy lewat Git seperti biasa.
