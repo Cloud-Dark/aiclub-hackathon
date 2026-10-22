@@ -13,4 +13,4 @@ migrations_dir = "migrations"
 [vars]
 SITE_URL = "https://aicandoit.aiclub.id"
 TURNSTILE_SITEKEY = "0x4AAAAAAFg4V4gXFhLUdMJm"
-EMAIL_FROM = "AI Agent Hackathon <noreply@aicandoit.aiclub.id>"
+EMAIL_FROM = "AI Agent Hackathon <noreply@apipedia.id>"
