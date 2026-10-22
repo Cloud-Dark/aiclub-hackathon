@@ -407,3 +407,16 @@ a.cbtn{text-decoration:none;display:inline-flex;align-items:center;justify-conte
 .chat-form input:focus{outline:none;border-color:var(--cyan)}
 .chat-form .cbtn{margin-top:0}
 .deadline{color:var(--yellow)}
+
+/* auth */
+.auth-tabs button{flex:1}
+.auth-tabs button:disabled{opacity:.6;cursor:not-allowed}
+.auth-hint{font-family:var(--mono);font-size:16px;color:var(--dim)}
+.auth-captcha{min-height:65px;display:flex;justify-content:center}
+.auth-err{border:2px solid var(--magenta);padding:8px 12px}
+/* ann */
+
+/* teams */
+.msg-del{margin-left:10px;background:none;border:0;padding:0;font-family:var(--mono);font-size:13px;color:var(--faint);cursor:pointer;text-decoration:underline}
+.msg-del:hover,.msg-del:focus-visible{color:var(--magenta)}
+.msg-gone{color:var(--faint)!important;font-style:italic}

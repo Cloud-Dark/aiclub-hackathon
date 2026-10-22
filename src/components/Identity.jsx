@@ -31,9 +31,8 @@ export default function Identity({ st, patch, t, get, errors, onNext, onBack }) 
             <input name="kota" autoComplete="address-level2" value={st.kota} placeholder={t("identity.cityPh")}
               aria-invalid={!!errors.kota} onChange={(e) => patch({ kota: e.target.value }, "kota")} />
           </Field>
-          <Field label={t("identity.email") + (st.user ? " (" + t("identity.emailLocked") + ")" : "")} error={errors.email}>
-            <input name="email" type="email" inputMode="email" autoComplete="email" value={st.email} placeholder={t("identity.emailPh")} aria-invalid={!!errors.email} readOnly={!!st.user}
-              onChange={(e) => patch({ email: e.target.value }, "email")} />
+          <Field label={t("identity.email") + " (" + t("identity.emailLocked") + ")"} error={errors.email}>
+            <input name="email" type="email" inputMode="email" autoComplete="email" value={st.email} placeholder={t("identity.emailPh")} aria-invalid={!!errors.email} readOnly />
           </Field>
         </div>
         <div className="row2">

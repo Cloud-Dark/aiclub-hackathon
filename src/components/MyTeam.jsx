@@ -1,17 +1,16 @@
 import React, { useRef, useState } from "react";
-import { BUILDER, WA_LINK_RE } from "../data.js";
+import { WA_LINK_RE } from "../data.js";
 import { ConfirmButton } from "./Widgets.jsx";
 import { teamLink } from "../lib/share.js";
 import { leftHM } from "../lib/rules.js";
-import { teamMembers, teamMessages } from "../lib/team.js";
 import TeamRoom from "./TeamRoom.jsx";
 
 // owner membagikan link tim; yang membuka link bisa melamar ke tim ini
-function ShareTeam({ st, t, role }) {
+function ShareTeam({ st, t, role, actions }) {
   const m = (k, v) => t("dash.myTeam." + k, v);
   const team = st.myTeam;
-  const url = teamLink(team, st.nama.trim());
-  const text = m("shareMsg", { team: team.nama, slots: team.butuh.map((b) => role(b).ringkas).join(", ") });
+  const url = teamLink(team.share_code);
+  const text = m("shareMsg", { team: team.nama, slots: (team.butuh || []).map((b) => role(b).ringkas).join(", ") });
   const [copy, setCopy] = useState("");
   const inp = useRef();
   async function doCopy() {
@@ -31,7 +30,8 @@ function ShareTeam({ st, t, role }) {
         {copy === "ok" && <span className="okline" role="status">&#9632; {m("copied")}</span>}
       </div>
       {copy === "fail" && <span className="err-msg" role="status">{m("copyFail")}</span>}
-      <div className="note">{m("shareDemo")}</div>
+      <div className="note">{m("rotateNote")}</div>
+      <div><ConfirmButton label={m("rotate")} sure={t("choose.sure")} onConfirm={actions.rotateShareCode} /></div>
     </div>
   );
 }
@@ -40,14 +40,15 @@ function ShareTeam({ st, t, role }) {
 export default function MyTeam({ st, t, get, role, actions }) {
   const m = (k, v) => t("dash.myTeam." + k, v);
   const team = st.myTeam;
-  const [link, setLink] = useState(team.wa);
+  const [link, setLink] = useState(team.wa || "");
   const [linkErr, setLinkErr] = useState("");
   const [saved, setSaved] = useState(false);
 
-  const saveLink = () => {
+  const saveLink = async () => {
     const v = link.trim();
     if (v && !WA_LINK_RE.test(v)) { setLinkErr(m("errWa")); setSaved(false); return; }
-    setLinkErr(""); actions.saveTeamLink(v); setSaved(true);
+    setLinkErr("");
+    setSaved(!!(await actions.saveTeamLink(v)));
   };
   return (
     <>
@@ -55,11 +56,11 @@ export default function MyTeam({ st, t, get, role, actions }) {
         <div className="kick">{m("title")}</div>
         <div className="px" style={{ fontSize: 11, lineHeight: 1.6 }}>{team.nama}</div>
         {team.desc && <div className="txt">{team.desc}</div>}
-        <div className="tags">{team.butuh.map((b) => <span key={b} className="tag m">{role(b).ringkas}</span>)}</div>
+        <div className="tags">{(team.butuh || []).map((b) => <span key={b} className="tag m">{role(b).ringkas}</span>)}</div>
 
         <div className={"field" + (linkErr ? " err" : "")}>
           <span>{m("wa")}</span>
-          <input type="url" inputMode="url" value={link} placeholder={m("waPh")} onChange={(e) => { setLink(e.target.value); setSaved(false); }} />
+          <input type="url" inputMode="url" maxLength={200} value={link} placeholder={m("waPh")} onChange={(e) => { setLink(e.target.value); setSaved(false); }} />
           {linkErr && <span className="err-msg">{linkErr}</span>}
           <div className="row-btns">
             <button type="button" className="cbtn go" onClick={saveLink}>{m("save")}</button>
@@ -72,21 +73,19 @@ export default function MyTeam({ st, t, get, role, actions }) {
           <div className="empty">{m("noApplicants")}</div>
         ) : (
           <div className="hist">
-            {st.applicants.map((ap, i) => {
-              const b = BUILDER[ap.b];
+            {st.applicants.map((ap) => {
               const col = ap.status === "approved" ? "var(--cyan)" : ap.status === "rejected" ? "var(--magenta)" : "var(--yellow)";
               return (
-                <div key={b.nama} className="it" style={{ alignItems: "flex-start" }}>
+                <div key={ap.id} className="it" style={{ alignItems: "flex-start" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0, flex: "1 1 180px" }}>
-                    <span className="px" style={{ fontSize: 9 }}>{b.nama} <span className="mono" style={{ fontSize: 17, color: "var(--dim)" }}>· {b.kota}</span></span>
-                    <span className="tag m" style={{ alignSelf: "flex-start" }}>{role(b.peran).ringkas}</span>
-                    <span className="mono" style={{ fontSize: 18, color: "var(--dim)", lineHeight: 1.25 }}>{get("builders")[ap.b]}</span>
+                    <span className="px" style={{ fontSize: 9 }}>{ap.nama} <span className="mono" style={{ fontSize: 17, color: "var(--dim)" }}>· {ap.kota}</span></span>
+                    <span className="tag m" style={{ alignSelf: "flex-start" }}>{role(ap.peran).ringkas}</span>
                   </div>
                   {ap.status === "pending" ? (
                     <div className="row-btns">
                       <span className="note deadline">{t("deadline.leftOwner", leftHM(ap))}</span>
-                      <button type="button" className="cbtn go" onClick={() => actions.decideApplicant(i, "approved")}>{m("approve")}</button>
-                      <button type="button" className="cbtn" onClick={() => actions.decideApplicant(i, "rejected")}>{m("reject")}</button>
+                      <button type="button" className="cbtn go" onClick={() => actions.decideApplicant(ap.id, "approved")}>{m("approve")}</button>
+                      <button type="button" className="cbtn" onClick={() => actions.decideApplicant(ap.id, "rejected")}>{m("reject")}</button>
                     </div>
                   ) : (
                     <span className="px" style={{ fontSize: 7, color: col }}>{ap.reason === "expired" ? t("deadline.auto") : m(ap.status)}</span>
@@ -99,28 +98,31 @@ export default function MyTeam({ st, t, get, role, actions }) {
         {!team.wa && st.applicants.some((x) => x.status === "approved") && <div className="note">{m("noLink")}</div>}
       </div>
 
-      <ShareTeam st={st} t={t} role={role} />
+      <ShareTeam st={st} t={t} role={role} actions={actions} />
 
-      <TeamRoom st={st} t={t} role={role} team={team} members={teamMembers(st, team)} messages={teamMessages(st, team, t)} onSend={(x) => actions.sendChat(team.nama, x)} />
+      <TeamRoom st={st} t={t} role={role} team={st.myTeam} isOwner actions={actions} />
 
       <div className="card">
         <div className="kick c">{t("dash.inviteTitle")}</div>
         <div className="note">{t("dash.inviteBody")}</div>
-        <div className="hist">
-          {BUILDER.map((b, i) => {
-            const sudah = st.undang.includes(b.nama);
-            return (
-              <div key={b.nama} className="it" style={{ alignItems: "flex-start" }}>
-                <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0, flex: "1 1 180px" }}>
-                  <span className="px" style={{ fontSize: 9 }}>{b.nama} <span className="mono" style={{ fontSize: 17, color: "var(--dim)" }}>· {b.kota}</span></span>
-                  <span className="tag" style={{ alignSelf: "flex-start" }}>{role(b.peran).ringkas}</span>
-                  <span className="mono" style={{ fontSize: 18, color: "var(--dim)", lineHeight: 1.25 }}>{get("builders")[i]}</span>
+        {st.builders.length === 0 ? (
+          <div className="empty">{m("noBuilders")}</div>
+        ) : (
+          <div className="hist">
+            {st.builders.map((b) => {
+              const sudah = st.invited.includes(b.member_id);
+              return (
+                <div key={b.member_id} className="it" style={{ alignItems: "flex-start" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0, flex: "1 1 180px" }}>
+                    <span className="px" style={{ fontSize: 9 }}>{b.nama} <span className="mono" style={{ fontSize: 17, color: "var(--dim)" }}>· {b.kota}</span></span>
+                    <span className="tag" style={{ alignSelf: "flex-start" }}>{role(b.peran).ringkas}</span>
+                  </div>
+                  <button type="button" className={"cbtn " + (sudah ? "sent" : "")} onClick={() => actions.toggleInvite(b.member_id)}>{sudah ? m("invited") : m("invite")}</button>
                 </div>
-                <button type="button" className={"cbtn " + (sudah ? "sent" : "")} onClick={() => actions.toggleInvite(b.nama)}>{sudah ? m("invited") : m("invite")}</button>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <div className="card">

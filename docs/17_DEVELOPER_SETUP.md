@@ -4,7 +4,7 @@
 > Terakhir diperbarui: 2026-10-21
 > Pemilik: Tim AIClub Hackathon
 
-Panduan menyiapkan lingkungan pengembangan portal pendaftaran AI Agent Hackathon aiclub.id x Tencent Cloud (React + Vite, statis, state dummy di `localStorage`). Dokumen terkait: [04_TRD.md](04_TRD.md), [18_INSTALLATION.md](18_INSTALLATION.md), [12_TEST_STRATEGY.md](12_TEST_STRATEGY.md), [13_GLOSSARY.md](13_GLOSSARY.md), [../README.md](../README.md), [../brief.md](../brief.md).
+Panduan menyiapkan lingkungan pengembangan portal pendaftaran AI Agent Hackathon aiclub.id x Tencent Cloud (React + Vite, backend Cloudflare Pages Functions + D1 di `/api`, tanpa data dummy). Dokumen terkait: [04_TRD.md](04_TRD.md), [18_INSTALLATION.md](18_INSTALLATION.md), [12_TEST_STRATEGY.md](12_TEST_STRATEGY.md), [13_GLOSSARY.md](13_GLOSSARY.md), [../README.md](../README.md), [../brief.md](../brief.md).
 
 ## 1. Prasyarat
 
@@ -27,7 +27,7 @@ npm run dev
 
 `npm run dev` menjalankan server pengembangan Vite. Alamat dan port bawaan Vite (`http://localhost:5173`) kecuali bentrok dengan proses lain; konfigurasi khusus tidak ada di `vite.config.js`.
 
-Login dummy: pilih salah satu akun demo di halaman login (`rani@aiclub.id`, `bagas@aiclub.id`, `salsa@aiclub.id`) atau isi email apa saja dan sandi bebas.
+Login: daftar akun baru di halaman login. Untuk API lokal jalankan `npm run db:migrate:local` lalu `npm run dev:api` ([21_BACKEND.md](21_BACKEND.md)).
 
 ## 3. Skrip npm
 
@@ -59,7 +59,7 @@ aiclub-hackathon/
 ├── package.json          # skrip dan dependensi
 ├── package-lock.json
 ├── vite.config.js        # base "./", outDir docs, plugin react + pembersih docs/assets
-├── README.md             # ringkasan proyek, alur, dummy, build
+├── README.md             # ringkasan proyek, alur, backend, build
 ├── brief.md              # rencana integrasi dengan aiclub.id (draf)
 ├── .gitignore            # node_modules, .env, .env.local
 ├── public/               # disalin apa adanya ke hasil build
@@ -67,8 +67,8 @@ aiclub-hackathon/
 │   └── brand/            # logo (aiclub, tencent, sumopod, workbuddy, codebuddy), favicon, poster
 ├── src/
 │   ├── main.jsx          # render <App/> ke #root
-│   ├── App.jsx           # state utama, navigasi, actions, persistensi localStorage
-│   ├── data.js           # data dan konfigurasi dummy (lihat bagian 6)
+│   ├── App.jsx           # state utama, navigasi, actions, state dari API (localStorage hanya preferensi)
+│   ├── data.js           # konstanta statis (lihat bagian 6)
 │   ├── styles.css        # gaya global
 │   ├── components/       # layar dan widget UI (satu berkas per layar)
 │   ├── i18n/             # teks tiga bahasa: id.js, en.js, zh.js, index.js
@@ -86,7 +86,7 @@ aiclub-hackathon/
 | Berkas | Layar / fungsi |
 |---|---|
 | `Intro.jsx` | Layar awal (`intro`), ditambah `EventInfo.jsx` untuk info event. |
-| `Login.jsx` | Login aiclub.id (dummy). |
+| `Login.jsx` | Login/daftar akun portal. |
 | `Identity.jsx` | Data diri (`identitas`). |
 | `Quiz.jsx`, `Result.jsx` | Skenario (`kuis`) dan hasil jalur (`hasil`). |
 | `Group.jsx` | Grup WhatsApp utama (`grup`) dan pesan perkenalan. |
@@ -130,41 +130,39 @@ Menambah bahasa baru: buat berkas kamus baru, daftarkan di `I18N` dan `LANGS` pa
 
 ## 6. Mengubah Data (`src/data.js`)
 
-Semua data dan konfigurasi dummy ada di `src/data.js`:
+`src/data.js` hanya berisi konstanta statis; data tim, pelamar, pengumuman, dan akun datang dari API:
 
 | Ekspor | Isi | Catatan perubahan |
 |---|---|---|
-| `CONFIG` | `modeDraft` (false), `quizLen` (6), `demoOwner` (true) | `demoOwner` menampilkan tombol simulasi setujui/tolak; matikan saat backend tersambung. `quizLen` tidak boleh melebihi `WEIGHTS.length`. |
+| `CONFIG` | `modeDraft` (false), `quizLen` (6) | `quizLen` tidak boleh melebihi `WEIGHTS.length`. |
 | `URUT` | Kode jalur: `CEO, CTO, AI, PM, DSG, GRW, DOM, DAT` | Mengubah urutan memengaruhi hasil seri skor. Menambah kode berarti menambah `roles.<kode>` di tiga kamus. |
 | `WEIGHTS` | Bobot skor per soal dan per opsi | Satu elemen per soal; satu objek per opsi. |
 | `LATAR` | Daftar latar peserta | Label ada di `identity.latar.*`. |
 | `WA_GROUP_URL` | Tautan grup WhatsApp utama | Terkompilasi ke bundel (publik). |
-| `DUMMY_USERS` | Akun demo (`rani@`, `bagas@`, `salsa@aiclub.id`) | Profil sengaja tidak lengkap untuk menguji gerbang. |
-| `WA_LINK_RE` | Ekspresi validasi tautan grup WhatsApp | Dipakai `Create.jsx` dan `MyTeam.jsx`. |
-| `TIM`, `BUILDER`, `SEED_APPLICANTS` | Tim, builder, dan pelamar contoh | Teks deskripsi tim/builder ada di `teams[]` dan `builders[]` pada i18n (diindeks sama). Tautan `wa` hanya placeholder; jangan isi tautan sungguhan. |
+| `WA_LINK_RE` | Ekspresi validasi tautan grup WhatsApp (sama dengan server) | Dipakai `Create.jsx` dan `MyTeam.jsx`. |
 | `SCREENS`, `STEP_OF` | Daftar layar dan pemetaan ke langkah besar | Ubah bersama `App.jsx` bila menambah layar. |
 | `TENCENT_REGISTER_URL`, `TENCENT_SUBMIT_URL` | Tautan portal Tencent (`aiclub.id/l/...`) | Langkah 2 dan 3. |
 | `ICONS` | Path ikon piksel | - |
 
 Teks event (hadiah, tantangan, tanggal, mitra) tidak ada di `data.js`, melainkan di kunci `event` dan `schedule` pada `src/i18n/*.js`; logo dan poster di `public/brand/`.
 
-Keamanan: jangan menaruh tautan grup atau data pribadi sungguhan di `data.js` karena akan tertanam di bundel publik ([14_SECURITY_THREAT_MODEL.md](14_SECURITY_THREAT_MODEL.md)).
+Keamanan: jangan menaruh data pribadi di `data.js` karena akan tertanam di bundel publik ([14_SECURITY_THREAT_MODEL.md](14_SECURITY_THREAT_MODEL.md)).
 
 ## 7. Mereset `localStorage`
 
-Aplikasi memakai dua kunci:
+Data peserta kini disimpan di server (D1). `localStorage` hanya preferensi; kunci:
 
 | Kunci | Isi |
 |---|---|
-| `hk_state` | Seluruh state peserta (kunci pada `PERSIST` di `src/App.jsx`: `user`, `screen`, `nama`, `kota`, `email`, `wa`, `linkedin`, `latar`, `idx`, `jawab`, `override`, `clickedMain`, `joinedMain`, `mode`, `viewTeam`, `tencentClicked`, `projectReady`, `submitClicked`, `tab`, `apps`, `undang`, `myTeam`, `applicants`, `log`) |
+| `hk_nav` | Layar terakhir dan indeks soal kuis |
 | `hk_lang` | Bahasa pilihan (`id`, `en`, `zh`) |
 
 Cara mereset:
 
-1. Lewat antarmuka: klik **Keluar** (mengosongkan state) atau **Mulai dari awal** (`restart`).
+1. Lewat antarmuka: klik **Keluar** (mengakhiri session di server).
 2. Lewat DevTools, tab Console pada origin yang sama:
    ```js
-   localStorage.removeItem("hk_state");
+   localStorage.removeItem("hk_nav");
    localStorage.removeItem("hk_lang");
    location.reload();
    ```
@@ -172,13 +170,13 @@ Cara mereset:
 3. Lewat DevTools, tab Application, Storage, Local Storage, hapus kunci.
 4. Jendela privat memberikan penyimpanan bersih.
 
-Catatan: `localStorage` terikat per origin. `http://localhost:5173` dan `https://cloud-dark.github.io` memiliki penyimpanan terpisah. Bila `hk_state` rusak, pemulihan di `initState` memakai `try/catch` dan mengarahkan ke layar yang sah; menghapus kunci menyelesaikan kasus yang tersisa.
+Catatan: `localStorage` terikat per origin. `http://localhost:5173` dan `https://aicandoit.aiclub.id` memiliki penyimpanan terpisah.
 
 ## 8. Catatan Penting: `docs/` Adalah Output Build Sekaligus Folder Dokumen
 
 Folder `docs/` memiliki dua fungsi:
 
-1. **Output build** Vite (`build.outDir = "docs"`): `index.html`, `assets/`, `brand/`, `.nojekyll`. Isinya dipakai GitHub Pages dan ikut di-commit.
+1. **Output build** Vite (`build.outDir = "docs"`): `index.html`, `assets/`, `brand/`, `.nojekyll`. Isinya disajikan Cloudflare Pages dan ikut di-commit.
 2. **Dokumentasi proyek**: berkas `.md` bernomor (00 sampai 31), folder `standards/`, dst.
 
 Sebelumnya `vite.config.js` memakai `emptyOutDir: true`, yang membuat Vite mengosongkan seluruh `docs/` pada setiap `npm run build` sehingga dokumen `.md` ikut terhapus. **Perbaikan 2026-10-21 (oleh Alya, sedang dikerjakan di `vite.config.js`):** `emptyOutDir` diubah menjadi `false`, dan plugin kecil `clean-docs-assets` menghapus **hanya** `docs/assets` pada `buildStart` agar berkas JS/CSS berhash lama tidak menumpuk. Status berkas itu per 2026-10-21: perubahan sudah ada di working tree dan belum di-commit.
@@ -206,8 +204,8 @@ Aturan kerja:
 | Gejala | Kemungkinan penyebab | Tindakan |
 |---|---|---|
 | `npm run dev` gagal dengan galat versi Node | Node terlalu lama untuk Vite 5 | Perbarui ke Node LTS terbaru |
-| Layar langsung "intro" setelah muat ulang | `hk_state` kosong atau pengguna belum login | Normal; login ulang |
-| Aplikasi tampak menyimpan data lama | `hk_state` dari sesi sebelumnya | Reset (bagian 7) |
+| Layar langsung "intro" setelah muat ulang | Session habis atau belum login | Normal; login ulang |
+| Layar terakhir tidak sesuai | `hk_nav` dari sesi sebelumnya | Reset (bagian 7) |
 | Teks tampil kosong | Kunci i18n salah ketik atau tidak ada di `id.js` | Periksa nama kunci di tiga kamus |
 | Aset 404 setelah build di sub-path | `base` tidak `"./"` | Pastikan `vite.config.js` memakai `base: "./"` |
 | File `.md` di `docs/` hilang setelah build | Konfigurasi lama `emptyOutDir: true` | Pastikan perbaikan 2026-10-21 terpasang (bagian 8); pulihkan dari git |

@@ -8,3 +8,9 @@ binding = "DB"
 database_name = "aiclub-hackathon-db"
 database_id = "8bd12a19-0c1f-4157-876d-de6aa920388b"
 migrations_dir = "migrations"
+
+# Variabel publik. Secret (TURNSTILE_SECRET, RESEND_API_KEY) diset lewat `wrangler pages secret put`.
+[vars]
+SITE_URL = "https://aicandoit.aiclub.id"
+TURNSTILE_SITEKEY = "0x4AAAAAAFg4V4gXFhLUdMJm"
+EMAIL_FROM = "AI Agent Hackathon <noreply@aicandoit.aiclub.id>"

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { makeT, detectLang } from "./i18n/index.js";
-import { SCREENS, STEP_OF, SEED_APPLICANTS, BUILDER } from "./data.js";
+import { SCREENS, STEP_OF } from "./data.js";
 import { total, quizDone, identDone, reachable, waValid } from "./lib/scoring.js";
 import { Header, Stepper, BottomNav } from "./components/Chrome.jsx";
 import Intro from "./components/Intro.jsx";
@@ -18,101 +18,191 @@ import Tencent from "./components/Tencent.jsx";
 import Submit from "./components/Submit.jsx";
 import { SubSteps } from "./components/Widgets.jsx";
 import { Footer } from "./components/Brand.jsx";
-import { activeApp, canCreate, expirePending } from "./lib/rules.js";
+import { activeApp, canCreate } from "./lib/rules.js";
 import Announcements from "./components/Announcements.jsx";
-import { TIM } from "./data.js";
-import { readInviteFromUrl, findTeam, newTeamId } from "./lib/share.js";
+import { readInviteCode, findTeam } from "./lib/share.js";
+import { api } from "./lib/api.js";
+import { setSkew, nowMs } from "./lib/time.js";
 
-const PERSIST = ["user", "screen", "nama", "kota", "email", "wa", "linkedin", "github", "annViewed", "annOpen", "prevScreen", "chats", "latar", "idx", "jawab", "override",
-  "clickedMain", "joinedMain", "mode", "viewTeam", "tencentClicked", "projectReady", "submitClicked", "tab", "apps", "undang", "myTeam", "applicants", "log", "sharedTeams", "invite"];
+/*
+ * Semua data berasal dari API (/api). Yang disimpan di localStorage hanya preferensi: bahasa (hk_lang) dan layar terakhir (hk_nav).
+ *
+ * Bentuk `st` (dipakai semua komponen layar):
+ *  UI        : lang, screen, idx, mode, viewTeam (nama tim), tab, prevScreen, annOpen (id), invite (nama tim dari link), inviteCode,
+ *              clickedMain, ready, config { turnstile_sitekey }
+ *  akun      : user { email, nama, member_id } | null
+ *  data diri : nama, kota, email, wa, linkedin, github, latar  (disunting lokal, disimpan saat "lanjut")
+ *  kuis      : jawab[] (null = belum), override (peran pilihan) | null
+ *  flag      : joinedMain, tencentClicked, projectReady, submitClicked, contactConsent
+ *  tim saya  : myTeam { id, nama, desc, kota, butuh[], wa, share_code, at } | null  (saya owner)
+ *              memberTeam { id, nama, wa } | null                                  (saya anggota yang disetujui)
+ *  lamaran   : apps[] { id, team_id, team (nama), status pending|approved|rejected, reason ("expired"|undefined), at, expires_at, decidedAt }
+ *  owner     : applicants[] { id, member_id, nama, kota, peran, status, reason, at, expires_at, decidedAt }, invited[] (member_id), builders[] { member_id, nama, kota, peran }
+ *  tim       : teams[] { id, nama, kota, anggota, ceo, butuh[], desc, hari, grupN, wa ("" kecuali tim saya), viaLink }
+ *  undangan  : receivedInvites[] { id, team_id, team (nama) }
+ *  log       : [{ k, at, team }] terlama dulu
+ *  pengumuman: ann[] { id, title, summary, pinned, published_at, views, read }, annDetail { id, title, summary, paragraphs, published_at, views, read } | null
+ */
+const NAV_KEY = "hk_nav";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-// dibaca sekali saat modul dimuat (bukan di initializer state, yang bisa terpanggil dua kali)
-const URL_INVITE = readInviteFromUrl();
+// dibaca sekali saat modul dimuat
+const URL_INVITE = readInviteCode();
+const LOG_KIND = { apply: "apply", withdraw: "withdraw", approved: "approved", rejected: "rejected", expired: "autoReject", leave: "leave", open_team: "openTeam", close_team: "closeTeam", invite: "invite", join_main: "joinMain" };
+const DAY = 86400000;
 
-const fresh = () => ({
-  user: null,
-  nama: "", kota: "", email: "", wa: "", linkedin: "", github: "", latar: "kerja-tech", idx: 0, jawab: [], override: null,
-  clickedMain: false, joinedMain: false, mode: null, viewTeam: null, tencentClicked: false, projectReady: false, submitClicked: false, tab: "tim", apps: [], undang: [], myTeam: null, applicants: [], log: [], sharedTeams: [], invite: null, chats: {}, annViewed: [], annOpen: null, prevScreen: null
+const emptyData = () => ({
+  user: null, nama: "", kota: "", email: "", wa: "", linkedin: "", github: "", latar: "kerja-tech",
+  jawab: [], override: null, joinedMain: false, tencentClicked: false, projectReady: false, submitClicked: false, contactConsent: false,
+  myTeam: null, memberTeam: null, apps: [], applicants: [], invited: [], builders: [], teams: [], receivedInvites: [], log: []
 });
+const fresh = () => ({ ...emptyData(), idx: 0, mode: null, viewTeam: null, tab: "tim", prevScreen: null, annOpen: null, annDetail: null, clickedMain: false, invite: null, inviteCode: null });
 
-// tolak otomatis lamaran yang lewat batas keputusan, dan catat di log; null bila tidak ada perubahan
-function expireAll(s) {
-  const apps = expirePending(s.apps), applicants = expirePending(s.applicants);
-  if (apps === s.apps && applicants === s.applicants) return null;
-  let log = s.log;
-  apps.forEach((x, i) => { if (x !== s.apps[i]) log = [...log, { k: "autoReject", at: x.decidedAt, team: x.team }]; });
-  applicants.forEach((x, i) => { if (x !== s.applicants[i]) log = [...log, { k: "autoRejectWho", at: x.decidedAt, who: BUILDER[x.b].nama }]; });
-  return { apps, applicants, log: log.slice(-60) };
+const appOf = (a) => ({
+  id: a.id, team_id: a.team_id, team: a.team_nama, status: a.status === "expired" ? "rejected" : a.status, reason: a.status === "expired" ? "expired" : undefined,
+  at: a.created_at, expires_at: a.expires_at, decidedAt: a.decided_at
+});
+const readNav = () => { try { return JSON.parse(localStorage.getItem(NAV_KEY) || "null") || {}; } catch (e) { return {}; } };
+
+// layar yang boleh dibuka sesuai progres (gerbang yang sama dengan sebelumnya, kini berdasar data server)
+function gate(st) {
+  let s = SCREENS.includes(st.screen) ? st.screen : "intro";
+  if (s === "info") return s;
+  if (s !== "intro" && !st.user) return "intro";
+  if (!["intro", "login", "identitas"].includes(s) && !identDone(st)) s = "identitas";
+  if (["hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"].includes(s) && !quizDone(st.jawab)) s = "kuis";
+  if (["pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"].includes(s) && !st.joinedMain) s = "grup";
+  if ((s === "pasar" || s === "buat" || s === "tim") && (st.myTeam || st.memberTeam)) s = "dasbor";
+  if (s === "tim" && !findTeam(st, st.viewTeam)) s = "pasar";
+  if (s === "buat" && !canCreate(st)) s = "pilih";
+  return s;
 }
-
-function initState() {
-  const st = { ...fresh(), lang: detectLang(), screen: "intro" };
-  try {
-    const saved = JSON.parse(localStorage.getItem("hk_state") || "null");
-    if (saved && typeof saved === "object") PERSIST.forEach((k) => { if (k in saved) st[k] = saved[k]; });
-  } catch (e) {}
-  st.applicants = st.applicants.map((x) => (x.at ? x : { ...x, at: Date.now() }));
-  Object.assign(st, expireAll(st));
-  if (st.myTeam && !st.myTeam.id) st.myTeam = { ...st.myTeam, id: newTeamId(), at: Date.now() };
-  // link undangan tim (?tim=...): simpan timnya, lalu arahkan ke halaman tim setelah syarat terpenuhi
-  const inv = URL_INVITE && { ...URL_INVITE };
-  if (inv === null) st.notice = "invite.bad";
-  else if (inv) {
-    if (st.myTeam && st.myTeam.id === inv.id) st.notice = "invite.own";
-    else {
-      const others = st.sharedTeams.filter((x) => x.id !== inv.id);
-      if (TIM.some((x) => x.nama === inv.nama) || others.some((x) => x.nama === inv.nama)) inv.nama += " · " + inv.id.slice(0, 4).toUpperCase();
-      const old = st.sharedTeams.find((x) => x.id === inv.id);
-      if (old) inv.nama = old.nama; // nama tetap agar lamaran yang sudah ada tidak putus
-      st.sharedTeams = [...others, inv];
-      st.invite = inv.nama;
-    }
-  }
-  if (!SCREENS.includes(st.screen)) st.screen = "intro";
-  if (st.screen === "info") return st; // pengumuman bisa dibaca tanpa login
-  if (st.screen !== "intro" && !st.user) st.screen = "intro";
-  else if (!["intro", "login", "identitas"].includes(st.screen) && !identDone(st)) st.screen = "identitas";
-  if (["hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"].includes(st.screen) && !quizDone(st.jawab)) st.screen = "kuis";
-  if (["pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"].includes(st.screen) && !st.joinedMain) st.screen = "grup";
-  if ((st.screen === "pasar" || st.screen === "buat" || st.screen === "tim") && st.myTeam) st.screen = "dasbor";
-  if (st.invite && st.user && identDone(st) && quizDone(st.jawab) && st.joinedMain) { st.screen = "tim"; st.viewTeam = st.invite; st.invite = null; }
-  if (st.screen === "tim" && !findTeam(st, st.viewTeam)) st.screen = "pasar";
-  if (st.screen === "buat" && !canCreate(st)) st.screen = "pilih";
-  return st;
-}
-
-const withLog = (s, k, x) => ({ log: [...s.log, { k, at: Date.now(), ...x }].slice(-60) });
 
 export default function App() {
-  const [st, setSt] = useState(initState);
+  const [st, setSt] = useState(() => ({ ...fresh(), lang: detectLang(), screen: "intro", ready: false, config: {}, ann: [] }));
   const [errors, setErrors] = useState({});
   const [toastMsg, setToastMsg] = useState("");
   const toastT = useRef();
+  const stRef = useRef(st);
+  stRef.current = st;
   const { t, get, role } = makeT(st.lang);
 
-  useEffect(() => { if (st.notice) { toast(t(st.notice)); patch({ notice: null }); } }, []);
+  function toast(msg) {
+    setToastMsg(msg);
+    clearTimeout(toastT.current);
+    toastT.current = setTimeout(() => setToastMsg(""), 3200);
+  }
+  const fail = (e) => {
+    if (e && e.status === 401) setSt((s) => ({ ...s, ...emptyData(), screen: "intro" }));
+    toast((e && e.message) || t("err.generic"));
+  };
 
-  // batas keputusan owner: cek lamaran yang lewat batas setiap 30 detik
-  useEffect(() => {
-    const tick = () => setSt((s) => { const ex = expireAll(s); return ex ? { ...s, ...ex } : s; });
-    const id = setInterval(tick, 30000);
-    return () => clearInterval(id);
+  // ---------- muat data dari server ----------
+  const applyMe = useCallback((me, { identity = true } = {}) => {
+    setSkew(me.server_time);
+    const p = me.participant, pf = me.profile, tm = me.team;
+    const apps = me.applications.filter((a) => a.status !== "withdrawn").map(appOf);
+    const myTeam = tm && tm.role === "owner" ? { id: tm.id, nama: tm.nama, desc: tm.deskripsi, kota: tm.kota, butuh: tm.butuh, wa: tm.wa_link || "", share_code: tm.share_code, at: tm.joined_at } : null;
+    const memberTeam = tm && tm.role === "member" ? { id: tm.id, nama: tm.nama, wa: tm.wa_link || "" } : null;
+    const log = me.activity.filter((a) => LOG_KIND[a.kind]).map((a) => ({ k: LOG_KIND[a.kind], at: a.at, team: a.team || "" })).reverse();
+    setSt((s) => ({
+      ...s,
+      user: { email: pf.email, nama: pf.nama, member_id: pf.member_id, role: pf.role },
+      ...(identity ? { nama: pf.nama, email: pf.email, kota: pf.kota, wa: pf.wa, linkedin: pf.linkedin, github: pf.github, latar: p.latar } : null),
+      jawab: s.screen === "kuis" && !identity ? s.jawab : p.jawaban, override: p.jalur_override,
+      joinedMain: !!p.joined_main_at, tencentClicked: !!p.tencent_clicked_at, projectReady: !!p.project_ready_at, submitClicked: !!p.submit_clicked_at, contactConsent: p.contact_consent,
+      myTeam, memberTeam, apps, log, receivedInvites: me.invites.map((i) => ({ id: i.id, team_id: i.team_id, team: i.team_nama }))
+    }));
+    return { myTeam, memberTeam };
   }, []);
 
-  useEffect(() => {
+  const loadTeams = useCallback(async (own) => {
+    const [tl, inbox, bl] = await Promise.all([
+      api.get("/hackathon/teams"),
+      own.myTeam ? api.get(`/hackathon/teams/${own.myTeam.id}/applications`) : null,
+      own.myTeam ? api.get("/hackathon/builders") : null
+    ]);
+    setSkew(tl.server_time);
+    setSt((s) => ({
+      ...s,
+      teams: tl.teams.map((x) => ({
+        id: x.id, nama: x.nama, kota: x.kota, anggota: x.member_count, ceo: x.owner, butuh: x.butuh, desc: x.deskripsi,
+        hari: Math.max(0, Math.floor((nowMs() - x.created_at) / DAY)), grupN: x.member_count,
+        wa: own.myTeam && own.myTeam.id === x.id ? own.myTeam.wa : own.memberTeam && own.memberTeam.id === x.id ? own.memberTeam.wa : "",
+        viaLink: s.invite === x.nama
+      })),
+      applicants: inbox ? inbox.applications.map((a) => ({
+        id: a.id, member_id: a.member_id, nama: a.nama, kota: a.kota, peran: a.jalur_aktif,
+        status: a.status === "expired" ? "rejected" : a.status === "withdrawn" ? "withdrawn" : a.status, reason: a.status === "expired" ? "expired" : undefined,
+        at: a.created_at, expires_at: a.expires_at, decidedAt: a.decided_at
+      })).filter((a) => a.status !== "withdrawn") : [],
+      invited: inbox ? inbox.invited : [],
+      builders: bl ? bl.builders.map((b) => ({ member_id: b.member_id, nama: b.nama, kota: b.kota, peran: b.jalur_aktif })) : []
+    }));
+  }, []);
+
+  const loadAnn = useCallback(async (lang) => {
+    const r = await api.get("/hackathon/announcements?lang=" + (lang || stRef.current.lang));
+    setSt((s) => ({ ...s, ann: r.announcements }));
+  }, []);
+
+  // muat ulang semua data akun; identity=false agar isian yang sedang disunting tidak tertimpa
+  const refresh = useCallback(async (opts) => {
     try {
-      const o = {};
-      PERSIST.forEach((k) => { o[k] = st[k]; });
-      localStorage.setItem("hk_state", JSON.stringify(o));
-    } catch (e) {}
-  }, [st]);
+      const me = await api.get("/hackathon/me");
+      const own = applyMe(me, opts);
+      await Promise.all([loadTeams(own), loadAnn()]);
+    } catch (e) { if (e.status === 401) setSt((s) => ({ ...s, ...emptyData() })); }
+  }, [applyMe, loadTeams, loadAnn]);
+
+  // ---------- boot ----------
+  useEffect(() => {
+    (async () => {
+      let config = {}, me = null, invite = null, notice = null;
+      try { config = await api.get("/config"); } catch (e) {}
+      try { me = await api.get("/hackathon/me"); } catch (e) {}
+      if (URL_INVITE === null) notice = "invite.bad";
+      else if (URL_INVITE) {
+        try { invite = await api.get("/hackathon/share/" + URL_INVITE); } catch (e) { notice = "invite.bad"; }
+      }
+      const nav = readNav();
+      setSt((s) => ({ ...s, config, screen: nav.screen || "intro", idx: Number.isInteger(nav.idx) ? nav.idx : 0 }));
+      if (me) {
+        const own = applyMe(me);
+        if (invite && own.myTeam && own.myTeam.id === invite.id) { notice = "invite.own"; invite = null; }
+        if (invite) setSt((s) => ({ ...s, invite: invite.nama, inviteCode: URL_INVITE }));
+        await Promise.all([loadTeams(own), loadAnn()]);
+      } else {
+        if (invite) setSt((s) => ({ ...s, invite: invite.nama, inviteCode: URL_INVITE }));
+        try { await loadAnn(); } catch (e) {}
+      }
+      setSt((s) => {
+        const g = gate(s);
+        const st2 = { ...s, screen: g, ready: true };
+        if (st2.invite && st2.user && identDone(st2) && quizDone(st2.jawab) && st2.joinedMain && findTeam(st2, st2.invite)) { st2.screen = "tim"; st2.viewTeam = st2.invite; st2.invite = null; }
+        return st2;
+      });
+      if (notice) toast(t(notice));
+    })();
+  }, []);
+
+  // polling ringan: status lamaran, tim, pengumuman
+  useEffect(() => {
+    const id = setInterval(() => { if (stRef.current.user && !document.hidden && stRef.current.screen !== "identitas") refresh({ identity: false }); }, 30000);
+    return () => clearInterval(id);
+  }, [refresh]);
+
+  useEffect(() => {
+    if (!st.ready) return;
+    try { localStorage.setItem(NAV_KEY, JSON.stringify({ screen: st.screen, idx: st.idx })); } catch (e) {}
+  }, [st.screen, st.idx, st.ready]);
 
   useEffect(() => {
     document.documentElement.lang = get("meta.lang");
     document.title = get("meta.title");
   }, [st.lang]);
+  useEffect(() => { if (st.ready) loadAnn(st.lang).catch(() => {}); }, [st.lang]);
 
-  // fokus ke judul hanya saat pindah layar / pertanyaan, bukan setiap interaksi
+  // fokus ke judul hanya saat pindah layar / pertanyaan
   const firstRender = useRef(true);
   useEffect(() => {
     if (firstRender.current) { firstRender.current = false; return; }
@@ -120,21 +210,35 @@ export default function App() {
     if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
   }, [st.screen, st.idx]);
 
+  // ---------- helper umum ----------
+  const SERVER_KEYS = { override: "jalur_override", projectReady: "project_ready", tencentClicked: "tencent_clicked", submitClicked: "submit_clicked", jawab: "jawaban" };
   const patch = useCallback((p, clearErr) => {
     setSt((s) => ({ ...s, ...p }));
     if (clearErr) setErrors((e) => { if (!e[clearErr]) return e; const n = { ...e }; delete n[clearErr]; return n; });
-  }, []);
+    // kunci yang tersimpan di server dikirim langsung
+    const body = {};
+    for (const [k, col] of Object.entries(SERVER_KEYS)) if (k in p) {
+      if ((k === "tencentClicked" || k === "submitClicked") && p[k] !== true) continue;
+      body[col] = p[k];
+    }
+    if (Object.keys(body).length) api.patch("/hackathon/me", body).then((me) => applyMe(me, { identity: false })).catch(fail);
+  }, [applyMe]);
   const update = useCallback((fn) => setSt((s) => ({ ...s, ...fn(s) })), []);
 
-  function toast(msg) {
-    setToastMsg(msg);
-    clearTimeout(toastT.current);
-    toastT.current = setTimeout(() => setToastMsg(""), 2200);
-  }
   function go(screen, extra) {
     setErrors({});
     setSt((s) => ({ ...s, ...extra, screen }));
     window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+  // jalankan aksi server lalu muat ulang; kembalikan true bila sukses
+  async function run(fn, { keepIdentity = true } = {}) {
+    try { await fn(); await refresh({ identity: !keepIdentity }); return true; } catch (e) { fail(e); return false; }
+  }
+
+  async function saveIdentity() {
+    const s = stRef.current;
+    const me = await api.patch("/hackathon/me", { nama: s.nama.trim(), kota: s.kota.trim(), wa: s.wa.trim(), linkedin: s.linkedin.trim(), github: (s.github || "").trim(), latar: s.latar });
+    applyMe(me, { identity: false });
   }
 
   function next() {
@@ -145,13 +249,12 @@ export default function App() {
         if (!st.nama.trim()) er.nama = t("identity.errName");
         if (!st.kota.trim()) er.kota = t("identity.errCity");
         if (!waValid(st.wa)) er.wa = t("identity.errWa");
-        if (st.email.trim() && !EMAIL_RE.test(st.email.trim())) er.email = t("identity.errEmail");
         if (Object.keys(er).length) {
           setErrors(er);
           setTimeout(() => { const i = document.querySelector(".field.err input"); if (i) i.focus(); }, 0);
           return;
         }
-        go("kuis", st.idx >= total() ? { idx: 0 } : null);
+        saveIdentity().then(() => go("kuis", st.idx >= total() ? { idx: 0 } : null)).catch(fail);
         break;
       }
       case "kuis":
@@ -166,7 +269,7 @@ export default function App() {
   }
   function back() {
     switch (st.screen) {
-      case "info": go(st.prevScreen && st.prevScreen !== "info" ? st.prevScreen : "intro", { annOpen: null }); break;
+      case "info": go(st.prevScreen && st.prevScreen !== "info" ? st.prevScreen : "intro", { annOpen: null, annDetail: null }); break;
       case "login": go("intro"); break;
       case "identitas": go("intro"); break;
       case "kuis": if (st.idx > 0) patch({ idx: st.idx - 1 }); else go("identitas"); break;
@@ -176,7 +279,7 @@ export default function App() {
       case "pasar": go("pilih"); break;
       case "tim": go("pasar"); break;
       case "buat": go("pilih"); break;
-      case "dasbor": go(st.myTeam ? "pilih" : "pasar"); break;
+      case "dasbor": go(st.myTeam || st.memberTeam ? "pilih" : "pasar"); break;
       case "tencent": go("dasbor"); break;
       case "submit": go("tencent"); break;
     }
@@ -185,12 +288,10 @@ export default function App() {
     for (let k = 0; k < total(); k++) if (st.jawab[k] == null) return k;
     return 0;
   };
-  // klik indikator kecil di langkah 1
   function goSub(key) {
     if (key === "kuis") go("kuis", { idx: firstMissing() });
     else go(key);
   }
-  // klik langkah besar: 0 daftar di portal kita, 1 daftar tim ke Tencent, 2 submit project
   function gotoStep(i) {
     if (i === -1) { go("intro"); return; }
     if (!reachable(st, i)) { toast(t(i > 0 && identDone(st) && quizDone(st.jawab) ? "group.gate" : "nav.locked")); return; }
@@ -199,29 +300,50 @@ export default function App() {
       if (!identDone(st)) go("identitas");
       else if (!quizDone(st.jawab)) go("kuis", { idx: firstMissing() });
       else if (!st.joinedMain) go("grup");
-      else go(st.myTeam || st.apps.length ? "dasbor" : "pilih");
+      else go(st.myTeam || st.memberTeam || st.apps.length ? "dasbor" : "pilih");
     }
     else go(i === 1 ? "tencent" : "submit");
   }
-  function login(u) {
-    setSt((s) => ({
-      ...s, user: { email: u.email, nama: u.nama },
-      nama: s.nama || u.nama, email: u.email, kota: s.kota || u.kota || "", wa: s.wa || u.wa || "", linkedin: s.linkedin || u.linkedin || "", github: s.github || u.github || "",
-      screen: "identitas"
-    }));
+
+  // ---------- auth ----------
+  // payload: { email, password, nama?, turnstile_token }; lempar error agar form menampilkan pesannya
+  async function authenticate(kind, payload) {
+    await api.post("/auth/" + kind, payload);
+    const me = await api.get("/hackathon/me");
+    const own = applyMe(me);
+    await Promise.all([loadTeams(own), loadAnn()]);
+    setSt((s) => {
+      const ss = { ...s };
+      let screen = "identitas";
+      if (identDone(ss) && quizDone(ss.jawab) && ss.joinedMain) screen = ss.myTeam || ss.memberTeam || ss.apps.length ? "dasbor" : "pilih";
+      else if (identDone(ss) && quizDone(ss.jawab)) screen = "grup";
+      else if (identDone(ss)) screen = "kuis";
+      if (ss.invite && identDone(ss) && quizDone(ss.jawab) && ss.joinedMain && findTeam(ss, ss.invite)) return { ...ss, screen: "tim", viewTeam: ss.invite, invite: null };
+      return { ...ss, screen };
+    });
     window.scrollTo({ top: 0 });
   }
-  function logout() { go("intro", fresh()); }
+  async function logout() {
+    try { await api.post("/auth/logout"); } catch (e) {}
+    setSt((s) => ({ ...s, ...fresh(), screen: "intro", ann: s.ann.map((a) => ({ ...a, read: undefined })) }));
+    window.scrollTo({ top: 0 });
+  }
   function setLang(k) {
     try { localStorage.setItem("hk_lang", k); } catch (e) {}
     patch({ lang: k });
   }
 
+  const teamByNama = (nama) => st.teams.find((x) => x.nama === nama);
+
   const actions = {
+    authenticate, refresh,
     confirmMain() {
       if (!st.clickedMain) { toast(t("group.confirmHint")); return; }
-      setSt((s) => ({ ...s, joinedMain: true, ...withLog(s, "joinMain"), ...(s.invite ? { screen: "tim", viewTeam: s.invite, invite: null } : { screen: "pilih" }) }));
-      window.scrollTo({ top: 0 });
+      api.patch("/hackathon/me", { joined_main: true }).then((me) => {
+        applyMe(me, { identity: false });
+        setSt((s) => ({ ...s, ...(s.invite ? { screen: "tim", viewTeam: s.invite, invite: null } : { screen: "pilih" }) }));
+        window.scrollTo({ top: 0 });
+      }).catch(fail);
     },
     toChoose() {
       if (!st.joinedMain) { toast(t("group.gate")); return; }
@@ -230,93 +352,86 @@ export default function App() {
     },
     openDetail(team) { go("tim", { viewTeam: team, ...(st.invite === team ? { invite: null } : null) }); },
     toTencent() { go("tencent"); },
-    toTeamStep() { go(st.myTeam || st.apps.length ? "dasbor" : "pilih"); },
+    toTeamStep() { go(st.myTeam || st.memberTeam || st.apps.length ? "dasbor" : "pilih"); },
     toChoosePage() { go("pilih"); },
     toMarketBack() { go("pasar"); },
     goDash() { go("dasbor"); },
     chooseJoin() { go("pasar", { mode: "join" }); },
     chooseCreate() { go("buat", { mode: "create" }); },
-    toggleApply(team) {
+    // melamar atau menarik lamaran (pending) ke tim bernama `nama`
+    async toggleApply(nama) {
       if (st.myTeam) { toast(t("market.lockedOwner")); return; }
       const act = activeApp(st);
-      if (act && act.team !== team) { toast(act.status === "approved" ? t("market.lockedMember") : t("market.oneAtATime", { team: act.team })); return; }
-      update((s) => {
-        const ex = s.apps.find((x) => x.team === team);
-        if (ex) return ex.status === "pending" ? { apps: s.apps.filter((x) => x.team !== team), ...withLog(s, "withdraw", { team }) } : {};
-        return { apps: [...s.apps, { team, status: "pending", at: Date.now() }], mode: "join", ...withLog(s, "apply", { team }) };
-      });
+      if (act && act.team !== nama) { toast(act.status === "approved" ? t("market.lockedMember") : t("market.oneAtATime", { team: act.team })); return; }
+      const ex = st.apps.find((x) => x.team === nama);
+      if (ex) {
+        if (ex.status === "pending") await run(() => api.del("/hackathon/applications/" + ex.id));
+        return;
+      }
+      const tm = teamByNama(nama);
+      if (!tm) { toast(t("err.generic")); return; }
+      const via = st.invite === nama && st.inviteCode ? "share_link" : st.receivedInvites.some((i) => i.team_id === tm.id) ? "invite" : "market";
+      if (await run(() => api.post(`/hackathon/teams/${tm.id}/apply`, { via }))) setSt((s) => ({ ...s, mode: "join" }));
     },
-    // simulasi keputusan owner tim (mode demo, sampai ada backend)
-    decideApp(team, status) {
-      update((s) => {
-        let log = withLog(s, status, { team });
-        const cur = s.apps.find((x) => x.team === team);
-        if (!cur || cur.status !== "pending") return {}; // sudah diputuskan atau ditolak otomatis
-        let apps = s.apps.map((x) => (x.team === team ? { ...x, status, decidedAt: Date.now() } : x));
-        if (status === "approved") {
-          // satu orang hanya bisa di satu tim: lamaran lain yang masih menunggu dibatalkan
-          const others = apps.filter((x) => x.team !== team && x.status === "pending");
-          apps = apps.filter((x) => x.team === team || x.status !== "pending");
-          let l = log.log;
-          others.forEach((o) => { l = [...l, { k: "autoWithdraw", at: Date.now(), team: o.team }]; });
-          log = { log: l.slice(-60) };
-        }
-        return { apps, ...log };
-      });
+    async leaveTeam() {
+      if (!st.memberTeam) return;
+      if (await run(() => api.post(`/hackathon/teams/${st.memberTeam.id}/leave`))) go("pilih", { mode: null });
     },
-    leaveTeam(team) {
-      update((s) => ({ apps: s.apps.filter((x) => x.team !== team), mode: null, ...withLog(s, "leave", { team }) }));
-      go("pilih");
-    },
-    withdrawAll() {
-      update((s) => ({ apps: s.apps.filter((x) => x.status !== "pending"), mode: null, ...withLog(s, "withdrawAll") }));
+    async withdrawAll() {
+      const pend = st.apps.filter((x) => x.status === "pending");
+      await run(async () => { for (const a of pend) await api.del("/hackathon/applications/" + a.id); });
+      setSt((s) => ({ ...s, mode: null }));
     },
     openTeamGroup(tm) {
       if (tm.wa) window.open(tm.wa, "_blank", "noopener,noreferrer");
       else toast(t("market.groupSoon"));
     },
-    toggleInvite(who) {
-      update((s) => {
-        const has = s.undang.includes(who);
-        return { undang: has ? s.undang.filter((x) => x !== who) : [...s.undang, who], ...withLog(s, has ? "uninvite" : "invite", { who }) };
-      });
+    async toggleInvite(memberId) {
+      const tm = st.myTeam;
+      if (!tm) return;
+      await run(() => st.invited.includes(memberId) ? api.del(`/hackathon/teams/${tm.id}/invites/${memberId}`) : api.post(`/hackathon/teams/${tm.id}/invites`, { member_id: memberId }));
     },
-    createTeam(team) {
+    // team: { nama, desc, kota, butuh, wa }
+    async createTeam(team) {
       if (!canCreate(st)) { toast(t("choose.lockedMember", { team: "" })); return; }
-      setSt((s) => ({
-        ...s, mode: "create", myTeam: { ...team, id: newTeamId(), at: Date.now() }, undang: [],
-        applicants: SEED_APPLICANTS.map((b) => ({ b, status: "pending", at: Date.now() })), ...withLog(s, "openTeam", { team: team.nama }), screen: "dasbor"
-      }));
-      window.scrollTo({ top: 0 });
+      const ok = await run(() => api.post("/hackathon/teams", { nama: team.nama, deskripsi: team.desc, kota: team.kota, butuh: team.butuh, wa_link: team.wa || null }));
+      if (ok) { go("dasbor", { mode: "create" }); }
     },
-    closeTeam() {
-      const team = st.myTeam ? st.myTeam.nama : "";
-      update((s) => ({ myTeam: null, applicants: [], undang: [], mode: null, ...withLog(s, "closeTeam", { team }) }));
-      go("pilih");
+    async closeTeam() {
+      if (!st.myTeam) return;
+      if (await run(() => api.post(`/hackathon/teams/${st.myTeam.id}/close`))) go("pilih", { mode: null });
     },
-    saveTeamLink(wa) { update((s) => ({ myTeam: { ...s.myTeam, wa } })); },
-    decideApplicant(i, status) {
-      update((s) => s.applicants[i].status !== "pending" ? {} : ({
-        applicants: s.applicants.map((x, j) => (j === i ? { ...x, status, decidedAt: Date.now() } : x)),
-        ...withLog(s, status === "approved" ? "approveWho" : "rejectWho", { who: BUILDER[s.applicants[i].b].nama })
-      }));
+    // kembalikan true bila tersimpan
+    saveTeamLink(wa) { return run(() => api.patch(`/hackathon/teams/${st.myTeam.id}`, { wa_link: wa || null })); },
+    rotateShareCode() { return run(() => api.post(`/hackathon/teams/${st.myTeam.id}/share-code/rotate`)); },
+    decideApplicant(id, status) { return run(() => api.post(`/hackathon/applications/${id}/decide`, { status })); },
+    setConsent(v) { return run(() => api.patch("/hackathon/me", { contact_consent: !!v })); },
+    // pengumuman: daftar dari layar mana pun; tayangan unik dicatat server saat detail dibuka (peserta login)
+    toAnnouncements() { if (st.screen !== "info") go("info", { prevScreen: st.screen, annOpen: null, annDetail: null }); else go("info", { annOpen: null, annDetail: null }); loadAnn().catch(() => {}); },
+    async openAnn(id) {
+      if (!id) { setSt((s) => ({ ...s, annOpen: null, annDetail: null })); loadAnn().catch(() => {}); return; }
+      try {
+        const d = await api.get(`/hackathon/announcements/${id}?lang=${stRef.current.lang}`);
+        setSt((s) => ({ ...s, annOpen: id, annDetail: d }));
+        window.scrollTo({ top: 0 });
+        if (stRef.current.user) {
+          const v = await api.post(`/hackathon/announcements/${id}/view`);
+          setSt((s) => ({
+            ...s, annDetail: s.annDetail && s.annDetail.id === id ? { ...s.annDetail, views: v.views, read: true } : s.annDetail,
+            ann: s.ann.map((a) => (a.id === id ? { ...a, views: v.views, read: true } : a))
+          }));
+        }
+      } catch (e) { fail(e); }
     },
-    restart() { go("intro", fresh()); },
-    // pengumuman: buka daftar dari layar mana pun, catat tayangan sekali per akun
-    toAnnouncements() { if (st.screen !== "info") go("info", { prevScreen: st.screen, annOpen: null }); else go("info", { annOpen: null }); },
-    openAnn(id) {
-      update((s) => ({ annOpen: id, annViewed: id && !s.annViewed.includes(id) ? [...s.annViewed, id] : s.annViewed }));
-      window.scrollTo({ top: 0 });
+    async openAnnFrom(id) {
+      setSt((s) => ({ ...s, prevScreen: s.screen === "info" ? s.prevScreen : s.screen, screen: "info" }));
+      await actions.openAnn(id);
     },
-    openAnnFrom(id) { update((s) => ({ prevScreen: s.screen === "info" ? s.prevScreen : s.screen, screen: "info", annOpen: id, annViewed: s.annViewed.includes(id) ? s.annViewed : [...s.annViewed, id] })); window.scrollTo({ top: 0 }); },
-    sendChat(team, text) {
-      update((s) => {
-        const list = (s.chats[team] || []).concat({ me: true, who: s.nama.trim(), text, at: Date.now() }).slice(-200);
-        return { chats: { ...s.chats, [team]: list }, ...withLog(s, "chat", { team }) };
-      });
-    }
+    toast
   };
   const redo = () => go("kuis", { jawab: [], idx: 0, override: null });
+  // jawaban kuis dikosongkan di server juga
+  const redoAll = () => { patch({ jawab: [], override: null }); redo(); };
 
   // pintasan keyboard A-E / 1-5 di layar kuis
   useEffect(() => {
@@ -333,15 +448,17 @@ export default function App() {
     return () => document.removeEventListener("keydown", onKey);
   });
 
+  if (!st.ready) return <div className="boot" role="status" aria-live="polite" style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "var(--dim)" }}>…</div>;
+
   const common = { st, patch, t, get, role, onNext: next, onBack: back };
   let view;
   switch (st.screen) {
     case "info": view = <Announcements {...common} actions={actions} />; break;
     case "intro": view = <Intro t={t} get={get} onNext={next} />; break;
-    case "login": view = <Login t={t} onBack={back} onLogin={login} />; break;
+    case "login": view = <Login t={t} st={st} onBack={back} onAuth={authenticate} />; break;
     case "identitas": view = <Identity {...common} errors={errors} />; break;
     case "kuis": view = <Quiz key={st.idx} {...common} />; break;
-    case "hasil": view = <Result {...common} onRedo={redo} />; break;
+    case "hasil": view = <Result {...common} onRedo={redoAll} />; break;
     case "grup": view = <Group {...common} actions={actions} />; break;
     case "pilih": view = <Choose {...common} actions={actions} />; break;
     case "pasar": view = <Market {...common} actions={actions} />; break;

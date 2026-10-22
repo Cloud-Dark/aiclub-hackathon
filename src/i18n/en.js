@@ -262,16 +262,12 @@ export default {
     "challengeTitle": "CHALLENGE FROM TENCENT",
     "challengeBody": "Drops in week 2, along with the briefing. Until then, build your team.",
     "toMarket": "BACK TO TEAM MARKET",
-    "restart": "Start over",
     "approvedKet": "approved by owner · time to join the team group",
     "rejectedKet": "rejected by owner · try another team",
     "stApproved": "APPROVED",
     "stRejected": "REJECTED",
     "joinTeam": "JOIN TEAM GROUP",
     "noLink": "owner hasn't added a group link yet",
-    "demoNote": "DEMO MODE · owner decisions are simulated on this device",
-    "simApprove": "APPROVE",
-    "simReject": "REJECT",
     "mainTitle": "MAIN HACKATHON GROUP",
     "mainJoined": "joined",
     "mainOpen": "OPEN GROUP",
@@ -284,17 +280,10 @@ export default {
       "approved": "{team} approved your application",
       "rejected": "{team} rejected your application",
       "invite": "Invited {who} to your team",
-      "uninvite": "Cancelled invite to {who}",
       "openTeam": "Opened team {team}",
-      "approveWho": "Approved {who} into your team",
-      "rejectWho": "Rejected {who}",
       "closeTeam": "Closed team {team}",
       "leave": "Left team {team}",
-      "autoWithdraw": "Application to {team} cancelled automatically",
-      "withdrawAll": "Withdrew all applications",
-      "autoReject": "Application to {team} rejected automatically (over 24 hours)",
-      "autoRejectWho": "{who}'s application rejected automatically (over 24 hours)",
-      "chat": "Sent a message in {team} chat"
+      "autoReject": "Application to {team} rejected automatically (over 24 hours)"
     },
     "myTeam": {
       "title": "MY TEAM",
@@ -333,8 +322,7 @@ export default {
       "copyFail": "Copy failed, copy it manually from the box above",
       "shareWa": "SHARE TO WHATSAPP",
       "shareMore": "SHARE…",
-      "shareMsg": "Join team {team} at the AI Agent Hackathon! We are looking for: {slots}. Apply via this link:",
-      "shareDemo": "Demo mode: applications via link do not reach your applicant inbox until the aiclub.id backend is connected. The team WhatsApp group link is not included in this link."
+      "shareMsg": "Join team {team} at the AI Agent Hackathon! We are looking for: {slots}. Apply via this link:"
     },
     "changeChoice": "CHANGE MY CHOICE",
     "memberTag": "MEMBER",
@@ -342,22 +330,6 @@ export default {
     "inviteBody": "Builders looking for a team. Your invites show up here.",
     "toTencent": "ON TO STEP 2"
   },
-  "teams": [
-    "An agent that matches merchant transactions every night, no humans needed.",
-    "A sidekick agent for small neighborhood shops: take payments, track stock, all from one chat.",
-    "A micro-loan risk scorer that can explain its reasoning.",
-    "An internal agent that answers ops team questions from old docs.",
-    "An agent that reschedules public service queues in small towns.",
-    "An agent that reads vendor contracts and flags risky clauses."
-  ],
-  "builders": [
-    "Built two agents with tool-calling. Never worked on a team.",
-    "4 years in product design. Looking for a team that wants its prototype actually used.",
-    "7 years in payment ops. Knows where the process leaks.",
-    "Retail data analyst. Can prove whether the agent saves time or not.",
-    "Backend, deploys my own stuff. Need someone who knows the real problem.",
-    "Grew a community of 8K people from zero. Looking for a team with a product ready to use."
-  ],
   "schedule": [
     {
       "minggu": "OCT 15",
@@ -412,17 +384,14 @@ export default {
     }
   },
   "login": {
-    "prompt": "login/aiclub.id",
-    "title": "SIGN IN WITH AICLUB.ID",
-    "body": "Use your AIClub.id community account so your data stays linked. After signing in, fill in whatever is missing, then the team market opens.",
-    "badge": "DUMMY · NOT CONNECTED TO THE REAL AICLUB.ID",
-    "email": "AICLUB.ID EMAIL",
-    "emailPh": "name@aiclub.id",
+    "prompt": "login",
+    "title": "SIGN IN TO THE HACKATHON PORTAL",
+    "body": "Sign in with your hackathon portal account. After signing in, fill in whatever is missing, then the team market opens.",
+    "email": "EMAIL",
+    "emailPh": "name@email.com",
     "pass": "PASSWORD",
-    "passPh": "anything, it's a dummy",
+    "passPh": "your account password",
     "submit": "SIGN IN",
-    "demoTitle": "OR USE A DEMO ACCOUNT",
-    "demoHint": "Each account has a different profile: some are missing city or WhatsApp.",
     "errEmail": "That email doesn't look right",
     "errPass": "Enter a password first",
     "logout": "SIGN OUT",
@@ -481,57 +450,17 @@ export default {
     "back": "BACK TO LIST",
     "latest": "LATEST ANNOUNCEMENTS",
     "all": "SEE ALL ANNOUNCEMENTS",
-    "unread": "{n} unread",
-    "demo": "Demo mode: view count = sample number + your views on this device. Each account counts once per announcement."
+    "unread": "{n} unread"
   },
-  "announcements": [
-    {
-      "judul": "Finalist and Demo Day schedule",
-      "ringkas": "Finalists announced Nov 14, Demo Day & Awarding Nov 27 in Jakarta.",
-      "isi": [
-        "After the submission deadline on Nov 1, 23:59 WIB, the organizers review every submitted project.",
-        "Finalists are announced on Nov 14. They present their work at Demo Day & Awarding on Nov 27, 13:00–16:00 WIB in Jakarta.",
-        "1st, 2nd, and 3rd place are announced at the event."
-      ]
-    },
-    {
-      "judul": "Reminder: registration closes Nov 1, 23:59 WIB",
-      "ringkas": "Team registration and submissions close Nov 1 at 23:59 WIB.",
-      "isi": [
-        "The team market and registration close on Nov 1 at 23:59 WIB. Agentic AI projects are due by the same deadline.",
-        "Make sure your team is registered on the Tencent portal (step 2) and your project is submitted (step 3) before the deadline."
-      ]
-    },
-    {
-      "judul": "Team rule: owners decide within 24 hours",
-      "ringkas": "Applications not decided by the owner within 24 hours are rejected automatically.",
-      "isi": [
-        "One person can be a member of one team or the owner of one team, and may have only one active application.",
-        "Owners have 24 hours from when an application arrives to approve or reject it. After that it is rejected automatically so the applicant can look for another team.",
-        "While waiting, applicants may withdraw. Once approved, members can see the other team members with their contacts and chat in the team room."
-      ]
-    },
-    {
-      "judul": "AI Agent Hackathon registration is open",
-      "ringkas": "Register on this portal, register your team with Tencent, then submit your project.",
-      "isi": [
-        "Registration opened on Oct 15. There are three steps: register on this portal (details, scenarios, main group, team), register your team on the Tencent portal, then submit your project.",
-        "Join the main WhatsApp group to receive official updates from the organizers."
-      ]
-    }
-  ],
   "room": {
     "title": "MEMBERS & CONTACTS",
     "owner": "OWNER",
     "you": "YOU",
-    "noContact": "Owner contacts appear once the backend is connected.",
     "locked": "Members, contacts, and team chat unlock once your application is approved.",
     "chatTitle": "TEAM CHAT",
     "ph": "Write a message to your team…",
     "send": "SEND",
     "empty": "No messages yet. Say hi to your team.",
-    "welcome": "Hi, welcome to team {team}! Introduce yourself here.",
-    "demo": "Demo mode: messages are stored on this device only. Once the backend is connected, chat syncs to every member.",
     "errEmpty": "Write a message first",
     "label": "Team chat message"
   },
@@ -598,8 +527,7 @@ export default {
     "ready": "My project is finished and ready to send",
     "readyHint": "Tick this first to unlock the submit button.",
     "cta": "CLICK HERE TO SUBMIT YOUR PROJECT TO TENCENT",
-    "sent": "Submission portal opened. Good luck at Demo Day!",
-    "restart": "Start over"
+    "sent": "Submission portal opened. Good luck at Demo Day!"
   },
   "event": {
     "title": "TENCENT CLOUD HACKATHON INDONESIA 2026",
@@ -652,5 +580,8 @@ export default {
     "partnersTitle": "SUPPORTED BY",
     "posterAlt": "Official Tencent Cloud Hackathon Indonesia 2026 poster",
     "venue": "Jakarta · venue details coming soon"
+  },
+  "err": {
+    "generic": "Something went wrong, please try again"
   }
 };

@@ -1,7 +1,7 @@
 # Catatan Perubahan (Changelog)
 
 > Status: Draft
-> Terakhir diperbarui: 2026-10-21
+> Terakhir diperbarui: 2026-10-22
 > Pemilik: Tim AIClub Hackathon
 
 Format mengikuti [Keep a Changelog](https://keepachangelog.com/id-ID/1.1.0/): perubahan dikelompokkan per tanggal dengan kategori Added, Changed, Fixed, dan Removed. Proyek belum memakai penomoran rilis (versi di `package.json`: `1.0.0`, tidak ada tag git), sehingga entri dikelompokkan per tanggal commit. Entri dibangun dari keluaran:
@@ -33,6 +33,20 @@ Hash di dalam kurung adalah commit sumber. Entri 2026-10-21 bagian "Fixed" dan s
 - Keputusan owner (`decideApp`, `decideApplicant`) hanya berlaku untuk lamaran yang masih `pending` dan kini menyimpan `decidedAt`; lamaran yang sudah diputuskan atau kedaluwarsa tidak dapat diputuskan lagi.
 - Pelamar contoh di tim owner kini menyimpan waktu masuk (`at`); data lama tanpa `at` diisi saat aplikasi dibuka.
 - `BUILDER` kini memuat kontak contoh (domain `contoh.id`), dan layar `info` ditambahkan ke `SCREENS` dengan `STEP_OF.info = -1`.
+
+## [2026-10-22]
+
+### Changed
+
+- Aplikasi terhubung ke backend sungguhan (Cloudflare Pages Functions + D1) di https://aicandoit.aiclub.id; lihat [21_BACKEND.md](21_BACKEND.md). Frontend tidak lagi memakai data dummy.
+- Akun dikelola sendiri (daftar/masuk email dan kata sandi), tidak lagi login dummy aiclub.id.
+- Data tim, pelamar, pengumuman, anggota, kontak, dan chat dibaca dari API; `localStorage` hanya menyimpan preferensi (bahasa, layar terakhir).
+- Hosting berpindah dari GitHub Pages ke Cloudflare Pages.
+
+### Removed
+
+- `DUMMY_USERS`, `TIM`, `BUILDER`, `ANGGOTA`, `PENGUMUMAN`, `SEED_APPLICANTS`, `CONFIG.demoOwner`, dan `CONFIG.approveHours` dari `src/data.js`.
+- Teks i18n `teams`, `builders`, `announcements`, serta kunci teks mode demo.
 
 ## [2026-10-21]
 

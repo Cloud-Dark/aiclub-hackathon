@@ -1,6 +1,7 @@
 // Tim, lamaran, undangan, anggota. Semua aturan brief 5.3 dijaga di sini dan oleh constraint DB.
 import { E, newId, randomCode, readJson, str, parseJson, isUniqueError, WA_LINK_RE } from "./util.js";
 import { URUT } from "./scoring.js";
+import { sendEmail, mail } from "./email.js";
 import {
   APPROVE_MS, getParticipant, activeMembership, requireActiveMember, requirePrerequisites, jalurAktif
 } from "./db.js";
@@ -167,6 +168,8 @@ export async function applyToTeam(c) {
     throw e;
   }
   if (!res[0].meta.changes) throw E.conflict("Lamaran tidak bisa dibuat saat ini", "conflict");
+  const owner = await db.prepare("SELECT email, nama FROM hackathon_member WHERE id = ?").bind(t.owner_id).first();
+  if (owner) c.notify(sendEmail(c.env, mail.newApplication(owner, c.member.nama, t.nama)));
   return c.json({ id, team_id: t.id, status: "pending", via, created_at: now, expires_at: exp, server_time: now }, 201);
 }
 
@@ -202,8 +205,9 @@ export async function listApplications(c) {
        JOIN hackathon_member m ON m.id = a.member_id JOIN hackathon_participant p ON p.member_id = a.member_id
       WHERE a.team_id = ? ORDER BY a.created_at DESC LIMIT 200`
   ).bind(t.id).all();
+  const inv = await c.db.prepare("SELECT member_id FROM hackathon_invite WHERE team_id = ?").bind(t.id).all();
   return c.json({
-    server_time: c.now,
+    server_time: c.now, invited: inv.results.map((x) => x.member_id),
     applications: r.results.map(({ jalur, jalur_override, ...a }) => ({ ...a, jalur_aktif: jalur_override || jalur }))
   });
 }
@@ -247,6 +251,8 @@ export async function decideApplication(c) {
     throw e;
   }
   if (!changed) throw E.conflict("Lamaran sudah diputuskan atau melewati batas waktu", "not_pending_or_expired");
+  const who = await db.prepare("SELECT m.email, m.nama, t.nama AS team FROM hackathon_member m, hackathon_team t WHERE m.id = ? AND t.id = ?").bind(a.member_id, a.team_id).first();
+  if (who) c.notify(sendEmail(c.env, mail.decided(who, who.team, b.status === "approved")));
   return c.json({ id: a.id, status: b.status, decided_at: now });
 }
 
@@ -276,6 +282,12 @@ export async function inviteBuilder(c) {
     act(c.db, c.member.id, "invite", t.id, { member_id: target }, now)
   ]);
   return c.json({ ok: true }, 201);
+}
+
+export async function uninviteBuilder(c) {
+  const t = await ownTeam(c, c.params.id);
+  await c.db.prepare("DELETE FROM hackathon_invite WHERE team_id = ? AND member_id = ?").bind(t.id, c.params.member_id).run();
+  return c.json({ ok: true });
 }
 
 // anggota aktif; kontak hanya untuk anggota aktif dan hanya milik yang sudah setuju (atau milik sendiri)

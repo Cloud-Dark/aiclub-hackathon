@@ -7,7 +7,9 @@ export default function Create({ st, t, role, actions, onBack }) {
   const [f, setF] = useState({ nama: "", desc: "", butuh: [], wa: "" });
   const [err, setErr] = useState({});
 
-  function submit(e) {
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e) {
     e.preventDefault();
     const er = {};
     if (!f.nama.trim()) er.nama = m("errName");
@@ -15,7 +17,10 @@ export default function Create({ st, t, role, actions, onBack }) {
     if (f.wa.trim() && !WA_LINK_RE.test(f.wa.trim())) er.wa = m("errWa");
     setErr(er);
     if (Object.keys(er).length) return;
-    actions.createTeam({ nama: f.nama.trim().toUpperCase(), desc: f.desc.trim(), kota: st.kota.trim(), butuh: f.butuh, wa: f.wa.trim() });
+    if (busy) return;
+    setBusy(true);
+    try { await actions.createTeam({ nama: f.nama.trim().toUpperCase(), desc: f.desc.trim(), kota: st.kota.trim(), butuh: f.butuh, wa: f.wa.trim() }); }
+    finally { setBusy(false); }
   }
 
   return (
@@ -27,12 +32,12 @@ export default function Create({ st, t, role, actions, onBack }) {
           <div className="kick c">{t("create.s1")}</div>
           <label className={"field" + (err.nama ? " err" : "")}>
             <span>{m("name")} *</span>
-            <input value={f.nama} placeholder={m("namePh")} onChange={(e) => { setF({ ...f, nama: e.target.value }); setErr({ ...err, nama: "" }); }} />
+            <input value={f.nama} maxLength={40} placeholder={m("namePh")} onChange={(e) => { setF({ ...f, nama: e.target.value }); setErr({ ...err, nama: "" }); }} />
             {err.nama && <span className="err-msg">{err.nama}</span>}
           </label>
           <label className="field">
             <span>{m("desc")}</span>
-            <input value={f.desc} placeholder={m("descPh")} onChange={(e) => setF({ ...f, desc: e.target.value })} />
+            <input value={f.desc} maxLength={200} placeholder={m("descPh")} onChange={(e) => setF({ ...f, desc: e.target.value })} />
           </label>
         </div>
         <div className="card" style={{ gap: 14 }}>
@@ -58,7 +63,7 @@ export default function Create({ st, t, role, actions, onBack }) {
           <div className="note">{m("waHint")}</div>
         </div>
         <Actions onBack={onBack} t={t}>
-          <button type="submit" className="btn primary">{m("createBtn")} <span aria-hidden="true">&rsaquo;</span></button>
+          <button type="submit" className="btn primary" disabled={busy}>{m("createBtn")} <span aria-hidden="true">&rsaquo;</span></button>
         </Actions>
       </form>
     </section>

@@ -19,6 +19,25 @@ export default function Market({ st, t, get, role, actions, onNext, onBack }) {
         <div className="chip"><span className="mono" style={{ fontSize: 18, color: "var(--dim)" }}>{t("market.asRole")}</span><span className="px" style={{ fontSize: 9, color: "var(--yellow)" }}>{role(a).ringkas}</span></div>
       </div>
       <div className="note" style={{ marginBottom: 14 }}>{t("market.hint")}</div>
+      {st.receivedInvites && st.receivedInvites.length > 0 && (
+        <div className="card y" style={{ marginBottom: 14, gap: 10 }}>
+          <div className="kick">{t("market.invitesTitle")}</div>
+          <div className="note">{t("market.invitesBody")}</div>
+          {st.receivedInvites.map((iv) => (
+            <div key={iv.id} className="cbtn-row" style={{ alignItems: "center" }}>
+              <span className="px" style={{ fontSize: 10 }}>{iv.team}</span>
+              <button type="button" className="cbtn go" onClick={() => actions.openDetail(iv.team)}>{t("market.viewInvite")}</button>
+            </div>
+          ))}
+        </div>
+      )}
+      {allTeams(st).length === 0 && (
+        <div className="empty" style={{ display: "grid", gap: 10, justifyItems: "center" }}>
+          <div className="kick">{t("market.emptyTitle")}</div>
+          <div>{t("market.emptyBody")}</div>
+          <button type="button" className="btn primary" onClick={actions.chooseCreate}>{t("market.emptyCta")}</button>
+        </div>
+      )}
       <div className="cards">
         {allTeams(st).map((tm) => {
           const ap = appOf(tm.nama);
@@ -33,8 +52,8 @@ export default function Market({ st, t, get, role, actions, onNext, onBack }) {
           else btn = <button type="button" className={"cbtn " + (status ? "sent" : cocok ? "go" : "")} onClick={() => actions.toggleApply(tm.nama)}>{status ? t("market.withdraw") : t("market.apply")}</button>;
           return (
             <article key={tm.nama} className={"card tcard " + (cocok ? "c" : "")}>
-              <div className="hd"><span className="nm">{tm.nama}{tm.shared && <span className="tag m via">{t("market.viaLink")}</span>}</span><span className="st" style={{ color: stColor }}>{stLabel}</span></div>
-              <div className="txt" style={{ fontSize: 20 }}>{teamDesc(tm, get)}</div>
+              <div className="hd"><span className="nm">{tm.nama}{tm.viaLink && <span className="tag m via">{t("market.viaLink")}</span>}</span><span className="st" style={{ color: stColor }}>{stLabel}</span></div>
+              <div className="txt" style={{ fontSize: 20 }}>{teamDesc(tm)}</div>
               <div className="info"><span>{tm.kota}</span><i>|</i><span>{t("market.members", { n: tm.anggota })}</span><i>|</i><span>{t("market.ceo", { name: tm.ceo })}</span></div>
               <div className="slots"><span className="kick" style={{ fontSize: 7 }}>{t("market.slots")}</span><div className="tags">{tm.butuh.map((b) => <span key={b} className={"tag" + (b === a ? " m" : "")}>{role(b).ringkas}</span>)}</div></div>
               <div className="cbtn-row">

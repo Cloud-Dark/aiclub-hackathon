@@ -5,7 +5,7 @@ import { approvedApp, pendingApps, canCreate } from "../lib/rules.js";
 
 export default function Choose({ st, t, actions, onBack }) {
   const owner = st.myTeam;
-  const member = approvedApp(st);
+  const member = st.memberTeam ? { team: st.memberTeam.nama } : approvedApp(st);
   const pending = pendingApps(st);
   const inJoin = !owner && st.apps.length > 0;
   const createOk = canCreate(st);
@@ -35,7 +35,7 @@ export default function Choose({ st, t, actions, onBack }) {
     createCard = (
       <>
         <div className="lock">{t("choose.lockedMember", { team: member.team })}</div>
-        <ConfirmButton label={t("choose.leaveTeam")} sure={t("choose.sure")} onConfirm={() => actions.leaveTeam(member.team)} />
+        <ConfirmButton label={t("choose.leaveTeam")} sure={t("choose.sure")} onConfirm={() => actions.leaveTeam()} />
       </>
     );
   } else if (!createOk) {

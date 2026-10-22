@@ -2,7 +2,7 @@ import React from "react";
 import { Head, Actions } from "./Common.jsx";
 import { TENCENT_SUBMIT_URL } from "../data.js";
 
-export default function Submit({ st, patch, t, onBack, actions }) {
+export default function Submit({ st, patch, t, onBack }) {
   const ready = !!st.projectReady;
   return (
     <section className="screen" style={{ maxWidth: 760, margin: "0 auto" }}>
@@ -24,7 +24,7 @@ export default function Submit({ st, patch, t, onBack, actions }) {
         )}
         {st.submitClicked && <div className="okline">&#9632; {t("submit.sent")}</div>}
       </div>
-      <Actions onBack={onBack} t={t} extra={<button type="button" className="link" onClick={actions.restart}>{t("submit.restart")}</button>}>
+      <Actions onBack={onBack} t={t}>
         <span />
       </Actions>
     </section>

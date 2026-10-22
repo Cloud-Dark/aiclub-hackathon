@@ -2,7 +2,21 @@ import id from "./id.js";
 import en from "./en.js";
 import zh from "./zh.js";
 
-export const I18N = { id, en, zh };
+import auth from "./add_auth.js";
+import teams from "./add_teams.js";
+import dash from "./add_dash.js";
+import ann from "./add_ann.js";
+
+// kamus utama + tambahan per area (add_*.js); kunci tambahan menimpa/menambah kamus utama
+const merge = (a, b) => {
+  const o = { ...a };
+  for (const k of Object.keys(b)) o[k] = b[k] && typeof b[k] === "object" && !Array.isArray(b[k]) && a[k] && typeof a[k] === "object" && !Array.isArray(a[k]) ? merge(a[k], b[k]) : b[k];
+  return o;
+};
+const extras = [auth, teams, dash, ann];
+const withExtras = (base, lang) => extras.reduce((acc, x) => merge(acc, x[lang] || {}), base);
+
+export const I18N = { id: withExtras(id, "id"), en: withExtras(en, "en"), zh: withExtras(zh, "zh") };
 export const LANGS = ["id", "en", "zh"];
 
 export function detectLang() {

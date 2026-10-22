@@ -1,10 +1,10 @@
 # Indeks Dokumentasi
 
 > Status: Draft
-> Terakhir diperbarui: 2026-10-21
+> Terakhir diperbarui: 2026-10-22
 > Pemilik: Tim AIClub Hackathon
 
-Dokumentasi Portal Pendaftaran AI Agent Hackathon (aiclub.id x Tencent Cloud). Folder `docs/` juga menjadi sumber GitHub Pages: `index.html`, `assets/`, dan `brand/` adalah hasil build (jangan diedit tangan), sedangkan berkas `.md` ditulis manual. Rencana integrasi dengan aiclub.id ada di [../brief.md](../brief.md).
+Dokumentasi Portal Pendaftaran AI Agent Hackathon (aiclub.id x Tencent Cloud). Folder `docs/` juga menjadi keluaran build yang disajikan Cloudflare Pages (https://aicandoit.aiclub.id), terhubung ke backend Pages Functions + D1 ([21_BACKEND.md](21_BACKEND.md)): `index.html`, `assets/`, dan `brand/` adalah hasil build (jangan diedit tangan), sedangkan berkas `.md` ditulis manual. Rancangan awal backend ada di [../brief.md](../brief.md).
 
 ## Dokumen inti
 

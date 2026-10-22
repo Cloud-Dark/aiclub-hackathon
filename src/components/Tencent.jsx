@@ -7,10 +7,10 @@ export default function Tencent({ st, patch, t, onNext, onBack, actions }) {
   const ap = activeApp(st);
   let teamMsg, tone;
   if (st.myTeam) { teamMsg = t("tencent.teamOwner", { team: st.myTeam.nama }); tone = "var(--cyan)"; }
-  else if (ap && ap.status === "approved") { teamMsg = t("tencent.teamMember", { team: ap.team }); tone = "var(--cyan)"; }
+  else if (st.memberTeam || (ap && ap.status === "approved")) { teamMsg = t("tencent.teamMember", { team: st.memberTeam ? st.memberTeam.nama : ap.team }); tone = "var(--cyan)"; }
   else if (ap) { teamMsg = t("tencent.teamPending", { team: ap.team }); tone = "var(--yellow)"; }
   else { teamMsg = t("tencent.teamNone"); tone = "var(--magenta)"; }
-  const hasTeam = st.myTeam || (ap && ap.status === "approved");
+  const hasTeam = !!(st.myTeam || st.memberTeam || (ap && ap.status === "approved"));
 
   return (
     <section className="screen" style={{ maxWidth: 760, margin: "0 auto" }}>

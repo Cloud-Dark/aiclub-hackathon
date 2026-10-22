@@ -2,6 +2,7 @@
 import { E } from "./util.js";
 import { quizComplete, jalurOf } from "./scoring.js";
 import { waValid } from "./util.js";
+import { sendEmail, mail } from "./email.js";
 
 export const APPROVE_MS = 24 * 3600000; // batas keputusan owner (APPROVE_HOURS = 24), hanya diatur di server
 
@@ -9,8 +10,12 @@ const jalurAktif = (p) => (p && (p.jalur_override || p.jalur)) || null;
 export { jalurAktif };
 
 // Lamaran pending yang lewat batas menjadi expired (dipanggil dari cek-saat-baca; tidak bergantung cron).
-export function expireDue(db, now) {
-  return db.batch([
+export async function expireDue(db, now, env, notify) {
+  const due = notify ? (await db.prepare(
+    `SELECT m.email, m.nama, t.nama AS team FROM hackathon_application a
+       JOIN hackathon_member m ON m.id = a.member_id JOIN hackathon_team t ON t.id = a.team_id
+      WHERE a.status = 'pending' AND a.expires_at <= ?`).bind(now).all()).results : [];
+  const res = await db.batch([
     db.prepare(
       `INSERT INTO hackathon_activity (id, member_id, kind, team_id, meta, created_at)
        SELECT 'act_' || lower(hex(randomblob(10))), member_id, 'expired', team_id, id, expires_at
@@ -21,6 +26,7 @@ export function expireDue(db, now) {
         WHERE status = 'pending' AND expires_at <= ?`
     ).bind(now)
   ]);
+  if (due.length && res[1].meta.changes) for (const d of due) notify(sendEmail(env, mail.expired(d, d.team)));
 }
 
 export const getParticipant = (db, id) => db.prepare("SELECT * FROM hackathon_participant WHERE member_id = ?").bind(id).first();

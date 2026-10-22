@@ -9,6 +9,7 @@ import * as ct from "./routes_content.js";
 // [method, path, handler, akses] akses: "public" | "opt" (session opsional) | "member" | "admin"
 const ROUTES = [
   ["GET", "/health", (c) => c.json({ ok: true, server_time: c.now }), "public"],
+  ["GET", "/config", (c) => c.json({ turnstile_sitekey: c.env.TURNSTILE_SITEKEY || null }), "public"],
   ["POST", "/auth/register", me.register, "public"],
   ["POST", "/auth/login", me.login, "public"],
   ["POST", "/auth/logout", me.logout, "public"],
@@ -27,6 +28,7 @@ const ROUTES = [
   ["GET", "/hackathon/teams/:id/applications", tm.listApplications, "member"],
   ["POST", "/hackathon/teams/:id/invites", tm.inviteBuilder, "member"],
   ["GET", "/hackathon/teams/:id/members", tm.listMembers, "member"],
+  ["DELETE", "/hackathon/teams/:id/invites/:member_id", tm.uninviteBuilder, "member"],
   ["DELETE", "/hackathon/applications/:id", tm.withdrawApplication, "member"],
   ["POST", "/hackathon/applications/:id/decide", tm.decideApplication, "member"],
   ["GET", "/hackathon/builders", tm.listBuilders, "member"],
@@ -60,7 +62,7 @@ const ROUTES = [
 // route yang membaca/mengubah lamaran: kedaluwarsa dicek saat baca (tanpa menunggu cron)
 const NEEDS_EXPIRY = /\/(me|teams|applications|builders)(\/|$)/;
 
-export async function handle(request, env) {
+export async function handle(request, env, ctx) {
   const url = new URL(request.url), now = Date.now();
   try {
     const path = url.pathname.replace(/^\/api/, "").replace(/\/+$/, "") || "/";
@@ -83,14 +85,15 @@ export async function handle(request, env) {
       if (origin && new URL(origin).host !== url.host) throw E.forbid("Origin tidak diizinkan");
     }
 
-    const c = { env, db: env.DB, req: request, url, now, params: found.params, member: null, json };
+    const notify = (p) => { const q = Promise.resolve(p).catch((e) => console.error("notify", e && e.message)); if (ctx && ctx.waitUntil) ctx.waitUntil(q); };
+    const c = { env, db: env.DB, req: request, url, now, params: found.params, member: null, json, notify };
     const { access } = found.r;
     if (access === "member" || access === "admin" || access === "opt") {
       c.member = await sessionMember(request, env.DB, now);
       if (!c.member && access !== "opt") throw E.unauth();
       if (access === "admin" && c.member.role !== "admin") throw E.forbid("Khusus pengurus");
     }
-    if (c.member && NEEDS_EXPIRY.test(path)) await expireDue(env.DB, now);
+    if (c.member && NEEDS_EXPIRY.test(path)) await expireDue(env.DB, now, env, notify);
     return await found.r.handler(c);
   } catch (e) {
     if (e instanceof ApiError) return errorResponse(e);

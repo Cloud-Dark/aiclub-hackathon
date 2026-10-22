@@ -262,16 +262,12 @@ export default {
     "challengeTitle": "TANTANGAN DARI TENCENT",
     "challengeBody": "Dibuka minggu ke-2, bareng briefing. Sampai saat itu, kumpulkan tim dulu.",
     "toMarket": "KEMBALI KE PASAR TIM",
-    "restart": "Mulai dari awal",
     "approvedKet": "disetujui owner · saatnya gabung grup tim",
     "rejectedKet": "ditolak owner · coba tim lain",
     "stApproved": "DISETUJUI",
     "stRejected": "DITOLAK",
     "joinTeam": "GABUNG GRUP TIM",
     "noLink": "owner belum menambahkan link grup",
-    "demoNote": "MODE DEMO · keputusan owner disimulasikan di perangkat ini",
-    "simApprove": "SETUJUI",
-    "simReject": "TOLAK",
     "mainTitle": "GRUP UTAMA HACKATHON",
     "mainJoined": "sudah gabung",
     "mainOpen": "BUKA GRUP",
@@ -284,17 +280,10 @@ export default {
       "approved": "{team} menyetujui lamaranmu",
       "rejected": "{team} menolak lamaranmu",
       "invite": "Mengundang {who} ke timmu",
-      "uninvite": "Membatalkan undangan ke {who}",
       "openTeam": "Membuka tim {team}",
-      "approveWho": "Menyetujui {who} masuk timmu",
-      "rejectWho": "Menolak {who}",
       "closeTeam": "Menutup tim {team}",
       "leave": "Keluar dari tim {team}",
-      "autoWithdraw": "Lamaran ke {team} dibatalkan otomatis",
-      "withdrawAll": "Menarik semua lamaran",
-      "autoReject": "Lamaran ke {team} ditolak otomatis (lewat 24 jam)",
-      "autoRejectWho": "Lamaran {who} ditolak otomatis (lewat 24 jam)",
-      "chat": "Mengirim pesan di chat {team}"
+      "autoReject": "Lamaran ke {team} ditolak otomatis (lewat 24 jam)"
     },
     "myTeam": {
       "title": "TIM SAYA",
@@ -333,8 +322,7 @@ export default {
       "copyFail": "Gagal menyalin, salin manual dari kotak di atas",
       "shareWa": "BAGIKAN KE WHATSAPP",
       "shareMore": "BAGIKAN…",
-      "shareMsg": "Gabung tim {team} di AI Agent Hackathon! Kami mencari: {slots}. Lamar lewat link ini:",
-      "shareDemo": "Mode demo: lamaran lewat link belum masuk ke kotak pelamarmu sampai backend aiclub.id tersambung. Link grup WhatsApp tim tidak ikut di link ini."
+      "shareMsg": "Gabung tim {team} di AI Agent Hackathon! Kami mencari: {slots}. Lamar lewat link ini:"
     },
     "changeChoice": "GANTI PILIHAN",
     "memberTag": "ANGGOTA",
@@ -342,22 +330,6 @@ export default {
     "inviteBody": "Builder yang cari tim. Undanganmu tampil di sini.",
     "toTencent": "LANJUT KE LANGKAH 2"
   },
-  "teams": [
-    "Agent yang mencocokkan transaksi merchant tiap malam, tanpa orang.",
-    "Agent pendamping warung: terima pembayaran, catat stok, dari satu chat.",
-    "Penilai risiko pinjaman mikro yang bisa menjelaskan alasannya.",
-    "Agent internal yang menjawab pertanyaan tim operasional dari dokumen lama.",
-    "Agent penjadwal ulang antrean layanan publik di kota kecil.",
-    "Agent yang membaca kontrak vendor dan menandai pasal berisiko."
-  ],
-  "builders": [
-    "Sudah bikin dua agent pakai tool-calling. Belum pernah kerja di tim.",
-    "Desain produk 4 tahun. Cari tim yang mau prototipenya benar-benar dipakai.",
-    "7 tahun di operasional pembayaran. Tahu di mana prosesnya bocor.",
-    "Analis data retail. Bisa membuktikan agent-nya hemat waktu atau tidak.",
-    "Backend, deploy sendiri. Butuh orang yang tahu masalah nyatanya.",
-    "Bangun komunitas 8rb orang dari nol. Cari tim yang produknya siap dipakai."
-  ],
   "schedule": [
     {
       "minggu": "15 OKT",
@@ -412,17 +384,14 @@ export default {
     }
   },
   "login": {
-    "prompt": "masuk/aiclub.id",
-    "title": "MASUK DENGAN AICLUB.ID",
-    "body": "Pakai akun komunitas AIClub.id supaya datamu terhubung. Setelah masuk, lengkapi data yang masih kurang, baru pasar tim terbuka.",
-    "badge": "DUMMY · BELUM TERSAMBUNG KE AICLUB.ID SUNGGUHAN",
-    "email": "EMAIL AICLUB.ID",
-    "emailPh": "nama@aiclub.id",
+    "prompt": "masuk",
+    "title": "MASUK KE PORTAL HACKATHON",
+    "body": "Masuk dengan akun portal hackathon. Setelah masuk, lengkapi data yang masih kurang, baru pasar tim terbuka.",
+    "email": "EMAIL",
+    "emailPh": "nama@email.com",
     "pass": "KATA SANDI",
-    "passPh": "bebas, ini dummy",
+    "passPh": "kata sandi akunmu",
     "submit": "MASUK",
-    "demoTitle": "ATAU PAKAI AKUN DEMO",
-    "demoHint": "Profil tiap akun berbeda: ada yang masih kosong kota atau WhatsApp-nya.",
     "errEmail": "Format email belum benar",
     "errPass": "Isi kata sandi dulu",
     "logout": "KELUAR",
@@ -481,57 +450,17 @@ export default {
     "back": "KEMBALI KE DAFTAR",
     "latest": "PENGUMUMAN TERBARU",
     "all": "LIHAT SEMUA PENGUMUMAN",
-    "unread": "{n} belum dibaca",
-    "demo": "Mode demo: jumlah tayangan = angka contoh + tayanganmu di perangkat ini. Satu akun dihitung satu kali per pengumuman."
+    "unread": "{n} belum dibaca"
   },
-  "announcements": [
-    {
-      "judul": "Jadwal finalis dan Demo Day",
-      "ringkas": "Finalis diumumkan 14 Nov, Demo Day & Awarding 27 Nov di Jakarta.",
-      "isi": [
-        "Setelah batas pengumpulan karya 1 Nov 23.59 WIB, panitia menilai semua project yang masuk.",
-        "Finalis diumumkan pada 14 Nov. Finalis mempresentasikan karyanya di Demo Day & Awarding, 27 Nov pukul 13.00–16.00 WIB di Jakarta.",
-        "Juara 1, 2, dan 3 diumumkan di acara tersebut."
-      ]
-    },
-    {
-      "judul": "Pengingat: batas pendaftaran 1 Nov 23.59 WIB",
-      "ringkas": "Pendaftaran tim dan pengumpulan karya ditutup 1 Nov pukul 23.59 WIB.",
-      "isi": [
-        "Pasar tim dan pendaftaran ditutup pada 1 Nov pukul 23.59 WIB. Karya Agentic AI dikumpulkan sebelum batas yang sama.",
-        "Pastikan tim sudah terdaftar di portal Tencent (langkah 2) dan project sudah dikirim (langkah 3) sebelum batas waktu."
-      ]
-    },
-    {
-      "judul": "Aturan bentuk tim: keputusan owner maksimal 24 jam",
-      "ringkas": "Lamaran yang tidak diputuskan owner dalam 24 jam ditolak otomatis.",
-      "isi": [
-        "Satu orang hanya bisa menjadi anggota satu tim atau owner satu tim, dan hanya boleh punya satu lamaran aktif.",
-        "Owner punya waktu 24 jam sejak lamaran masuk untuk menyetujui atau menolak. Lewat dari itu, lamaran otomatis ditolak supaya pelamar bisa mencari tim lain.",
-        "Selama menunggu, pelamar boleh menarik lamarannya. Setelah disetujui, anggota bisa melihat anggota tim lain beserta kontaknya dan chat di ruang tim."
-      ]
-    },
-    {
-      "judul": "Pendaftaran AI Agent Hackathon dibuka",
-      "ringkas": "Daftar di portal ini, daftarkan tim ke Tencent, lalu submit project.",
-      "isi": [
-        "Pendaftaran dibuka 15 Okt. Alurnya tiga langkah: daftar di portal ini (data, skenario, grup utama, tim), daftarkan tim ke portal Tencent, lalu submit project.",
-        "Gabung grup WhatsApp utama untuk menerima info resmi dari panitia."
-      ]
-    }
-  ],
   "room": {
     "title": "ANGGOTA & KONTAK",
     "owner": "OWNER",
     "you": "KAMU",
-    "noContact": "Kontak owner tampil setelah backend tersambung.",
     "locked": "Anggota, kontak, dan chat tim terbuka setelah lamaranmu disetujui.",
     "chatTitle": "CHAT TIM",
     "ph": "Tulis pesan untuk tim…",
     "send": "KIRIM",
     "empty": "Belum ada pesan. Sapa timmu duluan.",
-    "welcome": "Halo, selamat datang di tim {team}! Kenalan dulu yuk di sini.",
-    "demo": "Mode demo: pesan hanya tersimpan di perangkat ini. Setelah backend tersambung, chat tersinkron ke semua anggota.",
     "errEmpty": "Tulis pesan dulu",
     "label": "Pesan chat tim"
   },
@@ -598,8 +527,7 @@ export default {
     "ready": "Project saya sudah selesai dan siap dikirim",
     "readyHint": "Centang dulu supaya tombol submit terbuka.",
     "cta": "KLIK DISINI UNTUK SUBMIT PROJECT KE TENCENT",
-    "sent": "Portal submit sudah dibuka. Semoga sukses di Demo Day!",
-    "restart": "Mulai dari awal"
+    "sent": "Portal submit sudah dibuka. Semoga sukses di Demo Day!"
   },
   "event": {
     "title": "TENCENT CLOUD HACKATHON INDONESIA 2026",
@@ -652,5 +580,8 @@ export default {
     "partnersTitle": "DIDUKUNG OLEH",
     "posterAlt": "Poster resmi Tencent Cloud Hackathon Indonesia 2026",
     "venue": "Jakarta · lokasi detail menyusul"
+  },
+  "err": {
+    "generic": "Terjadi kesalahan, coba lagi"
   }
 };

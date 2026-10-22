@@ -4,6 +4,7 @@ import {
   hashPassword, newSalt, safeEqual, createSession, destroySession, cookieHeader, SESSION_MS,
   throttleLogin, recordFailedLogin, isAdminEmail
 } from "./auth.js";
+import { verifyTurnstile } from "./turnstile.js";
 import { jalurOf, quizComplete, LATAR, URUT, QUIZ_LEN, WEIGHTS } from "./scoring.js";
 import { getParticipant, activeMembership, profileOf, participantOf } from "./db.js";
 
@@ -14,6 +15,7 @@ const sessionResponse = async (c, member, status = 200) => {
 
 export async function register(c) {
   const b = await readJson(c.req);
+  await verifyTurnstile(c.env, b.turnstile_token, c.req);
   const email = str(b.email, "email", { max: 120, min: 3 }).toLowerCase();
   if (!EMAIL_RE.test(email)) throw E.bad("Format email tidak valid");
   if (typeof b.password !== "string" || b.password.length < 8 || b.password.length > 128) throw E.bad("Sandi 8 sampai 128 karakter");
@@ -34,6 +36,7 @@ export async function register(c) {
 
 export async function login(c) {
   const b = await readJson(c.req);
+  await verifyTurnstile(c.env, b.turnstile_token, c.req);
   const email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
   if (!email || typeof b.password !== "string" || b.password.length > 128) throw E.bad("Email dan sandi wajib diisi");
   await throttleLogin(c.db, email, c.now);
@@ -57,7 +60,7 @@ export async function logout(c) {
 export async function getMe(c) {
   const m = c.member, db = c.db, now = c.now;
   const p = await getParticipant(db, m.id);
-  const [mem, apps, invites, annUnread] = await Promise.all([
+  const [mem, apps, invites, annUnread, activity] = await Promise.all([
     activeMembership(db, m.id),
     db.prepare(
       `SELECT a.id, a.team_id, t.nama AS team_nama, a.status, a.via, a.created_at, a.expires_at, a.decided_at
@@ -73,7 +76,11 @@ export async function getMe(c) {
       `SELECT COUNT(*) n FROM hackathon_announcement a
         WHERE a.status = 'published' AND NOT EXISTS
           (SELECT 1 FROM hackathon_announcement_view v WHERE v.announcement_id = a.id AND v.member_id = ?)`
-    ).bind(m.id).first()
+    ).bind(m.id).first(),
+    db.prepare(
+      `SELECT a.kind, a.created_at AS at, t.nama AS team FROM hackathon_activity a LEFT JOIN hackathon_team t ON t.id = a.team_id
+        WHERE a.member_id = ? ORDER BY a.created_at DESC, a.id DESC LIMIT 40`
+    ).bind(m.id).all()
   ]);
   let team = null, chatUnread = 0;
   if (mem) {
@@ -90,7 +97,7 @@ export async function getMe(c) {
   return c.json({
     server_time: now,
     profile: profileOf(m), participant: participantOf(p),
-    team, applications: apps.results, invites: invites.results,
+    team, applications: apps.results, invites: invites.results, activity: activity.results,
     unread: { announcements: annUnread.n, chat: chatUnread }
   });
 }
@@ -151,6 +158,8 @@ export async function patchMe(c) {
   if (Object.keys(mset).length)
     stmts.push(db.prepare(`UPDATE hackathon_member SET ${Object.keys(mset).map((k) => k + " = ?").join(", ")} WHERE id = ?`).bind(...Object.values(mset), c.member.id));
   pset.updated_at = now;
+  if (pset.joined_main_at && !p.joined_main_at)
+    stmts.push(db.prepare("INSERT INTO hackathon_activity (id, member_id, kind, created_at) VALUES (?,?, 'join_main', ?)").bind(newId("act", now), c.member.id, now));
   stmts.push(db.prepare(`UPDATE hackathon_participant SET ${Object.keys(pset).map((k) => k + " = ?").join(", ")} WHERE member_id = ?`).bind(...Object.values(pset), c.member.id));
   await db.batch(stmts);
   c.member = { ...c.member, ...mset };

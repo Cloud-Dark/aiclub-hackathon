@@ -9,6 +9,8 @@ let pass = 0, fail = 0;
 function client() {
   let cookie = "";
   return async (method, path, body, opts = {}) => {
+    // captcha Turnstile hanya di login/register; token uji Cloudflare lolos bila secret uji dipakai
+    if (body && /^\/auth\/(register|login)$/.test(path) && !("turnstile_token" in body) && !opts.noCaptcha) body = { ...body, turnstile_token: "XXXX.DUMMY.TOKEN.XXXX" };
     const r = await fetch(BASE + "/api" + path, {
       method, redirect: "manual",
       headers: { ...(body !== undefined ? { "content-type": "application/json" } : {}), ...(cookie ? { cookie } : {}), ...(opts.headers || {}) },
@@ -43,6 +45,7 @@ console.log("auth");
   const a = client();
   check("tanpa session = 401", (await a("GET", "/hackathon/me")).status === 401);
   check("health publik", (await a("GET", "/health")).status === 200);
+  check("config publik memuat sitekey", "turnstile_sitekey" in (await a("GET", "/config")).data);
   check("endpoint tidak ada = 404", (await a("GET", "/nope")).status === 404);
   check("register sandi pendek = 400", (await a("POST", "/auth/register", { email: `x${RUN}@t.id`, password: "123", nama: "X" })).status === 400);
   const ok = await a("POST", "/auth/register", { email: `auth-${RUN}@t.id`, password: "rahasia123", nama: "Auth" });
@@ -56,6 +59,12 @@ console.log("auth");
   check("logout menghapus session", (await a("GET", "/hackathon/me")).status === 401);
   check("session lain tetap jalan", (await b("GET", "/hackathon/me")).status === 200);
   check("CSRF: Origin asing ditolak", (await b("PATCH", "/hackathon/me", { kota: "X" }, { headers: { origin: "https://evil.example" } })).status === 403);
+  if (process.env.TS_ENFORCED) {
+    const nc = await client()("POST", "/auth/login", { email: `auth-${RUN}@t.id`, password: "rahasia123" }, { noCaptcha: true });
+    check("captcha: login tanpa token = 400", nc.status === 400 && nc.data.error.code === "captcha_failed", nc.data);
+    check("captcha: register tanpa token = 400", (await client()("POST", "/auth/register", { email: `nc-${RUN}@t.id`, password: "rahasia123", nama: "N" }, { noCaptcha: true })).data.error?.code === "captcha_failed");
+    check("captcha: endpoint lain tidak minta captcha", (await b("GET", "/hackathon/me")).status === 200);
+  }
   for (let i = 0; i < 8; i++) await client()("POST", "/auth/login", { email: `brute-${RUN}@t.id`, password: "salah-salah" });
   check("brute force = 429", (await client()("POST", "/auth/login", { email: `brute-${RUN}@t.id`, password: "salah-salah" })).status === 429);
 }
@@ -290,7 +299,7 @@ if (!process.env.SKIP_MCP) {
   const { createHash, randomBytes } = await import("node:crypto");
   const b64 = (buf) => buf.toString("base64url");
   const REDIR = "http://localhost:9999/callback";
-  const post = (path, form) => fetch(BASE + path, { method: "POST", redirect: "manual", headers: { "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(form).toString() });
+  const post = (path, form) => fetch(BASE + path, { method: "POST", redirect: "manual", headers: { "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ "cf-turnstile-response": "XXXX.DUMMY.TOKEN.XXXX", ...form }).toString() });
   const reg = await (await fetch(BASE + "/oauth/register", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ redirect_uris: [REDIR], client_name: "Tes" }) })).json();
   check("registrasi klien", !!reg.client_id, reg);
   check("redirect_uri berbahaya ditolak", (await fetch(BASE + "/oauth/register", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ redirect_uris: ["javascript:alert(1)"] }) })).status === 400);

@@ -1,6 +1,7 @@
 // OAuth 2.1 authorization server minimal untuk MCP: klien publik, PKCE S256, registrasi dinamis.
 // Login memakai akun portal dan hanya admin yang boleh menyelesaikan otorisasi.
 import { json, randomToken, newId, EMAIL_RE } from "./util.js";
+import { verifyTurnstile } from "./turnstile.js";
 import { sha256, hashPassword, safeEqual, throttleLogin, recordFailedLogin } from "./auth.js";
 
 const CODE_MS = 10 * 60000, ACCESS_MS = 3600000, REFRESH_MS = 30 * 86400000;
@@ -55,7 +56,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", 
 const page = (body, status = 200) => new Response(
   `<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Masuk pengurus</title>
 <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#05070e;color:#e8ecf8;font:16px/1.5 system-ui,sans-serif}main{width:min(92vw,380px);background:#0d1220;border:1px solid #232b45;border-radius:12px;padding:28px}h1{font-size:20px;margin:0 0 4px}p{color:#9aa4c4;margin:0 0 18px;font-size:14px}label{display:block;font-size:13px;margin:12px 0 4px}input{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid #2c3556;background:#05070e;color:inherit;font:inherit}button{margin-top:18px;width:100%;padding:11px;border:0;border-radius:8px;background:#6ea8ff;color:#05070e;font:inherit;font-weight:700;cursor:pointer}.err{background:#3a1620;border:1px solid #7a2a3c;padding:10px 12px;border-radius:8px;font-size:14px;margin-bottom:8px}</style></head><body><main>${body}</main></body></html>`,
-  { status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-frame-options": "DENY", "content-security-policy": "frame-ancestors 'none'; default-src 'none'; style-src 'unsafe-inline'", "referrer-policy": "no-referrer" } }
+  { status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-frame-options": "DENY", "content-security-policy": "frame-ancestors 'none'; default-src 'none'; style-src 'unsafe-inline'; script-src https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; connect-src https://challenges.cloudflare.com", "referrer-policy": "no-referrer" } }
 );
 
 // validasi parameter otorisasi; kembalikan {client, p} atau Response halaman galat (tanpa redirect)
@@ -68,29 +69,31 @@ async function authParams(c, src) {
   if (p.code_challenge_method !== "S256" || !/^[A-Za-z0-9_-]{43,128}$/.test(p.code_challenge)) return { fail: back("invalid_request") };
   return { client, p };
 }
-const form = (p, client, error, email = "") => page(
+const form = (c, p, client, error, email = "") => page(
   `<h1>Masuk pengurus</h1><p>${esc(client.name)} meminta akses ke pengelolaan portal hackathon. Hanya akun admin yang bisa melanjutkan.</p>
 ${error ? `<div class="err" role="alert">${esc(error)}</div>` : ""}
 <form method="post">${Object.entries(p).map(([k, v]) => `<input type="hidden" name="${k}" value="${esc(v)}">`).join("")}
 <label for="e">Email</label><input id="e" name="email" type="email" autocomplete="username" required value="${esc(email)}">
 <label for="pw">Sandi</label><input id="pw" name="password" type="password" autocomplete="current-password" required>
+${c.env.TURNSTILE_SITEKEY && c.env.TURNSTILE_SECRET ? `<div class="cf-turnstile" data-sitekey="${esc(c.env.TURNSTILE_SITEKEY)}" data-theme="dark" style="margin-top:14px"></div><script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>` : ""}
 <button type="submit">Masuk dan izinkan</button></form>`, error ? 401 : 200);
 
 async function authorize(c) {
   const src = c.req.method === "POST" ? new URLSearchParams(await c.req.text()) : c.url.searchParams;
   const { fail, client, p } = await authParams(c, src);
   if (fail) return fail;
-  if (c.req.method === "GET") return form(p, client);
+  if (c.req.method === "GET") return form(c, p, client);
 
   const email = (src.get("email") || "").trim().toLowerCase().slice(0, 120), pw = src.get("password") || "";
   const origin = c.req.headers.get("origin");
   if (origin && new URL(origin).host !== c.url.host) return page("<h1>Ditolak</h1>", 403);
-  if (!EMAIL_RE.test(email) || !pw || pw.length > 128) return form(p, client, "Email dan sandi wajib diisi", email);
-  try { await throttleLogin(c.db, email, c.now); } catch { return form(p, client, "Terlalu banyak percobaan, coba lagi 15 menit lagi", email); }
+  if (!EMAIL_RE.test(email) || !pw || pw.length > 128) return form(c, p, client, "Email dan sandi wajib diisi", email);
+  try { await verifyTurnstile(c.env, src.get("cf-turnstile-response") || "", c.req); } catch (e) { return form(c, p, client, e.message, email); }
+  try { await throttleLogin(c.db, email, c.now); } catch { return form(c, p, client, "Terlalu banyak percobaan, coba lagi 15 menit lagi", email); }
   const m = await c.db.prepare("SELECT * FROM hackathon_member WHERE email = ?").bind(email).first();
   const got = await hashPassword(pw, m ? m.pass_salt : "00".repeat(16));
-  if (!m || !safeEqual(got, m.pass_hash)) { await recordFailedLogin(c.db, email, c.now); return form(p, client, "Email atau sandi salah", email); }
-  if (m.role !== "admin") return form(p, client, "Akun ini bukan admin", email);
+  if (!m || !safeEqual(got, m.pass_hash)) { await recordFailedLogin(c.db, email, c.now); return form(c, p, client, "Email atau sandi salah", email); }
+  if (m.role !== "admin") return form(c, p, client, "Akun ini bukan admin", email);
 
   const code = randomToken();
   await c.db.batch([
@@ -160,7 +163,7 @@ export async function handleOAuth(request, env) {
   if (request.method === "OPTIONS") return withCors(new Response(null, { status: 204 }));
   if (!env.DB) return oerr("server_error", "Database belum terpasang", 500);
   const url = new URL(request.url), now = Date.now();
-  const c = { db: env.DB, req: request, url, now };
+  const c = { env, db: env.DB, req: request, url, now };
   const path = url.pathname.replace(/\/+$/, "");
   try {
     if (path === "/oauth/register" && request.method === "POST") return await register(c);

@@ -4,18 +4,18 @@
 > Terakhir diperbarui: 2026-10-21
 > Pemilik: Tim AIClub Hackathon
 
-Dokumen ini menjelaskan cara membangun dan men-deploy portal pendaftaran AI Agent Hackathon aiclub.id x Tencent Cloud, baik kondisi sekarang (GitHub Pages, statis) maupun rencana produksi di subdomain aiclub.id. Dokumen terkait: [17_DEVELOPER_SETUP.md](17_DEVELOPER_SETUP.md), [04_TRD.md](04_TRD.md), [14_SECURITY_THREAT_MODEL.md](14_SECURITY_THREAT_MODEL.md), [12_TEST_STRATEGY.md](12_TEST_STRATEGY.md), [../README.md](../README.md), [../brief.md](../brief.md).
+Dokumen ini menjelaskan cara membangun dan men-deploy portal pendaftaran AI Agent Hackathon aiclub.id x Tencent Cloud, baik kondisi sekarang (Cloudflare Pages + Functions + D1 di https://aicandoit.aiclub.id) maupun rencana lama. Catatan: bagian yang menyebut GitHub Pages, `localStorage`, atau login dummy di bawah adalah riwayat dan sudah tidak berlaku; rujukan terbaru ada di [21_BACKEND.md](21_BACKEND.md). Dokumen terkait: [17_DEVELOPER_SETUP.md](17_DEVELOPER_SETUP.md), [04_TRD.md](04_TRD.md), [14_SECURITY_THREAT_MODEL.md](14_SECURITY_THREAT_MODEL.md), [12_TEST_STRATEGY.md](12_TEST_STRATEGY.md), [../README.md](../README.md), [../brief.md](../brief.md).
 
 ## 1. Gambaran Umum
 
 | Hal | Kondisi sekarang | Rencana produksi |
 |---|---|---|
-| Bentuk | SPA React + Vite statis | SPA statis + BFF (Cloudflare Worker/Pages Functions) |
-| Hosting | GitHub Pages | Subdomain aiclub.id (mis. `hackathon.aiclub.id`) |
-| URL | `https://cloud-dark.github.io/aiclub-hackathon/` | _TBD_ (usulan brief: `hackathon.aiclub.id`) |
-| Sumber publikasi | Branch `main`, folder `/docs` | _TBD_ |
-| Data | Dummy di `localStorage` | D1 aiclub.id lewat API |
-| Login | Dummy | Session aiclub.id |
+| Bentuk | SPA React + Vite + Pages Functions | SPA statis + BFF (Cloudflare Worker/Pages Functions) |
+| Hosting | Cloudflare Pages | Subdomain aiclub.id (mis. `hackathon.aiclub.id`) |
+| URL | `https://aicandoit.aiclub.id` | _TBD_ (usulan brief: `hackathon.aiclub.id`) |
+| Sumber publikasi | Cloudflare Pages (keluaran `docs/` + `functions/`) | _TBD_ |
+| Data | D1 `aiclub-hackathon-db` lewat `/api` | D1 aiclub.id lewat API |
+| Login | Akun portal sendiri (session cookie) | Session aiclub.id |
 
 Status rencana produksi: **Rencana**; seluruh detail teknis yang belum diputuskan ditandai _TBD_ (lihat bagian 8).
 
@@ -63,7 +63,7 @@ Catatan yang perlu diperhatikan:
 - `docs/index.html` dan `docs/brand/*` ditimpa oleh build (Vite menyalin `public/` dan menulis ulang `index.html`), jadi tidak ada dokumen lain yang boleh bernama `index.html` atau berada di `docs/brand/`.
 - Berkas lama hasil build selain `docs/assets` (mis. bila `public/` kelak kehilangan sebuah berkas) tidak otomatis terhapus dari `docs/`; bersihkan manual lewat git bila perlu.
 
-## 4. Deploy ke GitHub Pages (Kondisi Sekarang)
+## 4. Deploy ke GitHub Pages (Riwayat, tidak berlaku lagi)
 
 Sumber: [../README.md](../README.md), bagian "Build & GitHub Pages".
 
@@ -95,13 +95,13 @@ Berkas kosong `.nojekyll` ada di `public/` dan `docs/`. Berkas ini menyuruh GitH
 | Buka URL Pages | Layar intro termuat, tanpa galat konsol |
 | Jaringan | Tidak ada 404 untuk `assets/*` dan `brand/*` |
 | Ikon dan font | Favicon tampil; font dimuat dari Google Fonts |
-| Alur | Login dummy, kuis, grup, pasar tim berjalan ([12_TEST_STRATEGY.md](12_TEST_STRATEGY.md)) |
+| Alur | Login, kuis, grup, pasar tim berjalan ([12_TEST_STRATEGY.md](12_TEST_STRATEGY.md)) |
 | Muat ulang | Tidak ada 404 pada muat ulang (SPA tidak memakai router URL, jadi aman) |
 | Bahasa | `?lang=en` dan `?lang=zh` bekerja |
 
 ### 4.3 Batasan GitHub Pages
 
-- Tidak ada backend; seluruh data dummy tersimpan di `localStorage` per peramban.
+- Tidak ada backend; sudah tidak dipakai karena aplikasi kini memakai Cloudflare Pages Functions + D1.
 - Tidak ada header HTTP kustom (CSP, dst.).
 - Tidak dapat berbagi cookie dengan `aiclub.id` karena domain berbeda (`cloud-dark.github.io`), sehingga tidak cocok untuk versi produksi ([../brief.md](../brief.md) bagian 4).
 - Git menyimpan berkas hasil build; setiap build berhash baru menambah riwayat repo.

@@ -3,8 +3,8 @@ import { Head, Actions } from "./Common.jsx";
 import MyTeam from "./MyTeam.jsx";
 import { ConfirmButton } from "./Widgets.jsx";
 import { Prize, Challenges } from "./EventInfo.jsx";
-import { CONFIG, WA_GROUP_URL } from "../data.js";
-import { findTeam } from "../lib/share.js";
+import { WA_GROUP_URL } from "../data.js";
+import TeamRoom from "./TeamRoom.jsx";
 import { aktif } from "../lib/scoring.js";
 import { fmtTime } from "../lib/time.js";
 import { leftHM } from "../lib/rules.js";
@@ -18,14 +18,13 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
   const slug = (st.nama.trim() || "peserta").toLowerCase().replace(/\s+/g, "-");
   const stName = { pending: t("dash.appliedSt"), approved: t("dash.stApproved"), rejected: t("dash.stRejected") };
   const ket = { pending: t("dash.appliedKet"), approved: t("dash.approvedKet"), rejected: t("dash.rejectedKet") };
-  const approvedN = st.apps.filter((x) => x.status === "approved").length;
   const rows = st.apps.length;
   const logs = st.log.slice().reverse();
 
   return (
     <section className="screen">
       <Head prompt={"status/" + slug} onBack={onBack} t={t} />
-      <h2>{t("dash.greeting", { name: nm })}</h2>
+      <h2>{st.myTeam || st.memberTeam ? t("dash.greetingTeam", { name: nm, team: (st.myTeam || st.memberTeam).nama }) : t("dash.greeting", { name: nm })}</h2>
       <div className="grid2">
         <div className="stack">
           <div className="card c">
@@ -41,37 +40,31 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
             {rows ? (
               <div className="hist">
                 {st.apps.map((ap) => {
-                  const team = findTeam(st, ap.team);
+                  const wa = st.memberTeam && st.memberTeam.id === ap.team_id ? st.memberTeam.wa : "";
                   return (
-                    <div key={ap.team} className="it" style={{ alignItems: "flex-start" }}>
+                    <div key={ap.id} className="it" style={{ alignItems: "flex-start" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: "1 1 180px", minWidth: 0 }}>
                         <span className="px" style={{ fontSize: 9 }}>{ap.team}</span>
                         <span className="mono" style={{ fontSize: 18, color: "var(--dim)" }}>{ap.reason === "expired" ? t("deadline.expired") : ket[ap.status]}</span>
                         {ap.status === "pending" && <span className="note deadline">{t("deadline.left", leftHM(ap))}</span>}
-                        {ap.status === "approved" && (team && team.wa
-                          ? <a className="cbtn go" style={{ alignSelf: "flex-start", marginTop: 6 }} href={team.wa} target="_blank" rel="noopener noreferrer">{t("dash.joinTeam")}</a>
+                        {ap.status === "approved" && (wa
+                          ? <a className="cbtn go" style={{ alignSelf: "flex-start", marginTop: 6 }} href={wa} target="_blank" rel="noopener noreferrer">{t("dash.joinTeam")}</a>
                           : <span className="note">{t("dash.noLink")}</span>)}
                         <button type="button" className="cbtn" style={{ alignSelf: "flex-start", marginTop: 6 }} onClick={() => actions.openDetail(ap.team)}>{t("market.viewDetail")}</button>
-                        {ap.status === "approved" && <div style={{ marginTop: 6 }}><ConfirmButton label={t("choose.leaveTeam")} sure={t("choose.sure")} onConfirm={() => actions.leaveTeam(ap.team)} /></div>}
+                        {ap.status === "approved" && <div style={{ marginTop: 6 }}><ConfirmButton label={t("choose.leaveTeam")} sure={t("choose.sure")} onConfirm={() => actions.leaveTeam()} /></div>}
                       </div>
                       <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
                         <span className="px" style={{ fontSize: 7, color: COLOR[ap.status] }}>{ap.reason === "expired" ? t("deadline.auto") : stName[ap.status]}</span>
-                        {CONFIG.demoOwner && ap.status === "pending" && (
-                          <div className="row-btns">
-                            <button type="button" className="cbtn go" onClick={() => actions.decideApp(ap.team, "approved")}>{t("dash.simApprove")}</button>
-                            <button type="button" className="cbtn" onClick={() => actions.decideApp(ap.team, "rejected")}>{t("dash.simReject")}</button>
-                          </div>
-                        )}
                       </div>
                     </div>
                   );
                 })}
               </div>
             ) : <div className="empty">{t("dash.empty")}</div>}
-            {CONFIG.demoOwner && <div className="note">{t("dash.demoNote")}</div>}
           </div>}
 
           {st.myTeam && <MyTeam st={st} t={t} get={get} role={role} actions={actions} />}
+          {!st.myTeam && st.memberTeam && <TeamRoom st={st} t={t} role={role} team={st.memberTeam} isOwner={false} actions={actions} />}
 
           <div className="card">
             <div className="kick c">{t("dash.logTitle")}</div>
@@ -116,7 +109,7 @@ export default function Dash({ st, t, get, role, actions, onBack }) {
           <Challenges get={get} t={t} compact />
         </div>
       </div>
-      <Actions onBack={onBack} t={t} extra={<button type="button" className="link" onClick={actions.restart}>{t("dash.restart")}</button>}>
+      <Actions onBack={onBack} t={t}>
         <button type="button" className="btn gold" onClick={actions.toTencent}>{t("dash.toTencent")} <span aria-hidden="true">&rsaquo;</span></button>
         {!st.myTeam && <button type="button" className="btn ghost" onClick={actions.toMarketBack}>{t("dash.toMarket")}</button>}
         <button type="button" className="btn ghost" onClick={actions.toChoosePage}>{t("dash.changeChoice")}</button>

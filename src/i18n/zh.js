@@ -262,16 +262,12 @@ export default {
     "challengeTitle": "来自 TENCENT 的挑战",
     "challengeBody": "第 2 周随简报一起公布。在那之前，先把队伍组好。",
     "toMarket": "返回组队市场",
-    "restart": "从头开始",
     "approvedKet": "队长已通过 · 去加入队伍群",
     "rejectedKet": "队长已拒绝 · 试试其他队伍",
     "stApproved": "已通过",
     "stRejected": "已拒绝",
     "joinTeam": "加入队伍群",
     "noLink": "队长还没添加群链接",
-    "demoNote": "演示模式 · 队长的决定在此设备上模拟",
-    "simApprove": "通过",
-    "simReject": "拒绝",
     "mainTitle": "黑客松主群",
     "mainJoined": "已加入",
     "mainOpen": "打开群",
@@ -284,17 +280,10 @@ export default {
       "approved": "{team} 通过了你的申请",
       "rejected": "{team} 拒绝了你的申请",
       "invite": "邀请 {who} 加入你的队伍",
-      "uninvite": "取消了对 {who} 的邀请",
       "openTeam": "创建了队伍 {team}",
-      "approveWho": "通过了 {who} 加入你的队伍",
-      "rejectWho": "拒绝了 {who}",
       "closeTeam": "关闭了队伍 {team}",
       "leave": "退出了队伍 {team}",
-      "autoWithdraw": "对 {team} 的申请已自动取消",
-      "withdrawAll": "撤回了所有申请",
-      "autoReject": "对 {team} 的申请已自动拒绝（超过 24 小时）",
-      "autoRejectWho": "{who} 的申请已自动拒绝（超过 24 小时）",
-      "chat": "在 {team} 聊天中发送了消息"
+      "autoReject": "对 {team} 的申请已自动拒绝（超过 24 小时）"
     },
     "myTeam": {
       "title": "我的队伍",
@@ -333,8 +322,7 @@ export default {
       "copyFail": "复制失败，请从上方框中手动复制",
       "shareWa": "分享到 WHATSAPP",
       "shareMore": "分享…",
-      "shareMsg": "加入 AI Agent Hackathon 的 {team} 团队！我们在找：{slots}。通过此链接申请：",
-      "shareDemo": "演示模式：在接入 aiclub.id 后端之前，通过链接提交的申请不会进入你的申请收件箱。此链接不包含团队 WhatsApp 群链接。"
+      "shareMsg": "加入 AI Agent Hackathon 的 {team} 团队！我们在找：{slots}。通过此链接申请："
     },
     "changeChoice": "更改选择",
     "memberTag": "成员",
@@ -342,22 +330,6 @@ export default {
     "inviteBody": "正在找队伍的 builder。你发出的邀请会显示在这里。",
     "toTencent": "继续第 2 步"
   },
-  "teams": [
-    "每晚自动匹配商户交易的 agent，无需人工。",
-    "社区小店助手 agent：收款、记库存，一个聊天全搞定。",
-    "能解释理由的小额贷款风险评估工具。",
-    "从旧文档中回答运营团队问题的内部 agent。",
-    "为小城市公共服务排队重新排期的 agent。",
-    "阅读供应商合同并标出风险条款的 agent。"
-  ],
-  "builders": [
-    "用工具调用做过两个 agent。还没在团队里干过。",
-    "4 年产品设计经验。想找一支真想让原型被用起来的队伍。",
-    "7 年支付运营经验。知道流程哪里漏。",
-    "零售数据分析师。能证明 agent 到底省没省时间。",
-    "后端，能自己部署。需要懂真实问题的人。",
-    "从零做起 8 千人的社区。想找产品已经能用的队伍。"
-  ],
   "schedule": [
     {
       "minggu": "10月15日",
@@ -412,17 +384,14 @@ export default {
     }
   },
   "login": {
-    "prompt": "登录/aiclub.id",
-    "title": "使用 AICLUB.ID 登录",
-    "body": "使用 AIClub.id 社区账号，让你的资料保持关联。登录后补全缺少的资料，组队市场才会开放。",
-    "badge": "演示 · 尚未连接真实 AICLUB.ID",
-    "email": "AICLUB.ID 邮箱",
-    "emailPh": "name@aiclub.id",
+    "prompt": "登录",
+    "title": "登录黑客松门户",
+    "body": "使用黑客松门户账号登录。登录后补全缺少的资料，组队市场才会开放。",
+    "email": "邮箱",
+    "emailPh": "name@email.com",
     "pass": "密码",
-    "passPh": "随便填，这是演示",
+    "passPh": "你的账号密码",
     "submit": "登录",
-    "demoTitle": "或使用演示账号",
-    "demoHint": "每个账号的资料不同：有的还缺城市或 WhatsApp。",
     "errEmail": "邮箱格式不正确",
     "errPass": "请先填写密码",
     "logout": "退出",
@@ -481,57 +450,17 @@ export default {
     "back": "返回列表",
     "latest": "最新公告",
     "all": "查看全部公告",
-    "unread": "{n} 条未读",
-    "demo": "演示模式：浏览次数 = 示例数字 + 你在本设备上的浏览。每个账号每条公告只计一次。"
+    "unread": "{n} 条未读"
   },
-  "announcements": [
-    {
-      "judul": "决赛名单与 Demo Day 日程",
-      "ringkas": "11 月 14 日公布决赛名单，11 月 27 日在雅加达举行 Demo Day 及颁奖。",
-      "isi": [
-        "11 月 1 日 23:59（WIB）作品提交截止后，主办方将评审所有提交的项目。",
-        "决赛名单于 11 月 14 日公布。入围团队将在 11 月 27 日 13:00–16:00（WIB）于雅加达举行的 Demo Day 及颁奖典礼上展示作品。",
-        "第一、二、三名将在活动现场公布。"
-      ]
-    },
-    {
-      "judul": "提醒：报名于 11 月 1 日 23:59（WIB）截止",
-      "ringkas": "团队报名与作品提交于 11 月 1 日 23:59（WIB）截止。",
-      "isi": [
-        "团队市场与报名于 11 月 1 日 23:59（WIB）关闭。Agentic AI 作品须在同一截止时间前提交。",
-        "请确保在截止前已在腾讯门户注册团队（第 2 步）并提交项目（第 3 步）。"
-      ]
-    },
-    {
-      "judul": "组队规则：队长须在 24 小时内决定",
-      "ringkas": "队长 24 小时内未处理的申请将被自动拒绝。",
-      "isi": [
-        "每人只能成为一个团队的成员或一个团队的队长，且同一时间只能有一个有效申请。",
-        "队长自收到申请起有 24 小时决定批准或拒绝。超时后申请将被自动拒绝，以便申请人寻找其他团队。",
-        "等待期间申请人可以撤回申请。获批后，成员可查看其他成员及其联系方式，并在团队空间中聊天。"
-      ]
-    },
-    {
-      "judul": "AI Agent Hackathon 报名开启",
-      "ringkas": "在本门户报名，向腾讯注册团队，然后提交项目。",
-      "isi": [
-        "报名于 10 月 15 日开启。共三步：在本门户报名（资料、情景、主群、团队），在腾讯门户注册团队，然后提交项目。",
-        "加入 WhatsApp 主群以接收主办方的官方通知。"
-      ]
-    }
-  ],
   "room": {
     "title": "成员与联系方式",
     "owner": "队长",
     "you": "你",
-    "noContact": "后端接入后将显示队长联系方式。",
     "locked": "申请获批后才能查看成员、联系方式和团队聊天。",
     "chatTitle": "团队聊天",
     "ph": "给团队写条消息…",
     "send": "发送",
     "empty": "还没有消息，先和队友打个招呼吧。",
-    "welcome": "你好，欢迎加入 {team} 团队！先在这里自我介绍一下吧。",
-    "demo": "演示模式：消息仅保存在本设备。接入后端后，聊天将同步给所有成员。",
     "errEmpty": "请先输入消息",
     "label": "团队聊天消息"
   },
@@ -598,8 +527,7 @@ export default {
     "ready": "我的项目已完成，可以提交",
     "readyHint": "先勾选，提交按钮才会开放。",
     "cta": "点击这里向腾讯提交项目",
-    "sent": "已打开提交平台。Demo Day 加油！",
-    "restart": "从头开始"
+    "sent": "已打开提交平台。Demo Day 加油！"
   },
   "event": {
     "title": "TENCENT CLOUD HACKATHON INDONESIA 2026",
@@ -652,5 +580,8 @@ export default {
     "partnersTitle": "支持方",
     "posterAlt": "Tencent Cloud Hackathon Indonesia 2026 官方海报",
     "venue": "Jakarta · 具体地点稍后公布"
+  },
+  "err": {
+    "generic": "出错了，请重试"
   }
 };

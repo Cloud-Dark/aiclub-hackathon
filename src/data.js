@@ -1,6 +1,4 @@
-// demoOwner: tampilkan tombol simulasi keputusan owner (sampai ada backend sungguhan)
-// approveHours: batas owner memutuskan lamaran; lewat dari itu lamaran ditolak otomatis
-export const CONFIG = { modeDraft: false, quizLen: 6, demoOwner: true, approveHours: 24 };
+export const CONFIG = { modeDraft: false, quizLen: 6 };
 export const URUT = ["CEO", "CTO", "AI", "PM", "DSG", "GRW", "DOM", "DAT"];
 export const WEIGHTS = [
   [{ DOM: 3, PM: 1 }, { PM: 3, AI: 1 }, { CTO: 3, AI: 1 }, { CEO: 3 }, { DAT: 3 }],
@@ -13,57 +11,7 @@ export const WEIGHTS = [
 export const LATAR = ["kerja-tech", "kerja-nontech", "mahasiswa", "freelance", "founder", "cari-kerja"];
 export const WA_GROUP_URL = "https://chat.whatsapp.com/GNcd3TL3bZ71LoxlL8RzH9";
 
-// akun dummy untuk halaman login aiclub.id (profil sengaja tidak lengkap)
-export const DUMMY_USERS = [
-  { email: "rani@aiclub.id", nama: "Rani Putri", kota: "", wa: "", linkedin: "" },
-  { email: "bagas@aiclub.id", nama: "Bagas Pratama", kota: "Malang", wa: "", linkedin: "" },
-  { email: "salsa@aiclub.id", nama: "Salsa Nadira", kota: "Bandung", wa: "", linkedin: "https://linkedin.com/in/salsa-nadira" }
-];
-
-export const WA_LINK_RE = /^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9_-]+/;
-
-// wa = link grup dummy (placeholder). Dengan backend sungguhan, link hanya dikirim setelah lamaran disetujui.
-export const TIM = [
-  { nama: "REKON", kota: "Jakarta", anggota: 3, ceo: "Raka", butuh: ["AI", "DAT"], wa: "https://chat.whatsapp.com/DummyRekon01", hari: 5, grupN: 7 },
-  { nama: "WARUNG TAP", kota: "Bandung", anggota: 2, ceo: "Sari", butuh: ["CTO", "DSG"], wa: "https://chat.whatsapp.com/DummyWarungTap02", hari: 3, grupN: 5 },
-  { nama: "SIAP RISIKO", kota: "Surabaya", anggota: 4, ceo: "Bintang", butuh: ["DOM", "PM"], wa: "https://chat.whatsapp.com/DummySiapRisiko03", hari: 8, grupN: 9 },
-  { nama: "TANYA OPS", kota: "Yogyakarta", anggota: 2, ceo: "Nadia", butuh: ["AI", "GRW"], wa: "https://chat.whatsapp.com/DummyTanyaOps04", hari: 2, grupN: 4 },
-  { nama: "ANTRE HABIS", kota: "Makassar", anggota: 3, ceo: "Fikri", butuh: ["DAT", "DSG"], wa: "https://chat.whatsapp.com/DummyAntreHabis05", hari: 6, grupN: 6 },
-  { nama: "BACA KONTRAK", kota: "Medan", anggota: 2, ceo: "Ayu", butuh: ["DOM", "CTO"], wa: "https://chat.whatsapp.com/DummyBacaKontrak06", hari: 4, grupN: 5 }
-];
-// kontak dummy (domain contoh), hanya tampil ke owner setelah pelamar disetujui
-const kontak = (n, i) => ({
-  wa: "0812000000" + String(i).padStart(2, "0"), email: n.toLowerCase() + "@contoh.id",
-  linkedin: "https://linkedin.com/in/contoh-" + n.toLowerCase(), github: "https://github.com/contoh-" + n.toLowerCase()
-});
-export const BUILDER = [
-  { nama: "Dimas", kota: "Semarang", peran: "AI" }, { nama: "Lala", kota: "Denpasar", peran: "DSG" },
-  { nama: "Hendra", kota: "Palembang", peran: "DOM" }, { nama: "Vina", kota: "Balikpapan", peran: "DAT" },
-  { nama: "Arif", kota: "Pontianak", peran: "CTO" }, { nama: "Tari", kota: "Kupang", peran: "GRW" }
-].map((b, i) => ({ ...b, ...kontak(b.nama, 50 + i) }));
-
-// anggota tim contoh beserta kontak; hanya tampil ke pelamar yang sudah disetujui
-const ANGGOTA_RAW = {
-  "REKON": [["Raka", "CEO"], ["Wulan", "CTO"], ["Yoga", "PM"]],
-  "WARUNG TAP": [["Sari", "CEO"], ["Bima", "GRW"]],
-  "SIAP RISIKO": [["Bintang", "CEO"], ["Citra", "AI"], ["Fajar", "CTO"], ["Gita", "DAT"]],
-  "TANYA OPS": [["Nadia", "CEO"], ["Ilham", "CTO"]],
-  "ANTRE HABIS": [["Fikri", "CEO"], ["Joko", "AI"], ["Kirana", "PM"]],
-  "BACA KONTRAK": [["Ayu", "CEO"], ["Lutfi", "AI"]]
-};
-let nomor = 0;
-export const ANGGOTA = Object.fromEntries(Object.entries(ANGGOTA_RAW).map(([tim, xs]) =>
-  [tim, xs.map(([nama, peran], j) => ({ nama, peran, owner: j === 0, ...kontak(nama, ++nomor) }))]));
-
-// pengumuman: teks per bahasa ada di i18n "announcements" (urutan sama), views = tayangan contoh
-export const PENGUMUMAN = [
-  { id: "p-jadwal", at: "2026-10-21T10:00:00+07:00", pin: true, views: 87 },
-  { id: "p-batas-1-nov", at: "2026-10-21T09:00:00+07:00", pin: false, views: 142 },
-  { id: "p-aturan-tim", at: "2026-10-19T13:00:00+07:00", pin: false, views: 196 },
-  { id: "p-dibuka", at: "2026-10-15T09:00:00+07:00", pin: false, views: 318 }
-];
-// pelamar contoh yang masuk ke tim buatan peserta (index ke BUILDER)
-export const SEED_APPLICANTS = [0, 4];
+export const WA_LINK_RE = /^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9_-]+$/;
 
 export const SCREENS = ["info", "intro", "login", "identitas", "kuis", "hasil", "grup", "pilih", "pasar", "tim", "buat", "dasbor", "tencent", "submit"];
 export const STEP_OF = { info: -1, intro: -1, login: -1, identitas: 0, kuis: 0, hasil: 0, grup: 0, pilih: 0, pasar: 0, tim: 0, buat: 0, dasbor: 0, tencent: 1, submit: 2 };
