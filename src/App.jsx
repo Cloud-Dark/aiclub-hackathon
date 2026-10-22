@@ -21,7 +21,7 @@ import { Footer } from "./components/Brand.jsx";
 import { activeApp, canCreate } from "./lib/rules.js";
 import Announcements from "./components/Announcements.jsx";
 import { readInviteCode, findTeam } from "./lib/share.js";
-import { api } from "./lib/api.js";
+import { api, onBusy } from "./lib/api.js";
 import { setSkew, nowMs } from "./lib/time.js";
 
 /*
@@ -82,6 +82,7 @@ export default function App() {
   const [errors, setErrors] = useState({});
   const [toastMsg, setToastMsg] = useState("");
   const toastT = useRef();
+  const [busy, setBusy] = useState(false);
   const stRef = useRef(st);
   stRef.current = st;
   const { t, get, role } = makeT(st.lang);
@@ -95,6 +96,16 @@ export default function App() {
     if (e && e.status === 401) setSt((s) => ({ ...s, ...emptyData(), screen: "intro" }));
     toast((e && e.message) || t("err.generic"));
   };
+
+  // indikator "mohon tunggu": muncul bila ada permintaan non-latar belakang yang berjalan lebih dari 250 ms
+  useEffect(() => {
+    let timer;
+    return onBusy((n) => {
+      clearTimeout(timer);
+      if (n > 0) timer = setTimeout(() => setBusy(true), 250);
+      else setBusy(false);
+    });
+  }, []);
 
   // ---------- muat data dari server ----------
   const applyMe = useCallback((me, { identity = true } = {}) => {
@@ -115,11 +126,11 @@ export default function App() {
     return { myTeam, memberTeam };
   }, []);
 
-  const loadTeams = useCallback(async (own) => {
+  const loadTeams = useCallback(async (own, o) => {
     const [tl, inbox, bl] = await Promise.all([
-      api.get("/hackathon/teams"),
-      own.myTeam ? api.get(`/hackathon/teams/${own.myTeam.id}/applications`) : null,
-      own.myTeam ? api.get("/hackathon/builders") : null
+      api.get("/hackathon/teams", o),
+      own.myTeam ? api.get(`/hackathon/teams/${own.myTeam.id}/applications`, o) : null,
+      own.myTeam ? api.get("/hackathon/builders", o) : null
     ]);
     setSkew(tl.server_time);
     setSt((s) => ({
@@ -140,17 +151,18 @@ export default function App() {
     }));
   }, []);
 
-  const loadAnn = useCallback(async (lang) => {
-    const r = await api.get("/hackathon/announcements?lang=" + (lang || stRef.current.lang));
+  const loadAnn = useCallback(async (lang, o) => {
+    const r = await api.get("/hackathon/announcements?lang=" + (lang || stRef.current.lang), o);
     setSt((s) => ({ ...s, ann: r.announcements }));
   }, []);
 
   // muat ulang semua data akun; identity=false agar isian yang sedang disunting tidak tertimpa
   const refresh = useCallback(async (opts) => {
+    const o = { silent: !!(opts && opts.silent) };
     try {
-      const me = await api.get("/hackathon/me");
+      const me = await api.get("/hackathon/me", o);
       const own = applyMe(me, opts);
-      await Promise.all([loadTeams(own), loadAnn()]);
+      await Promise.all([loadTeams(own, o), loadAnn(undefined, o)]);
     } catch (e) { if (e.status === 401) setSt((s) => ({ ...s, ...emptyData() })); }
   }, [applyMe, loadTeams, loadAnn]);
 
@@ -187,7 +199,7 @@ export default function App() {
 
   // polling ringan: status lamaran, tim, pengumuman
   useEffect(() => {
-    const id = setInterval(() => { if (stRef.current.user && !document.hidden && stRef.current.screen !== "identitas") refresh({ identity: false }); }, 30000);
+    const id = setInterval(() => { if (stRef.current.user && !document.hidden && stRef.current.screen !== "identitas") refresh({ identity: false, silent: true }); }, 30000);
     return () => clearInterval(id);
   }, [refresh]);
 
@@ -200,7 +212,7 @@ export default function App() {
     document.documentElement.lang = get("meta.lang");
     document.title = get("meta.title");
   }, [st.lang]);
-  useEffect(() => { if (st.ready) loadAnn(st.lang).catch(() => {}); }, [st.lang]);
+  useEffect(() => { if (st.ready) loadAnn(st.lang, { silent: true }).catch(() => {}); }, [st.lang]);
 
   // fokus ke judul hanya saat pindah layar / pertanyaan
   const firstRender = useRef(true);
@@ -448,7 +460,7 @@ export default function App() {
     return () => document.removeEventListener("keydown", onKey);
   });
 
-  if (!st.ready) return <div className="boot" role="status" aria-live="polite" style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "var(--dim)" }}>…</div>;
+  if (!st.ready) return <div className="boot" role="status" aria-live="polite" style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "var(--dim)" }}><span className="busy-pill"><i className="busy-spin" aria-hidden="true" />{makeT(st.lang).t("busy.wait")}</span></div>;
 
   const common = { st, patch, t, get, role, onNext: next, onBack: back };
   let view;
@@ -481,6 +493,7 @@ export default function App() {
       <Footer t={t} />
       <BottomNav st={st} t={t} get={get} gotoStep={gotoStep} onAnn={actions.toAnnouncements} />
       <div className={"toast" + (toastMsg ? " on" : "")} role="status">{toastMsg}</div>
+      {busy && <><div className="busy-bar" aria-hidden="true" /><div className="busy-pill fixed" role="status" aria-live="polite"><i className="busy-spin" aria-hidden="true" />{t("busy.wait")}</div></>}
     </>
   );
 }

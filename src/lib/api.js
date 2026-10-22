@@ -3,7 +3,18 @@ export class ApiError extends Error {
   constructor(status, code, message) { super(message); this.status = status; this.code = code; }
 }
 
-export async function api(method, path, body) {
+// penghitung permintaan yang sedang berjalan (kecuali yang { silent: true }, mis. polling latar belakang) untuk indikator "mohon tunggu"
+let inflight = 0;
+const listeners = new Set();
+const bump = (d) => { inflight += d; listeners.forEach((f) => f(inflight)); };
+export const onBusy = (f) => { listeners.add(f); return () => listeners.delete(f); };
+
+export async function api(method, path, body, opts = {}) {
+  if (!opts.silent) bump(1);
+  try { return await request(method, path, body); } finally { if (!opts.silent) bump(-1); }
+}
+
+async function request(method, path, body) {
   let r;
   try {
     r = await fetch("/api" + path, {
@@ -20,7 +31,7 @@ export async function api(method, path, body) {
   }
   return data;
 }
-api.get = (p) => api("GET", p);
-api.post = (p, b) => api("POST", p, b === undefined ? {} : b);
-api.patch = (p, b) => api("PATCH", p, b);
-api.del = (p) => api("DELETE", p);
+api.get = (p, o) => api("GET", p, undefined, o);
+api.post = (p, b, o) => api("POST", p, b === undefined ? {} : b, o);
+api.patch = (p, b, o) => api("PATCH", p, b, o);
+api.del = (p, o) => api("DELETE", p, undefined, o);

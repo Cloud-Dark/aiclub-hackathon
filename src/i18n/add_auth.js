@@ -1,6 +1,6 @@
 // Teks tambahan untuk area "auth" (id/en/zh). Digabung ke kamus utama di index.js.
 export default {
-  id: { login: {
+  id: { busy: { wait: "MOHON TUNGGU…" }, login: {
     prompt: "masuk/portal", title: "MASUK KE PORTAL", titleRegister: "DAFTAR AKUN PORTAL",
     body: "Ini akun portal hackathon, terpisah dari akun lain. Setelah masuk, lengkapi data diri, lalu pasar tim terbuka.",
     badge: "AKUN PORTAL HACKATHON", tabLogin: "MASUK", tabRegister: "DAFTAR", tabsLabel: "Masuk atau daftar",
@@ -10,7 +10,7 @@ export default {
     captcha: "Verifikasi keamanan", errCaptcha: "Selesaikan verifikasi keamanan dulu", errCaptchaFailed: "Verifikasi keamanan gagal. Coba lagi.",
     errGeneric: "Gagal terhubung ke server. Coba lagi."
   } },
-  en: { login: {
+  en: { busy: { wait: "PLEASE WAIT…" }, login: {
     prompt: "login/portal", title: "SIGN IN TO THE PORTAL", titleRegister: "CREATE A PORTAL ACCOUNT",
     body: "This is a hackathon portal account, separate from any other account. After signing in, complete your profile, then the team market opens.",
     badge: "HACKATHON PORTAL ACCOUNT", tabLogin: "SIGN IN", tabRegister: "REGISTER", tabsLabel: "Sign in or register",
@@ -20,7 +20,7 @@ export default {
     captcha: "Security check", errCaptcha: "Complete the security check first", errCaptchaFailed: "Security check failed. Try again.",
     errGeneric: "Could not reach the server. Try again."
   } },
-  zh: { login: {
+  zh: { busy: { wait: "请稍候…" }, login: {
     prompt: "登录/portal", title: "登录黑客松门户", titleRegister: "注册门户账号",
     body: "这是黑客松门户账号，与其他账号相互独立。登录后请补全个人资料，之后即可进入组队市场。",
     badge: "黑客松门户账号", tabLogin: "登录", tabRegister: "注册", tabsLabel: "登录或注册",

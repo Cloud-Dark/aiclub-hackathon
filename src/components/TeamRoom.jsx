@@ -53,7 +53,7 @@ export default function TeamRoom({ st, t, role, team, isOwner, actions }) {
     const l = lastId(list);
     if (!l || l <= readRef.current) return;
     readRef.current = l;
-    api.post(`/hackathon/teams/${id}/messages/read`, { last_read_id: l }).catch(() => {});
+    api.post(`/hackathon/teams/${id}/messages/read`, { last_read_id: l }, { silent: true }).catch(() => {});
   };
   const addMsgs = (add) => {
     if (!alive.current || !add.length) return;
@@ -74,7 +74,7 @@ export default function TeamRoom({ st, t, role, team, isOwner, actions }) {
     const iv = setInterval(() => {
       if (document.hidden) return;
       // chat masih kosong: ambil dari awal; selain itu hanya yang setelah pesan terakhir
-      api.get(`/hackathon/teams/${id}/messages?limit=50${lastRef.current ? "&after=" + lastRef.current : ""}`)
+      api.get(`/hackathon/teams/${id}/messages?limit=50${lastRef.current ? "&after=" + lastRef.current : ""}`, { silent: true })
         .then((c) => addMsgs((c && c.messages) || []))
         .catch(() => {});
     }, POLL_MS);
