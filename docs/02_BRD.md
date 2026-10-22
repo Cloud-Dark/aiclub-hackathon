@@ -10,7 +10,7 @@ Fakta yang tidak tercantum di kode, `README.md`, atau `brief.md` ditulis `_TBD_`
 
 ## 1. Latar belakang bisnis
 
-AIClub.id adalah komunitas AI di Indonesia (memiliki konsep anggota dengan `memberId`, peran pengurus kota dan pusat, event, registrasi, dan tautan pendek `aiclub.id/l/...`; sumber: [../brief.md](../brief.md) bagian 3). Bersama Tencent Cloud Indonesia, aiclub.id menyelenggarakan **Tencent Cloud Hackathon Indonesia 2026**: peserta membangun AI agent dengan WorkBuddy untuk satu dari tiga tantangan (The Workplace Brain, The Office Agent, The Creator Agent). Event gratis, total hadiah USD 3.100, mitra: Tencent Cloud, SumoPod, WorkBuddy, CodeBuddy.
+AIClub.id adalah komunitas AI di Indonesia (memiliki konsep anggota dengan `memberId`, peran pengurus kota dan pusat, event, registrasi, dan tautan pendek `aiclub.id/l/...`; sumber: [../brief.md](../brief.md) bagian 3). Bersama Tencent Cloud Indonesia, aiclub.id menyelenggarakan **Tencent Cloud Hackathon Indonesia 2026**: peserta membangun AI agent dengan WorkBuddy untuk satu dari tiga tantangan (The Workplace Brain, The Office Agent, The Creator Agent). Event gratis, total hadiah USD 2.500, mitra: Tencent Cloud, SumoPod, WorkBuddy, CodeBuddy.
 
 Penyelenggara menetapkan alur tiga langkah: (1) daftar di portal aiclub.id (portal ini), (2) daftarkan tim di portal Tencent, (3) submit project ke Tencent. Portal ini mengisi celah antara minat perorangan dan terbentuknya tim yang siap didaftarkan.
 

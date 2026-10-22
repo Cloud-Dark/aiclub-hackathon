@@ -25,8 +25,8 @@ export function Poster({ t }) {
 }
 
 export function Prize({ t }) {
-  const amounts = ["USD 1.800", "USD 800", "USD 500"];
-  const usd = t("event.prizeTotal").includes(",") ? (a) => a.replace("1.800", "1,800") : (a) => a;
+  const amounts = ["USD 1.200", "USD 800", "USD 500"];
+  const usd = t("event.prizeTotal").includes(",") ? (a) => a.replace("1.200", "1,200") : (a) => a;
   const place = ["event.place.0", "event.place.1", "event.place.2"];
   return (
     <div className="card y prize">

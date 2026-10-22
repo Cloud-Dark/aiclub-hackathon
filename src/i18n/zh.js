@@ -606,7 +606,7 @@ export default {
     "tagline": "用 WorkBuddy 构建真正能帮上工作的 AI agent，而不只是聊天。",
     "collab": "Tencent Cloud 与 AICLUB.ID 联合举办 · 免费",
     "prizeTitle": "奖金总额",
-    "prizeTotal": "USD 3,100",
+    "prizeTotal": "USD 2,500",
     "place": [
       "第 1 名",
       "第 2 名",

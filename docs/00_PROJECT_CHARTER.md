@@ -105,7 +105,7 @@ Matriks RACI rinci: _TBD_.
 |---|---|
 | Nama event | Tencent Cloud Hackathon Indonesia 2026 |
 | Tagline | "Bangun AI agent yang beneran bantu kerja, bukan cuma bisa ngobrol, pakai WorkBuddy." |
-| Total hadiah | USD 3.100 (Juara 1 USD 1.800; Juara 2 USD 800; Juara 3 USD 500) |
+| Total hadiah | USD 2.500 (Juara 1 USD 1.200; Juara 2 USD 800; Juara 3 USD 500) |
 | Tantangan (pilih 1 dari 3) | The Workplace Brain (Learn Anywhere); The Office Agent (Automate Better); The Creator Agent (Create Bolder) |
 | Pendaftaran dibuka | 15 Oktober 2026 |
 | Batas pendaftaran dan pengumpulan karya | 1 November 2026, 23.59 WIB |

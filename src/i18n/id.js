@@ -606,7 +606,7 @@ export default {
     "tagline": "Bangun AI agent yang beneran bantu kerja, bukan cuma bisa ngobrol, pakai WorkBuddy.",
     "collab": "Kolaborasi Tencent Cloud & AICLUB.ID · gratis",
     "prizeTitle": "TOTAL HADIAH",
-    "prizeTotal": "USD 3.100",
+    "prizeTotal": "USD 2.500",
     "place": [
       "JUARA 1",
       "JUARA 2",

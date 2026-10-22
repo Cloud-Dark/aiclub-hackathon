@@ -31,7 +31,7 @@ Dasar: riwayat commit 2026-10-19 sampai 2026-10-21.
 - [x] Lamar per grup tim dengan approve/reject owner; status, aktivitas, timeline (2026-10-19)
 - [x] Halaman login aiclub.id (dummy); data wajib (kota, WhatsApp) sebelum pasar tim (2026-10-19)
 - [x] i18n id/en/zh (`src/i18n/id.js`, `en.js`, `zh.js`)
-- [x] Info event resmi: hadiah USD 3.100, 3 tantangan, tanggal penting, mitra, logo, poster, favicon, footer mitra (2026-10-19)
+- [x] Info event resmi: hadiah USD 2.500, 3 tantangan, tanggal penting, mitra, logo, poster, favicon, footer mitra (2026-10-19)
 - [x] Revisi pusat: batas pendaftaran 1 Nov menggantikan 6 minggu; kartu target peserta dihapus (2026-10-19)
 - [x] Build ke `docs/` dan deploy GitHub Pages (2026-10-19)
 - [x] Apps Script dihapus (2026-10-19)

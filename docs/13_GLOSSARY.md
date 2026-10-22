@@ -40,7 +40,7 @@ Keterangan: istilah bertanda (rencana) belum ada di kode dan hanya berasal dari 
 | DSG (jalur) | Kode jalur "Designer": menyadari prototipe jalan tapi tak bisa dipakai; fokus alur, bukan hiasan. | `roles.DSG` |
 | DUMMY_USERS | Tiga akun demo (`rani@`, `bagas@`, `salsa@aiclub.id`) dengan profil sengaja tidak lengkap. | `src/data.js` |
 | emptyOutDir | Opsi Vite `build.emptyOutDir`. Sejak perbaikan 2026-10-21 bernilai `false` agar `docs/*.md` tidak terhapus; hanya `docs/assets` dibersihkan. | `vite.config.js`; [18_INSTALLATION.md](18_INSTALLATION.md) |
-| Event | Tencent Cloud Hackathon Indonesia 2026 (kolaborasi Tencent Cloud dan AICLUB.ID, gratis), total hadiah USD 3.100, tiga tantangan. | `event.*` |
+| Event | Tencent Cloud Hackathon Indonesia 2026 (kolaborasi Tencent Cloud dan AICLUB.ID, gratis), total hadiah USD 2.500, tiga tantangan. | `event.*` |
 | Finalis | Tim yang lolos seleksi dan tampil di Demo Day; diumumkan 14 Nov. | `schedule` |
 | GAS / Apps Script | Skrip Google Apps Script lama untuk menampung pendaftaran; dihapus pada 2026-10-19. | Riwayat git (commit `582836c`) |
 | Gerbang (gate) | Syarat yang harus dipenuhi sebelum layar berikutnya: data diri lengkap, kuis selesai, grup utama diikuti. | `reachable`, `subReachable` di `scoring.js` |

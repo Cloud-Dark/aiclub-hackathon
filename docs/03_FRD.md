@@ -653,7 +653,7 @@ Acceptance criteria:
 - G: dasbor; T: kartu GRUP UTAMA HACKATHON menampilkan "sudah gabung" dan tombol BUKA GRUP ke `WA_GROUP_URL`.
 - G: peserta bukan owner; T: kartu "LAMARAN & UNDANGAN" mencantumkan tiap lamaran (tim, keterangan status, tombol LIHAT DETAIL, tombol GABUNG GRUP TIM bila disetujui dan `wa` tersedia, KELUAR DARI TIM bila disetujui). Bila kosong: "Belum ada lamaran. Balik ke pasar tim dan lamar tim yang cocok denganmu."
 - G: peserta owner; T: kartu "LAMARAN & UNDANGAN" digantikan panel TIM SAYA (FR-032 sampai FR-035).
-- G: dasbor; T: kolom kanan memuat total hadiah (USD 3.100), JALURMU (nama ringkas dan deskripsi), dan tiga tantangan (ringkas).
+- G: dasbor; T: kolom kanan memuat total hadiah (USD 2.500), JALURMU (nama ringkas dan deskripsi), dan tiga tantangan (ringkas).
 - G: dasbor; T: bagian "JALAN SAMPAI DEMO DAY" memuat empat tonggak: 15 OKT; 1 NOV 23.59 WIB; 14 NOV; 27 NOV 13.00-16.00 WIB.
 - G: tombol aksi bawah; T: LANJUT KE LANGKAH 2 (ke `tencent`), KEMBALI KE PASAR TIM (hanya non-owner), GANTI PILIHAN (ke `pilih`), "Mulai dari awal".
 - Keterbatasan as-built: sapaan tetap "BELUM PUNYA TIM" bagi semua peserta, termasuk owner atau anggota (teks `dash.greeting`).
@@ -806,7 +806,7 @@ Acceptance criteria:
 - G: kamus id, en, zh; W: kunci dibandingkan; T: ketiganya memiliki 428 kunci daun yang identik (diverifikasi pada 2026-10-21).
 - G: seluruh layar dan teks event (hadiah, tanggal, tantangan, deskripsi tim contoh, builder contoh, pertanyaan skenario, nama jalur); T: tersedia dalam tiga bahasa.
 - Label bahasa pada header: ID, EN, 中文 (nama: Bahasa Indonesia, English, 简体中文).
-- Mata uang hadiah tampil "USD 3.100" (id) dan "USD 3,100" (en, zh); nominal juara: 1.800, 800, 500 (format ribuan menyesuaikan).
+- Mata uang hadiah tampil "USD 2.500" (id) dan "USD 2,500" (en, zh); nominal juara: 1.200, 800, 500 (format ribuan menyesuaikan).
 
 ### FR-046 Pemilihan, deteksi, dan penyimpanan bahasa
 
@@ -983,7 +983,7 @@ Acceptance criteria:
 
 Acceptance criteria:
 - G: layar `intro`; W: dirender; T: judul "AI AGENT HACKATHON", subjudul "Tencent Cloud Indonesia - pendaftaran sampai 1 Nov", penjelasan alur, tombol "MULAI PENDAFTARAN", petunjuk "gratis - 4 menit - nggak perlu jago dulu", poster, dan kartu "KENAPA PAKAI KUIS".
-- G: informasi event; T: total hadiah USD 3.100 (Juara 1 USD 1.800; Juara 2 USD 800; Juara 3 USD 500); tanggal penting: 15 OKT pendaftaran dibuka; 1 NOV batas pendaftaran dan pengumpulan karya 23.59 WIB; 14 NOV pengumuman finalis; 27 NOV Demo Day dan Awarding, Jakarta, 13.00-16.00 WIB.
+- G: informasi event; T: total hadiah USD 2.500 (Juara 1 USD 1.200; Juara 2 USD 800; Juara 3 USD 500); tanggal penting: 15 OKT pendaftaran dibuka; 1 NOV batas pendaftaran dan pengumpulan karya 23.59 WIB; 14 NOV pengumuman finalis; 27 NOV Demo Day dan Awarding, Jakarta, 13.00-16.00 WIB.
 - G: tantangan; T: tiga kartu: The Workplace Brain (LEARN ANYWHERE), The Office Agent (AUTOMATE BETTER), The Creator Agent (CREATE BOLDER) dengan deskripsi.
 - G: tombol MULAI PENDAFTARAN; T: `login` bila belum masuk, atau `identitas` bila sudah.
 - Teks header: "pendaftaran 15 Okt - 1 Nov" dan "demo day akhir Nov - Jakarta". Teks ini tampil di header pada lebar layar 1400 px ke atas dan di bawah header pada layar yang lebih sempit (FR-062). Data dari <https://aiclub.id/event/tencent-cloud-hackathon-2026>; lokasi detail Demo Day: "menyusul" (_TBD_).

@@ -606,7 +606,7 @@ export default {
     "tagline": "Build AI agents that actually help with work, not just chat, using WorkBuddy.",
     "collab": "A Tencent Cloud & AICLUB.ID collaboration · free",
     "prizeTitle": "TOTAL PRIZES",
-    "prizeTotal": "USD 3,100",
+    "prizeTotal": "USD 2,500",
     "place": [
       "1ST PLACE",
       "2ND PLACE",

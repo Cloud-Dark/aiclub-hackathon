@@ -26,7 +26,7 @@ Login dummy: pilih salah satu akun demo di halaman login (`rani@aiclub.id`, `bag
 
 ## Info event
 
-Data event (hadiah USD 3.100, 3 tantangan, tanggal penting, mitra) diambil dari halaman resmi
+Data event (hadiah USD 2.500, 3 tantangan, tanggal penting, mitra) diambil dari halaman resmi
 https://aiclub.id/event/tencent-cloud-hackathon-2026. Teks ada di `src/i18n/*.js` (kunci `event`, `schedule`),
 logo dan poster di `public/brand/`.
 
