@@ -1,0 +1,10 @@
+name = "aiclub-hackathon"
+compatibility_date = "2026-10-01"
+pages_build_output_dir = "docs"
+
+# Database portal hackathon (D1). Migrasi: lihat migrations/ dan docs/20_DATABASE.md
+[[d1_databases]]
+binding = "DB"
+database_name = "aiclub-hackathon-db"
+database_id = "8bd12a19-0c1f-4157-876d-de6aa920388b"
+migrations_dir = "migrations"
